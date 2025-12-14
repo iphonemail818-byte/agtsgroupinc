@@ -118,7 +118,7 @@ button:hover{
   .flex-row{flex-direction:column;}
 }
 
-/* Flatpickr custom theme */
+/* Flatpickr calendar custom */
 .flatpickr-calendar {
   background: #000 !important;
   border: 1px solid #0ff !important;
@@ -135,14 +135,9 @@ button:hover{
   background: #000 !important;
   color: #0ff !important;
 }
-.flatpickr-day:hover {
-  background: #06b6d4 !important;
-  color:#000 !important;
-}
 .flatpickr-time .flatpickr-time-separator,
 .flatpickr-time input,
-.flatpickr-time.am,
-.flatpickr-time.pm {
+.flatpickr-time .flatpickr-am-pm {
   color: #0ff !important;
 }
 </style>
@@ -157,11 +152,11 @@ button:hover{
 <div class="flex-row">
   <div class="field show">
     <label>Pickup Address</label>
-    <input id="pickup" placeholder="Start typing address">
+    <input id="pickup" placeholder="Start typing...">
   </div>
   <div class="field show">
     <label>Drop-off Address</label>
-    <input id="dropoff" placeholder="Start typing address">
+    <input id="dropoff" placeholder="Start typing...">
   </div>
 </div>
 
@@ -250,10 +245,8 @@ button:hover{
 
 </div>
 
-<!-- GOOGLE PLACES API -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places"></script>
 <script>
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
@@ -289,16 +282,18 @@ const fieldContainers = {
 const tripSummary = document.getElementById('tripSummary');
 const payBtn = document.getElementById('payBtn');
 
-// GOOGLE AUTOCOMPLETE
-let pickupAutocomplete = new google.maps.places.Autocomplete(fields.pickup, {types:['geocode']});
-let dropoffAutocomplete = new google.maps.places.Autocomplete(fields.dropoff, {types:['geocode']});
+// Google Autocomplete integration
+const pickupAutocomplete = new google.maps.places.Autocomplete(fields.pickup);
+pickupAutocomplete.addListener('place_changed', checkAddressFields);
+const dropoffAutocomplete = new google.maps.places.Autocomplete(fields.dropoff);
+dropoffAutocomplete.addListener('place_changed', checkAddressFields);
 
-// Step-by-step display
 function checkAddressFields() {
   if(fields.pickup.value.trim() && fields.dropoff.value.trim()) {
     fieldContainers.dateField.classList.add('show');
   }
 }
+
 fields.pickup.addEventListener('input', checkAddressFields);
 fields.dropoff.addEventListener('input', checkAddressFields);
 
@@ -323,7 +318,6 @@ fields.pets.addEventListener('change', () => {
   }
 });
 
-// Update trip summary
 function updateTripSummary(){
   const requiredFilled = fields.pickup.value && fields.dropoff.value && fields.pickupDate.value && fields.pickupTime.value &&
                          fields.vehicle.value && fields.passengers.value && fields.pets.value &&
@@ -341,7 +335,6 @@ function updateTripSummary(){
 Object.values(fields).forEach(f => f.addEventListener('input', updateTripSummary));
 Object.values(fields).forEach(f => f.addEventListener('change', updateTripSummary));
 
-// Highlight required fields
 const required = [
   fields.pickup, fields.dropoff, fields.pickupDate, fields.pickupTime,
   fields.vehicle, fields.passengers, fields.pets, fields.name, fields.phone, fields.email
@@ -369,4 +362,3 @@ payBtn.addEventListener('click',()=>{
 </script>
 </body>
 </html>
-
