@@ -55,17 +55,28 @@ input::placeholder{color:#555;}
 .field{
   flex:1;
   display:none;
+  opacity:0;
+  transition:opacity .3s ease-in-out;
 }
-.field.show{display:block;}
+.field.show{
+  display:block;
+  opacity:1;
+}
 
 #tripSummary{
   display:none;
+  opacity:0;
   margin-top:24px;
   padding:20px;
   border-radius:18px;
   background:#000;
   border:1px solid #0ff;
   text-align:center;
+  transition:opacity .5s ease-in-out;
+}
+#tripSummary.show{
+  display:block;
+  opacity:1;
 }
 #tripSummary div{
   font-family:'Orbitron',monospace;
@@ -88,6 +99,7 @@ button{
   background:linear-gradient(90deg,#0ff,#06b6d4);
   color:#000;
 }
+button.show{display:block;}
 button:hover{opacity:.9;}
 
 @media(max-width:900px){
@@ -105,11 +117,11 @@ button:hover{opacity:.9;}
 <div class="flex-row">
   <div class="field show">
     <label>Pickup Address</label>
-    <input id="pickup" placeholder="Premium chauffeur pickup location">
+    <input id="pickup" placeholder="Enter pickup location">
   </div>
   <div class="field show">
     <label>Drop-off Address</label>
-    <input id="dropoff" placeholder="Luxury destination">
+    <input id="dropoff" placeholder="Enter drop-off location">
   </div>
 </div>
 
@@ -159,14 +171,14 @@ button:hover{opacity:.9;}
   </div>
   <div class="field" id="phoneField">
     <label>Phone</label>
-    <input id="phone">
+    <input id="phone" type="tel">
   </div>
 </div>
 
 <div class="flex-row">
   <div class="field" id="emailField">
     <label>Email</label>
-    <input id="email">
+    <input id="email" type="email">
   </div>
 </div>
 
@@ -187,51 +199,66 @@ button:hover{opacity:.9;}
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-const f=id=>document.getElementById(id);
-const fields=[pickup,dropoff,pickupDate,pickupTime,vehicle,passengers,pets,name,phone,email];
+const f = id => document.getElementById(id);
 
-function show(id){f(id).classList.add("show");}
+// Progressive reveal sequence
+f("pickup").addEventListener("input", checkAddresses);
+f("dropoff").addEventListener("input", checkAddresses);
 
-pickup.onchange=dropoff.onchange=()=>{
-  if(pickup.value && dropoff.value) show("dateField");
-};
+function checkAddresses(){
+  if(f("pickup").value && f("dropoff").value){
+    showField("dateField");
+  }
+}
 
-pickupDate.onchange=()=>show("timeField");
+f("pickupDate").addEventListener("change", ()=> showField("timeField"));
+f("pickupTime").addEventListener("change", ()=>{
+  showField("vehicleField");
+  showField("passengersField");
+  showField("petsField");
+});
 
-pickupTime.onchange=()=>{
-  show("vehicleField");
-  show("passengersField");
-  show("petsField");
-};
+f("pets").addEventListener("change", ()=>{
+  showField("nameField");
+  showField("phoneField");
+  showField("emailField");
+  f("payBtn").classList.add("show");
+});
 
-pets.onchange=()=>{
-  show("nameField");
-  show("phoneField");
-  show("emailField");
-  payBtn.style.display="block";
-};
+function showField(id){
+  f(id).classList.add("show");
+}
+
+// Validation with red glow
+const fields = [
+  f("pickup"), f("dropoff"), f("pickupDate"), f("pickupTime"),
+  f("vehicle"), f("passengers"), f("pets"), f("name"), f("phone"), f("email")
+];
 
 function validate(){
-  let ok=true;
+  let ok = true;
   fields.forEach(el=>{
     el.classList.remove("input-error");
     if(!el.value){
       el.classList.add("input-error");
-      ok=false;
+      ok = false;
     }
   });
   return ok;
 }
 
+// Render the summary with fade-in
 function renderSummary(){
-  tripSummary.style.display="block";
-  sumPickup.textContent="Pickup: "+pickup.value;
-  sumDropoff.textContent="Drop-off: "+dropoff.value;
-  sumDateTime.textContent="Date & Time: "+pickupDate.value+" at "+pickupTime.value;
-  sumVehicle.textContent="Vehicle: "+vehicle.value+" | Passengers: "+passengers.value+" | Pets: "+pets.value;
+  f("sumPickup").textContent = "Pickup: " + f("pickup").value;
+  f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
+  f("sumDateTime").textContent = "Date & Time: " + f("pickupDate").value + " at " + f("pickupTime").value;
+  f("sumVehicle").textContent = "Vehicle: " + f("vehicle").value +
+    " | Passengers: " + f("passengers").value + " | Pets: " + f("pets").value;
+
+  f("tripSummary").classList.add("show");
 }
 
-payBtn.onclick=()=>{
+f("payBtn").onclick = ()=>{
   if(!validate()) return;
   renderSummary();
   alert("Booking submitted successfully!");
@@ -244,8 +271,9 @@ async defer></script>
 
 <script>
 function initAutocomplete(){
-  new google.maps.places.Autocomplete(pickup,{types:["geocode"]});
-  new google.maps.places.Autocomplete(dropoff,{types:["geocode"]});
+  // NOTE: Recent Google Places API updates recommend using the new PlaceAutocompleteElement approach  [oai_citation:1‡Google for Developers](https://developers.google.com/maps/documentation/javascript/place-autocomplete-new?utm_source=chatgpt.com)
+  new google.maps.places.Autocomplete(f("pickup"));
+  new google.maps.places.Autocomplete(f("dropoff"));
 }
 </script>
 
