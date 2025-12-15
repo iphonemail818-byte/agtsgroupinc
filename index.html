@@ -194,85 +194,85 @@ button:hover{opacity:.9;}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 <script>
-// Initialize Flatpickr
-flatpickr("#pickupDate",{minDate:"today"});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+document.addEventListener("DOMContentLoaded", ()=>{
 
-// Helper
-const f = id => document.getElementById(id);
-const showField = id => f(id).classList.add("show");
+  // Flatpickr
+  flatpickr("#pickupDate",{minDate:"today"});
+  flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-// Progressive reveal
-f("pickup").addEventListener("input", checkAddresses);
-f("dropoff").addEventListener("input", checkAddresses);
-function checkAddresses(){
-  if(f("pickup").value && f("dropoff").value){
-    showField("dateField");
-  }
-}
+  const f = id => document.getElementById(id);
+  const showField = id => f(id).classList.add("show");
 
-f("pickupDate").addEventListener("change", ()=> showField("timeField"));
-f("pickupTime").addEventListener("change", ()=>{
-  showField("vehicleField");
-  showField("passengersField");
-  showField("petsField");
-});
-
-f("pets").addEventListener("change", ()=>{
-  showField("nameField");
-  showField("phoneField");
-  showField("emailField");
-  f("payBtn").classList.add("show");
-});
-
-// Fields array for validation
-const fields = [
-  f("pickup"), f("dropoff"), f("pickupDate"), f("pickupTime"),
-  f("vehicle"), f("passengers"), f("pets"), f("name"), f("phone"), f("email")
-];
-
-// Validation function
-function validate(){
-  let ok = true;
-  fields.forEach(el=>{
-    el.classList.remove("input-error");
-    if(!el.value){
-      el.classList.add("input-error");
-      ok = false;
+  // Progressive fields
+  f("pickup").addEventListener("input", checkAddresses);
+  f("dropoff").addEventListener("input", checkAddresses);
+  function checkAddresses(){
+    if(f("pickup").value.trim() && f("dropoff").value.trim()){
+      showField("dateField");
     }
+  }
+
+  f("pickupDate").addEventListener("change", ()=> showField("timeField"));
+  f("pickupTime").addEventListener("change", ()=>{
+    showField("vehicleField");
+    showField("passengersField");
+    showField("petsField");
   });
-  return ok;
-}
 
-// Render trip summary
-function renderSummary(){
-  f("sumPickup").textContent = "Pickup: " + f("pickup").value;
-  f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
-  f("sumDateTime").textContent = "Date & Time: " + f("pickupDate").value + " at " + f("pickupTime").value;
-  f("sumVehicle").textContent = "Vehicle: " + f("vehicle").value +
-    " | Passengers: " + f("passengers").value + " | Pets: " + f("pets").value;
-  f("tripSummary").classList.add("show");
-}
+  f("pets").addEventListener("change", ()=>{
+    showField("nameField");
+    showField("phoneField");
+    showField("emailField");
+    f("payBtn").classList.add("show");
+  });
 
-// Pay button click
-f("payBtn").addEventListener("click", ()=>{
-  if(!validate()) return; // only submit if all mandatory fields are filled
-  renderSummary();
-  alert("Booking submitted successfully!");
+  // All fields for validation
+  const fields = [
+    f("pickup"), f("dropoff"), f("pickupDate"), f("pickupTime"),
+    f("vehicle"), f("passengers"), f("pets"), f("name"), f("phone"), f("email")
+  ];
+
+  // Validation
+  function validate(){
+    let ok = true;
+    fields.forEach(el=>{
+      el.classList.remove("input-error");
+      if(!el.value.trim()){
+        el.classList.add("input-error");
+        ok = false;
+      }
+    });
+    return ok;
+  }
+
+  // Render summary
+  function renderSummary(){
+    f("sumPickup").textContent = "Pickup: " + f("pickup").value;
+    f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
+    f("sumDateTime").textContent = "Date & Time: " + f("pickupDate").value + " at " + f("pickupTime").value;
+    f("sumVehicle").textContent = "Vehicle: " + f("vehicle").value +
+      " | Passengers: " + f("passengers").value + " | Pets: " + f("pets").value;
+    f("tripSummary").classList.add("show");
+  }
+
+  f("payBtn").addEventListener("click", ()=>{
+    if(!validate()) return; // mandatory field check
+    renderSummary();
+    alert("Booking submitted successfully!");
+  });
+
+  // Google Autocomplete after DOM ready
+  window.initAutocomplete = function(){
+    new google.maps.places.Autocomplete(f("pickup"));
+    new google.maps.places.Autocomplete(f("dropoff"));
+  };
+
 });
-
-// Google Places Autocomplete
-function initAutocomplete(){
-  new google.maps.places.Autocomplete(f("pickup"));
-  new google.maps.places.Autocomplete(f("dropoff"));
-}
 </script>
 
 <script
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete"
 async defer></script>
-
 </body>
 </html>
