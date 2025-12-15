@@ -29,7 +29,7 @@ h2{font-size:1.1em;margin-bottom:30px;}
 
 label{display:block;margin-top:8px;font-weight:bold;}
 
-input, textarea, select{
+input, select{
   width:100%;
   padding:12px;
   margin-top:4px;
@@ -56,7 +56,7 @@ input::placeholder{color:#555;}
   flex:1;
   display:none;
   opacity:0;
-  transition:opacity .3s ease-in-out;
+  transition:opacity .4s ease-in-out;
 }
 .field.show{
   display:block;
@@ -196,15 +196,17 @@ button:hover{opacity:.9;}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
+// Initialize Flatpickr
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
+// Helper
 const f = id => document.getElementById(id);
+const showField = id => f(id).classList.add("show");
 
-// Progressive reveal sequence
+// Progressive reveal
 f("pickup").addEventListener("input", checkAddresses);
 f("dropoff").addEventListener("input", checkAddresses);
-
 function checkAddresses(){
   if(f("pickup").value && f("dropoff").value){
     showField("dateField");
@@ -225,16 +227,13 @@ f("pets").addEventListener("change", ()=>{
   f("payBtn").classList.add("show");
 });
 
-function showField(id){
-  f(id).classList.add("show");
-}
-
-// Validation with red glow
+// Fields array for validation
 const fields = [
   f("pickup"), f("dropoff"), f("pickupDate"), f("pickupTime"),
   f("vehicle"), f("passengers"), f("pets"), f("name"), f("phone"), f("email")
 ];
 
+// Validation function
 function validate(){
   let ok = true;
   fields.forEach(el=>{
@@ -247,35 +246,33 @@ function validate(){
   return ok;
 }
 
-// Render the summary with fade-in
+// Render trip summary
 function renderSummary(){
   f("sumPickup").textContent = "Pickup: " + f("pickup").value;
   f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
   f("sumDateTime").textContent = "Date & Time: " + f("pickupDate").value + " at " + f("pickupTime").value;
   f("sumVehicle").textContent = "Vehicle: " + f("vehicle").value +
     " | Passengers: " + f("passengers").value + " | Pets: " + f("pets").value;
-
   f("tripSummary").classList.add("show");
 }
 
-f("payBtn").onclick = ()=>{
-  if(!validate()) return;
+// Pay button click
+f("payBtn").addEventListener("click", ()=>{
+  if(!validate()) return; // only submit if all mandatory fields are filled
   renderSummary();
   alert("Booking submitted successfully!");
-};
+});
+
+// Google Places Autocomplete
+function initAutocomplete(){
+  new google.maps.places.Autocomplete(f("pickup"));
+  new google.maps.places.Autocomplete(f("dropoff"));
+}
 </script>
 
 <script
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete"
 async defer></script>
-
-<script>
-function initAutocomplete(){
-  // NOTE: Recent Google Places API updates recommend using the new PlaceAutocompleteElement approach  [oai_citation:1‡Google for Developers](https://developers.google.com/maps/documentation/javascript/place-autocomplete-new?utm_source=chatgpt.com)
-  new google.maps.places.Autocomplete(f("pickup"));
-  new google.maps.places.Autocomplete(f("dropoff"));
-}
-</script>
 
 </body>
 </html>
