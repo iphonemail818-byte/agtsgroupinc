@@ -39,21 +39,18 @@ input, textarea, select{
   color:#0ff;
   font-size:1em;
   transition:0.3s;
-  position: relative;
-  z-index:0;
 }
 input::placeholder, textarea::placeholder{color:#555;}
 
-.input-error {
-  border: 2px solid #0ff;
-  box-shadow: 0 0 12px #0ff, 0 0 20px #0ff88;
-  animation: pulseGlow 1.5s ease-in-out infinite;
+.input-error{
+  border:2px solid #0ff;
+  box-shadow:0 0 12px #0ff,0 0 22px #0ff88;
+  animation:pulseGlow 1.5s infinite;
 }
-
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 8px #0ff, 0 0 16px #0ff88; }
-  50% { box-shadow: 0 0 20px #0ff, 0 0 28px #0ff88; }
-  100% { box-shadow: 0 0 8px #0ff, 0 0 16px #0ff88; }
+@keyframes pulseGlow{
+  0%{box-shadow:0 0 8px #0ff;}
+  50%{box-shadow:0 0 22px #0ff;}
+  100%{box-shadow:0 0 8px #0ff;}
 }
 
 .flex-row{
@@ -63,11 +60,10 @@ input::placeholder, textarea::placeholder{color:#555;}
 }
 .field{
   flex:1;
-  min-width:0;
+  display:none;
   opacity:0;
   transform:translateY(10px);
   transition:0.4s ease;
-  display:none;
 }
 .field.show{
   display:block;
@@ -76,17 +72,17 @@ input::placeholder, textarea::placeholder{color:#555;}
 }
 
 #tripSummary{
-  background:#000;
+  display:none;
+  margin-top:18px;
   padding:18px;
   border-radius:15px;
-  margin-top:18px;
+  background:#000;
   text-align:center;
-  display:none;
 }
 #tripSummary div{
   font-family:'Orbitron',monospace;
-  font-weight:900;
   font-size:1.2em;
+  font-weight:900;
   text-shadow:0 0 12px #0ff;
 }
 
@@ -102,11 +98,6 @@ button{
   cursor:pointer;
   background:linear-gradient(90deg,#0ff,#06b6d4);
   color:#000;
-  box-shadow:0 5px 20px rgba(0,255,255,.6);
-}
-
-@media(max-width:900px){
-  .flex-row{flex-direction:column;}
 }
 </style>
 </head>
@@ -120,11 +111,11 @@ button{
 <div class="flex-row">
   <div class="field show">
     <label>Pickup Address</label>
-    <input id="pickup" placeholder="Where should we pick you up?">
+    <input id="pickup" placeholder="Start typing pickup location">
   </div>
   <div class="field show">
     <label>Drop-off Address</label>
-    <input id="dropoff" placeholder="Where are you going?">
+    <input id="dropoff" placeholder="Start typing drop-off location">
   </div>
 </div>
 
@@ -191,7 +182,6 @@ button{
       <option>Social Media</option>
       <option>Friend / Family</option>
       <option>Website</option>
-      <option>Other</option>
     </select>
   </div>
 </div>
@@ -214,53 +204,72 @@ button{
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
 
 <script>
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-const fields = {
-  pickup: document.getElementById('pickup'),
-  dropoff: document.getElementById('dropoff'),
-  pickupDate: document.getElementById('pickupDate'),
-  pickupTime: document.getElementById('pickupTime'),
-  vehicle: document.getElementById('vehicle'),
-  passengers: document.getElementById('passengers'),
-  pets: document.getElementById('pets'),
-  name: document.getElementById('name'),
-  phone: document.getElementById('phone'),
-  email: document.getElementById('email')
-};
+const f=id=>document.getElementById(id);
+const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
 
-const autocompletePickup = new google.maps.places.Autocomplete(fields.pickup);
-const autocompleteDropoff = new google.maps.places.Autocomplete(fields.dropoff);
+f("pickup").addEventListener("input",()=>f("dateField").classList.add("show"));
+f("dropoff").addEventListener("input",()=>f("dateField").classList.add("show"));
+f("pickupDate").addEventListener("change",()=>f("timeField").classList.add("show"));
+f("pickupTime").addEventListener("change",()=>{
+  ["vehicleField","passengersField","petsField"].forEach(id=>f(id).classList.add("show"));
+});
+f("pets").addEventListener("change",()=>{
+  ["nameField","phoneField","emailField","referenceField","notesField"].forEach(id=>f(id).classList.add("show"));
+  f("payBtn").style.display="block";
+});
 
-function checkAddressFields(){
-  if(fields.pickup.value && fields.dropoff.value){
-    document.getElementById('dateField').classList.add('show');
+function updateSummary(){
+  if(fields.every(el=>el.value)){
+    f("tripSummary").style.display="block";
+    f("sumPickup").textContent="Pickup: "+f("pickup").value;
+    f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
+    f("sumDateTime").textContent=`${f("pickupDate").value} at ${f("pickupTime").value}`;
+    f("sumDuration").textContent="Duration: XX min";
+    f("sumPrice").textContent="Estimated: $XX.XX";
   }
 }
-
-autocompletePickup.addListener('place_changed', checkAddressFields);
-autocompleteDropoff.addListener('place_changed', checkAddressFields);
-
-fields.pickupDate.addEventListener('change',()=>{
-  document.getElementById('timeField').classList.add('show');
+fields.forEach(el=>{
+  el.addEventListener("input",updateSummary);
+  el.addEventListener("change",updateSummary);
 });
 
-fields.pickupTime.addEventListener('change',()=>{
-  ['vehicleField','passengersField','petsField'].forEach(id=>{
-    document.getElementById(id).classList.add('show');
+f("payBtn").onclick=()=>{
+  let bad=null;
+  fields.forEach(el=>{
+    el.classList.remove("input-error");
+    if(!el.value && !bad){el.classList.add("input-error");bad=el;}
   });
-});
-
-fields.pets.addEventListener('change',()=>{
-  ['nameField','phoneField','emailField','referenceField','notesField'].forEach(id=>{
-    document.getElementById(id).classList.add('show');
-  });
-  document.getElementById('payBtn').style.display='block';
-});
+  if(bad){bad.focus();return;}
+  alert("Booking submitted successfully!");
+};
 </script>
+
+<!-- ✅ GOOGLE AUTOCOMPLETE (FIXED, STABLE) -->
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY_HERE&libraries=places&callback=initAutocomplete"
+  async defer></script>
+
+<script>
+function initAutocomplete(){
+  const pickupAuto=new google.maps.places.Autocomplete(f("pickup"),{types:["geocode"]});
+  const dropoffAuto=new google.maps.places.Autocomplete(f("dropoff"),{types:["geocode"]});
+
+  pickupAuto.addListener("place_changed",()=>{
+    const p=pickupAuto.getPlace();
+    if(p?.formatted_address) f("pickup").value=p.formatted_address;
+  });
+
+  dropoffAuto.addListener("place_changed",()=>{
+    const p=dropoffAuto.getPlace();
+    if(p?.formatted_address) f("dropoff").value=p.formatted_address;
+  });
+}
+</script>
+
 </body>
 </html>
