@@ -25,7 +25,7 @@ h1,h2{
   font-family:'Orbitron',sans-serif;
 }
 h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
-h2{font-size:1.1em;margin-bottom:30px;text-shadow:0 0 8px #0ff;}
+h2{font-size:1.1em;margin-bottom:30px;}
 
 label{display:block;margin-top:8px;font-weight:bold;}
 
@@ -43,8 +43,8 @@ input, textarea, select{
 input::placeholder{color:#555;}
 
 .input-error{
-  border:2px solid #ff3b81;
-  box-shadow:0 0 14px #ff3b81,0 0 28px #ff3b8177;
+  border:2px solid #ff3b81 !important;
+  box-shadow:0 0 14px #ff3b81,0 0 30px #ff3b81aa;
 }
 
 .flex-row{
@@ -60,15 +60,16 @@ input::placeholder{color:#555;}
 
 #tripSummary{
   display:none;
-  margin-top:20px;
-  padding:18px;
-  border-radius:16px;
+  margin-top:24px;
+  padding:20px;
+  border-radius:18px;
   background:#000;
+  border:1px solid #0ff;
   text-align:center;
 }
 #tripSummary div{
   font-family:'Orbitron',monospace;
-  font-size:1.1em;
+  font-size:1.05em;
   font-weight:900;
   text-shadow:0 0 10px #0ff;
   margin-bottom:6px;
@@ -77,16 +78,17 @@ input::placeholder{color:#555;}
 button{
   display:none;
   width:100%;
-  margin-top:18px;
-  padding:14px;
-  font-size:1.15em;
+  margin-top:22px;
+  padding:16px;
+  font-size:1.2em;
   font-weight:bold;
   border:none;
-  border-radius:16px;
+  border-radius:18px;
   cursor:pointer;
   background:linear-gradient(90deg,#0ff,#06b6d4);
   color:#000;
 }
+button:hover{opacity:.9;}
 
 @media(max-width:900px){
   .flex-row{flex-direction:column;}
@@ -172,7 +174,7 @@ button{
   <div id="sumPickup"></div>
   <div id="sumDropoff"></div>
   <div id="sumDateTime"></div>
-  <div id="sumPrice"></div>
+  <div id="sumVehicle"></div>
 </div>
 
 <button id="payBtn">Book & Pay</button>
@@ -186,60 +188,59 @@ flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
 const f=id=>document.getElementById(id);
+const fields=[pickup,dropoff,pickupDate,pickupTime,vehicle,passengers,pets,name,phone,email];
 
 function show(id){f(id).classList.add("show");}
 
-function readyAddresses(){
-  if(f("pickup").value && f("dropoff").value){
-    show("dateField");
-  }
-}
-pickup.addEventListener("change",readyAddresses);
-dropoff.addEventListener("change",readyAddresses);
+pickup.onchange=dropoff.onchange=()=>{
+  if(pickup.value && dropoff.value) show("dateField");
+};
 
-pickupDate.addEventListener("change",()=>show("timeField"));
+pickupDate.onchange=()=>show("timeField");
 
-pickupTime.addEventListener("change",()=>{
+pickupTime.onchange=()=>{
   show("vehicleField");
   show("passengersField");
   show("petsField");
-});
+};
 
-pets.addEventListener("change",()=>{
+pets.onchange=()=>{
   show("nameField");
   show("phoneField");
   show("emailField");
   payBtn.style.display="block";
-});
+};
 
-function updateSummary(){
-  if(
-    pickup.value && dropoff.value &&
-    pickupDate.value && pickupTime.value &&
-    vehicle.value && passengers.value &&
-    pets.value && name.value &&
-    phone.value && email.value
-  ){
-    tripSummary.style.display="block";
-    sumPickup.textContent="Pickup: "+pickup.value;
-    sumDropoff.textContent="Drop-off: "+dropoff.value;
-    sumDateTime.textContent="Date & Time: "+pickupDate.value+" at "+pickupTime.value;
-    sumPrice.textContent="Estimated: $XXX.XX";
-  }
+function validate(){
+  let ok=true;
+  fields.forEach(el=>{
+    el.classList.remove("input-error");
+    if(!el.value){
+      el.classList.add("input-error");
+      ok=false;
+    }
+  });
+  return ok;
 }
-document.querySelectorAll("input,select").forEach(e=>{
-  e.addEventListener("input",updateSummary);
-  e.addEventListener("change",updateSummary);
-});
+
+function renderSummary(){
+  tripSummary.style.display="block";
+  sumPickup.textContent="Pickup: "+pickup.value;
+  sumDropoff.textContent="Drop-off: "+dropoff.value;
+  sumDateTime.textContent="Date & Time: "+pickupDate.value+" at "+pickupTime.value;
+  sumVehicle.textContent="Vehicle: "+vehicle.value+" | Passengers: "+passengers.value+" | Pets: "+pets.value;
+}
 
 payBtn.onclick=()=>{
+  if(!validate()) return;
+  renderSummary();
   alert("Booking submitted successfully!");
 };
 </script>
 
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete"
-  async defer></script>
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete"
+async defer></script>
 
 <script>
 function initAutocomplete(){
