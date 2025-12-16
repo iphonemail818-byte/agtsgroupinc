@@ -181,11 +181,13 @@ const fields = [
   vehicle, passengers, pets, name, phone, email
 ];
 
-flatpickr("#pickupDate",{minDate:"today"});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+// Pickers
+flatpickr("#pickupDate",{minDate:"today",onChange:stateCheck});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K",onChange:stateCheck});
 
-// === SEQUENCE ===
-function checkSequence(){
+// === STATE ENGINE ===
+function stateCheck(){
+  // Sequence
   if(pickup.value && dropoff.value){
     dateField.classList.add("show");
   } else return;
@@ -206,20 +208,20 @@ function checkSequence(){
     emailField.classList.add("show");
     payBtn.style.display="block";
   }
+
+  updateSummary();
 }
 
+// Input listeners
 fields.forEach(f=>{
-  f.addEventListener("change", ()=>{
-    f.classList.remove("input-error");
-    checkSequence();
-    updateSummary();
-  });
   f.addEventListener("input", ()=>{
     f.classList.remove("input-error");
-    updateSummary();
+    stateCheck();
   });
+  f.addEventListener("change", stateCheck);
 });
 
+// === SUMMARY ===
 function updateSummary(){
   const allFilled = fields.every(f=>f.value.trim());
   if(!allFilled){
@@ -238,22 +240,19 @@ function updateSummary(){
   tripSummary.style.display="block";
 }
 
-// === BOOK & PAY ===
+// === PAY ===
 payBtn.onclick = ()=>{
   let firstMissing=null;
-
   fields.forEach(f=>{
     if(!f.value.trim()){
       f.classList.add("input-error");
       if(!firstMissing) firstMissing=f;
     }
   });
-
   if(firstMissing){
     firstMissing.focus();
     return;
   }
-
   alert("Booking submitted successfully!");
 };
 </script>
@@ -261,8 +260,11 @@ payBtn.onclick = ()=>{
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
 <script>
 function initAutocomplete(){
-  new google.maps.places.Autocomplete(pickup);
-  new google.maps.places.Autocomplete(dropoff);
+  const p = new google.maps.places.Autocomplete(pickup);
+  const d = new google.maps.places.Autocomplete(dropoff);
+
+  p.addListener("place_changed", stateCheck);
+  d.addListener("place_changed", stateCheck);
 }
 </script>
 
