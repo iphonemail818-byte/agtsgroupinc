@@ -67,21 +67,6 @@ button:hover{opacity:.9;}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-// Global function for Google Maps autocomplete
-function initAutocomplete(){
-  const pickup = document.getElementById("pickup");
-  const dropoff = document.getElementById("dropoff");
-  if(pickup && dropoff){
-    const pickupAutocomplete = new google.maps.places.Autocomplete(pickup);
-    const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoff);
-
-    // Only trigger progressive logic when a place is selected
-    pickupAutocomplete.addListener("place_changed", checkProgressive);
-    dropoffAutocomplete.addListener("place_changed", checkProgressive);
-  }
-}
-
-// Helper functions
 const f = id => document.getElementById(id);
 const showField = id => f(id).classList.add("show");
 
@@ -89,8 +74,11 @@ const showField = id => f(id).classList.add("show");
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-// Progressive reveal for all fields except addresses
+// Fields in order
 const fieldsIds = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
+const fields = fieldsIds.map(id=>f(id));
+
+// Progressive reveal for non-address fields
 fieldsIds.forEach(id=>{
   if(id !== "pickup" && id !== "dropoff"){
     f(id).addEventListener("input", checkProgressive);
@@ -99,7 +87,7 @@ fieldsIds.forEach(id=>{
 });
 
 function checkProgressive(){
-  if(f("pickup").value.trim() && f("dropoff").value.trim()) showField("dateField");
+  if(f("pickup").value && f("dropoff").value) showField("dateField");
   if(f("pickupDate").value) showField("timeField");
   if(f("pickupTime").value){
     showField("vehicleField");
@@ -115,8 +103,7 @@ function checkProgressive(){
   checkAllFields();
 }
 
-// Validation
-const fields = fieldsIds.map(id=>f(id));
+// Validate fields
 function validateFields(){
   let ok = true;
   fields.forEach(el=>{
@@ -129,7 +116,7 @@ function validateFields(){
   return ok;
 }
 
-// Trip summary
+// Render summary
 function renderSummary(){
   f("sumPickup").textContent = "Pickup: " + f("pickup").value;
   f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
@@ -139,7 +126,7 @@ function renderSummary(){
   f("tripSummary").classList.add("show");
 }
 
-// Auto summary when all mandatory fields filled
+// Auto summary when all fields are filled
 function checkAllFields(){
   const allFilled = fields.every(el => el.value.trim());
   if(allFilled) renderSummary();
@@ -150,6 +137,18 @@ f("payBtn").addEventListener("click", ()=>{
   if(!validateFields()) return;
   alert("Booking submitted successfully!");
 });
+
+// Google Autocomplete
+function initAutocomplete(){
+  const pickup = f("pickup");
+  const dropoff = f("dropoff");
+  const pickupAuto = new google.maps.places.Autocomplete(pickup);
+  const dropoffAuto = new google.maps.places.Autocomplete(dropoff);
+
+  // Only trigger progressive after selecting a place
+  pickupAuto.addListener("place_changed", checkProgressive);
+  dropoffAuto.addListener("place_changed", checkProgressive);
+}
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
