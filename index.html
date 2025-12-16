@@ -67,7 +67,7 @@ button:hover{opacity:.9;}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-// Google Maps autocomplete global function
+// Global function for Google Maps autocomplete
 function initAutocomplete(){
   const pickup = document.getElementById("pickup");
   const dropoff = document.getElementById("dropoff");
@@ -75,13 +75,13 @@ function initAutocomplete(){
     const pickupAutocomplete = new google.maps.places.Autocomplete(pickup);
     const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoff);
 
-    // Only call checkProgressive when a place is selected
+    // Only trigger progressive logic when a place is selected
     pickupAutocomplete.addListener("place_changed", checkProgressive);
     dropoffAutocomplete.addListener("place_changed", checkProgressive);
   }
 }
 
-// All other JS
+// Helper functions
 const f = id => document.getElementById(id);
 const showField = id => f(id).classList.add("show");
 
@@ -89,10 +89,10 @@ const showField = id => f(id).classList.add("show");
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-// Progressive reveal
+// Progressive reveal for all fields except addresses
 const fieldsIds = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
 fieldsIds.forEach(id=>{
-  if(id !== "pickup" && id !== "dropoff"){ // Skip direct input listeners for Google Maps fields
+  if(id !== "pickup" && id !== "dropoff"){
     f(id).addEventListener("input", checkProgressive);
     f(id).addEventListener("change", checkProgressive);
   }
@@ -115,9 +115,8 @@ function checkProgressive(){
   checkAllFields();
 }
 
-// Fields for validation
+// Validation
 const fields = fieldsIds.map(id=>f(id));
-
 function validateFields(){
   let ok = true;
   fields.forEach(el=>{
@@ -130,7 +129,7 @@ function validateFields(){
   return ok;
 }
 
-// Render summary
+// Trip summary
 function renderSummary(){
   f("sumPickup").textContent = "Pickup: " + f("pickup").value;
   f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
