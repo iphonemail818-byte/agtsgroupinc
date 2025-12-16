@@ -2,144 +2,215 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AGTS Booking</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AGTS Group Inc — Booking</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-body{background:#000;color:#0ff;font-family:Arial;margin:0}
-.container{max-width:900px;margin:40px auto;padding:20px}
-.field{display:none;margin-top:12px}
-.field.show{display:block}
-input,select{width:100%;padding:12px;background:#111;color:#0ff;border:1px solid #333;border-radius:12px}
-.input-error{border:2px solid #ff3b81}
-#summary{display:none;background:#222;padding:16px;border-radius:16px;margin-top:20px}
-button{display:none;margin-top:20px;padding:14px;width:100%;border:none;border-radius:14px;background:#0ff;color:#000;font-weight:bold}
+body{background:#000;color:#0ff;font-family:Segoe UI,Tahoma,Verdana,sans-serif;margin:0;}
+.container{max-width:900px;margin:40px auto;padding:25px;}
+h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
+h1{font-size:2.8em;}
+h2{font-size:1.1em;margin-bottom:30px;}
+label{display:block;margin-top:8px;font-weight:bold;}
+input,select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
+input::placeholder{color:#555;}
+.input-error{border:2px solid #ff3b81 !important;box-shadow:0 0 14px #ff3b81aa;}
+.flex-row{display:flex;gap:12px;margin-top:12px;}
+.field{flex:1;display:none;}
+.field.show{display:block;}
+#tripSummary{display:none;margin-top:24px;padding:20px;border-radius:18px;background:#222;line-height:1.6em;text-align:left;}
+#tripSummary div{font-family:'Orbitron',monospace;font-size:1.05em;font-weight:700;color:#0ff;margin-bottom:6px;}
+button{display:none;width:100%;margin-top:22px;padding:16px;font-size:1.2em;font-weight:bold;border:none;border-radius:18px;cursor:pointer;background:linear-gradient(90deg,#0ff,#06b6d4);color:#000;}
+@media(max-width:900px){.flex-row{flex-direction:column;}}
 </style>
 </head>
 
 <body>
 <div class="container">
+<h1>AGTS GROUP INC</h1>
+<h2>www.agtsgroupinc.com</h2>
 
-<div class="field show">
-  <label>Pickup</label>
-  <input id="pickup">
+<div class="flex-row">
+  <div class="field show">
+    <label>Pickup Address</label>
+    <input id="pickup" placeholder="Premium chauffeur pickup location">
+  </div>
+  <div class="field show">
+    <label>Drop-off Address</label>
+    <input id="dropoff" placeholder="Luxury destination">
+  </div>
 </div>
 
-<div class="field show">
-  <label>Dropoff</label>
-  <input id="dropoff">
+<div class="flex-row">
+  <div class="field" id="dateField">
+    <label>Pickup Date</label>
+    <input id="pickupDate">
+  </div>
+  <div class="field" id="timeField">
+    <label>Pickup Time</label>
+    <input id="pickupTime">
+  </div>
 </div>
 
-<div class="field" id="dateWrap">
-  <label>Date</label>
-  <input id="date">
+<div class="flex-row">
+  <div class="field" id="vehicleField">
+    <label>Vehicle</label>
+    <select id="vehicle">
+      <option value="">Select</option>
+      <option>GMC Yukon</option>
+      <option>Cadillac Escalade</option>
+      <option>Chevy Suburban</option>
+    </select>
+  </div>
+  <div class="field" id="passengersField">
+    <label>Passengers</label>
+    <select id="passengers">
+      <option value="">Select</option>
+      <option>1</option><option>2</option><option>3</option>
+      <option>4</option><option>5</option><option>6</option>
+    </select>
+  </div>
+  <div class="field" id="petsField">
+    <label>Pets</label>
+    <select id="pets">
+      <option value="">Select</option>
+      <option>Yes</option>
+      <option>No</option>
+    </select>
+  </div>
 </div>
 
-<div class="field" id="timeWrap">
-  <label>Time</label>
-  <input id="time">
+<div class="flex-row">
+  <div class="field" id="nameField">
+    <label>Full Name</label>
+    <input id="name" placeholder="Full Name">
+  </div>
+  <div class="field" id="phoneField">
+    <label>Phone</label>
+    <input id="phone" placeholder="Phone">
+  </div>
 </div>
 
-<div class="field" id="vehicleWrap">
-  <label>Vehicle</label>
-  <select id="vehicle">
-    <option value="">Select</option>
-    <option>SUV</option>
-    <option>Escalade</option>
-  </select>
+<div class="flex-row">
+  <div class="field" id="emailField">
+    <label>Email</label>
+    <input id="email" placeholder="Email">
+  </div>
 </div>
 
-<div class="field" id="nameWrap">
-  <label>Name</label>
-  <input id="name">
+<div id="tripSummary">
+  <div id="sumPickup"></div>
+  <div id="sumDropoff"></div>
+  <div id="sumDateTime"></div>
+  <div id="sumVehicle"></div>
+  <div id="sumDuration"></div>
+  <div id="sumPrice"></div>
 </div>
 
-<div class="field" id="emailWrap">
-  <label>Email</label>
-  <input id="email">
-</div>
-
-<div id="summary"></div>
-
-<button id="pay">Book & Pay</button>
-
+<button id="payBtn">Book & Pay</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-const pickup=document.getElementById("pickup");
-const dropoff=document.getElementById("dropoff");
-const date=document.getElementById("date");
-const time=document.getElementById("time");
-const vehicle=document.getElementById("vehicle");
-const name=document.getElementById("name");
-const email=document.getElementById("email");
+const el=id=>document.getElementById(id);
 
-const dateWrap=document.getElementById("dateWrap");
-const timeWrap=document.getElementById("timeWrap");
-const vehicleWrap=document.getElementById("vehicleWrap");
-const nameWrap=document.getElementById("nameWrap");
-const emailWrap=document.getElementById("emailWrap");
+// Fields
+const pickup=el('pickup'), dropoff=el('dropoff'), pickupDate=el('pickupDate'), pickupTime=el('pickupTime'),
+      vehicle=el('vehicle'), passengers=el('passengers'), pets=el('pets'),
+      nameField=el('name'), phone=el('phone'), email=el('email');
 
-const summary=document.getElementById("summary");
-const pay=document.getElementById("pay");
+const dateField=el('dateField'), timeField=el('timeField'),
+      vehicleField=el('vehicleField'), passengersField=el('passengersField'), petsField=el('petsField'),
+      nameFieldWrap=el('nameField'), phoneFieldWrap=el('phoneField'), emailFieldWrap=el('emailField');
 
-flatpickr(date,{minDate:"today"});
-flatpickr(time,{enableTime:true,noCalendar:true});
+const tripSummary=el('tripSummary'), sumPickup=el('sumPickup'), sumDropoff=el('sumDropoff'),
+      sumDateTime=el('sumDateTime'), sumVehicle=el('sumVehicle'), sumDuration=el('sumDuration'), sumPrice=el('sumPrice');
 
-function check(){
-  if(pickup.value && dropoff.value) dateWrap.classList.add("show");
-  else return reset(1);
+const payBtn=el('payBtn');
 
-  if(date.value) timeWrap.classList.add("show");
-  else return reset(2);
+// Required fields in order
+const required=[pickup, dropoff, pickupDate, pickupTime, vehicle, passengers, pets, nameField, phone, email];
 
-  if(time.value) vehicleWrap.classList.add("show");
-  else return reset(3);
+// Flatpickr
+flatpickr(pickupDate,{minDate:"today",onChange:stateCheck});
+flatpickr(pickupTime,{enableTime:true,noCalendar:true,dateFormat:"h:i K",onChange:stateCheck});
 
-  if(vehicle.value){
-    nameWrap.classList.add("show");
-    emailWrap.classList.add("show");
-    pay.style.display="block";
-  }else return reset(4);
+// Show/hide helpers
+function show(el){el.classList.add('show');}
+function hide(el){el.classList.remove('show');}
+function hideSummary(){tripSummary.style.display='none';}
+function showSummary(){tripSummary.style.display='block';}
 
-  if(name.value && email.value){
-    summary.innerHTML=
-      "Pickup: "+pickup.value+"<br>"+
-      "Dropoff: "+dropoff.value+"<br>"+
-      "Date: "+date.value+" "+time.value+"<br>"+
-      "Vehicle: "+vehicle.value;
-    summary.style.display="block";
-  }else{
-    summary.style.display="none";
+// Update summary
+function renderSummary(){
+  sumPickup.textContent='Pickup: '+pickup.value;
+  sumDropoff.textContent='Drop-off: '+dropoff.value;
+  sumDateTime.textContent='Date & Time: '+pickupDate.value+' at '+pickupTime.value;
+  sumVehicle.innerHTML='Vehicle: '+vehicle.value+'<br>Passengers: '+passengers.value+'<br>Pets: '+pets.value;
+  sumDuration.textContent='Duration: TBD';
+  sumPrice.textContent='Price: TBD';
+}
+
+// Reset downstream fields when previous cleared
+function resetFrom(stage){
+  switch(stage){
+    case 'pickup':
+    case 'dropoff':
+      hide(dateField); hide(timeField); hide(vehicleField); hide(passengersField); hide(petsField);
+      hide(nameFieldWrap); hide(phoneFieldWrap); hide(emailFieldWrap); payBtn.style.display='none'; hideSummary(); break;
+    case 'date':
+      hide(timeField); hide(vehicleField); hide(passengersField); hide(petsField);
+      hide(nameFieldWrap); hide(phoneFieldWrap); hide(emailFieldWrap); payBtn.style.display='none'; hideSummary(); break;
+    case 'time':
+      hide(vehicleField); hide(passengersField); hide(petsField);
+      hide(nameFieldWrap); hide(phoneFieldWrap); hide(emailFieldWrap); payBtn.style.display='none'; hideSummary(); break;
+    case 'ride':
+      hide(nameFieldWrap); hide(phoneFieldWrap); hide(emailFieldWrap); payBtn.style.display='none'; hideSummary(); break;
   }
 }
 
-function reset(step){
-  summary.style.display="none";
-  if(step<=4) pay.style.display="none";
+// Check state
+function stateCheck(){
+  if(!pickup.value){resetFrom('pickup'); return;}
+  if(!dropoff.value){resetFrom('dropoff'); return;}
+  show(dateField);
+
+  if(!pickupDate.value){resetFrom('date'); return;}
+  show(timeField);
+
+  if(!pickupTime.value){resetFrom('time'); return;}
+  show(vehicleField); show(passengersField); show(petsField);
+
+  if(!vehicle.value || !passengers.value || !pets.value){resetFrom('ride'); return;}
+  show(nameFieldWrap); show(phoneFieldWrap); show(emailFieldWrap); payBtn.style.display='block';
+
+  // Show summary only if all required filled
+  if(required.every(f=>f.value.trim()!='')){
+    renderSummary(); showSummary();
+  } else hideSummary();
 }
 
-[pickup,dropoff,date,time,vehicle,name,email].forEach(el=>{
-  el.addEventListener("input",()=>{
-    el.classList.remove("input-error");
-    check();
+// Clear error as user types
+required.forEach(f=>{
+  f.addEventListener('input',()=>{
+    if(f.value.trim()!='') f.classList.remove('input-error');
+    stateCheck();
   });
 });
 
-pay.onclick=()=>{
+// Book & Pay
+payBtn.addEventListener('click',()=>{
   let first=null;
-  [pickup,dropoff,date,time,vehicle,name,email].forEach(el=>{
-    if(!el.value){
-      el.classList.add("input-error");
-      if(!first) first=el;
-    }
+  required.forEach(f=>{
+    f.classList.remove('input-error');
+    if(f.value.trim()==''){f.classList.add('input-error'); if(!first) first=f;}
   });
-  if(first) return;
-  alert("Success");
-};
+  if(first){first.focus(); hideSummary(); return;}
+  alert('Booking submitted successfully!');
+});
 </script>
 </body>
 </html>
