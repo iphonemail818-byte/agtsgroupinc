@@ -92,7 +92,7 @@ flatpickr(pickupTime,{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChan
 const show=id=>f(id).classList.add("show");
 const hide=id=>f(id).classList.remove("show");
 
-// Sequential field logic and summary
+// Sequential field logic
 function stateCheck(){
   tripSummary.classList.remove('show');
   payBtn.classList.remove('show');
@@ -105,21 +105,35 @@ function stateCheck(){
   show('vehicleField'); show('passengersField'); show('petsField');
   if(!vehicle.value.trim() || !passengers.value.trim() || !pets.value.trim()){hide('nameField'); hide('phoneField'); hide('emailField'); return;}
   show('nameField'); show('phoneField'); show('emailField');
-  
+
+  // Show summary if all filled
   if(fields.every(el=>el.value.trim()!='')){
-    renderSummary(); tripSummary.classList.add('show'); payBtn.classList.add('show');
+    renderSummary();
+    tripSummary.classList.add('show');
+    payBtn.classList.add('show');
+  } else {
+    tripSummary.classList.remove('show');
+    payBtn.classList.remove('show');
   }
 }
 
-// Fix missing-field glow: highlight empty fields and remove when typed
+// Fix missing-field glow: highlight empty fields
+function highlightMissingFields(){
+  fields.forEach(fld=>{
+    if(!fld.value.trim()) fld.classList.add('input-error');
+    else fld.classList.remove('input-error');
+  });
+}
+
+// Add event listeners for input and change
 fields.forEach(fld=>{
   fld.addEventListener('input',()=>{
-    if(fld.value.trim()) fld.classList.remove('input-error');
     stateCheck();
+    highlightMissingFields();
   });
   fld.addEventListener('change',()=>{
-    if(fld.value.trim()) fld.classList.remove('input-error');
     stateCheck();
+    highlightMissingFields();
   });
 });
 
@@ -133,7 +147,7 @@ function renderSummary(){
   sumPrice.textContent="Estimated Price: TBD";
 }
 
-// Validate fields and focus first missing
+// Validate fields & focus first missing
 function validateFields(){
   let firstMissing=null;
   fields.forEach(fld=>{
@@ -145,8 +159,8 @@ function validateFields(){
     }
   });
   if(firstMissing){
-    firstMissing.focus();        
-    tripSummary.classList.remove('show'); 
+    firstMissing.focus();
+    tripSummary.classList.remove('show');
     payBtn.classList.remove('show');
     return false;
   }
@@ -154,9 +168,7 @@ function validateFields(){
 }
 
 // Book & Pay
-payBtn.addEventListener('click',()=>{
-  if(validateFields()) alert("Booking submitted successfully!");
-});
+payBtn.addEventListener('click',()=>{if(validateFields()) alert("Booking submitted successfully!");});
 
 // Google Places Autocomplete
 function initAutocomplete(){
