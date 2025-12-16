@@ -67,13 +67,17 @@ button:hover{opacity:.9;}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-// Global Google Autocomplete function
+// Google Maps autocomplete global function
 function initAutocomplete(){
   const pickup = document.getElementById("pickup");
   const dropoff = document.getElementById("dropoff");
   if(pickup && dropoff){
-    new google.maps.places.Autocomplete(pickup);
-    new google.maps.places.Autocomplete(dropoff);
+    const pickupAutocomplete = new google.maps.places.Autocomplete(pickup);
+    const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoff);
+
+    // Only call checkProgressive when a place is selected
+    pickupAutocomplete.addListener("place_changed", checkProgressive);
+    dropoffAutocomplete.addListener("place_changed", checkProgressive);
   }
 }
 
@@ -88,8 +92,10 @@ flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 // Progressive reveal
 const fieldsIds = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
 fieldsIds.forEach(id=>{
-  f(id).addEventListener("input", checkProgressive);
-  f(id).addEventListener("change", checkProgressive);
+  if(id !== "pickup" && id !== "dropoff"){ // Skip direct input listeners for Google Maps fields
+    f(id).addEventListener("input", checkProgressive);
+    f(id).addEventListener("change", checkProgressive);
+  }
 });
 
 function checkProgressive(){
