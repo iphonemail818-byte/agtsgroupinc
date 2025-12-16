@@ -55,7 +55,7 @@ input::placeholder{color:#555;}
   flex:1;
   display:none;
   opacity:0;
-  transition:opacity .4s ease;
+  transition:opacity .35s ease;
 }
 .field.show{
   display:block;
@@ -163,14 +163,14 @@ button:hover{opacity:.9;}
   </div>
   <div class="field" id="phoneField">
     <label>Phone</label>
-    <input id="phone">
+    <input id="phone" type="tel">
   </div>
 </div>
 
 <div class="flex-row">
   <div class="field" id="emailField">
     <label>Email</label>
-    <input id="email">
+    <input id="email" type="email">
   </div>
 </div>
 
@@ -198,12 +198,12 @@ const fields=[
   vehicle,passengers,pets,name,phone,email
 ];
 
-// progressive reveal
-pickup.addEventListener("input",()=>{});
-dropoff.addEventListener("input",()=>{});
+let emailTouched=false;
 
+/* progressive reveal */
 pickup.addEventListener("change",()=>show("dateField"));
 dropoff.addEventListener("change",()=>show("dateField"));
+
 pickupDate.addEventListener("change",()=>show("timeField"));
 
 pickupTime.addEventListener("change",()=>{
@@ -219,21 +219,28 @@ pets.addEventListener("change",()=>{
   payBtn.classList.add("show");
 });
 
-// 🔥 VALIDATION ONLY WHEN EMAIL IS TOUCHED
-email.addEventListener("blur",validateAll);
-
-// remove glow when fixing fields
-fields.forEach(el=>{
-  el.addEventListener("input",()=>el.classList.remove("input-error"));
+/* mark email as user-intent */
+email.addEventListener("input",()=>{
+  emailTouched=true;
 });
 
-// validation logic
-function validateAll(){
+/* remove glow when fixing */
+fields.forEach(el=>{
+  el.addEventListener("input",()=>el.classList.remove("input-error"));
+  el.addEventListener("change",()=>el.classList.remove("input-error"));
+});
+
+function validateAll(force=false){
+  if(!emailTouched && !force) return false;
+
   let firstMissing=null;
+
   fields.forEach(el=>{
     if(el.offsetParent!==null && !el.value.trim()){
       el.classList.add("input-error");
       if(!firstMissing) firstMissing=el;
+    }else{
+      el.classList.remove("input-error");
     }
   });
 
@@ -242,6 +249,7 @@ function validateAll(){
     tripSummary.classList.remove("show");
     return false;
   }
+
   renderSummary();
   return true;
 }
@@ -258,7 +266,7 @@ function renderSummary(){
 }
 
 payBtn.onclick=()=>{
-  if(!validateAll()) return;
+  if(!validateAll(true)) return;
   alert("Booking submitted successfully!");
 };
 </script>
