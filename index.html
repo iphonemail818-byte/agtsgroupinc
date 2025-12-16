@@ -10,7 +10,7 @@
 body{background:#000;color:#0ff;font-family:Segoe UI,Tahoma,Verdana,sans-serif;margin:0;}
 .container{max-width:900px;margin:40px auto;padding:25px;}
 h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
-h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
+h1{font-size:2.8em;}
 h2{font-size:1.1em;margin-bottom:30px;}
 label{display:block;margin-top:8px;font-weight:bold;}
 input, select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
@@ -19,9 +19,9 @@ input::placeholder{color:#555;}
 .flex-row{display:flex;gap:12px;margin-top:12px;}
 .field{flex:1;display:none;opacity:0;transition:opacity .4s ease-in-out;}
 .field.show{display:block;opacity:1;}
-#tripSummary{display:none;opacity:0;margin-top:24px;padding:20px;border-radius:18px;background:#000;border:1px solid #0ff;text-align:center;transition:opacity .5s ease-in-out;}
+#tripSummary{display:none;opacity:0;margin-top:24px;padding:20px;border-radius:18px;background:#222;text-align:left;line-height:1.6em;transition:opacity .5s ease;}
 #tripSummary.show{display:block;opacity:1;}
-#tripSummary div{font-family:'Orbitron',monospace;font-size:1.05em;font-weight:900;text-shadow:0 0 10px #0ff;margin-bottom:6px;}
+#tripSummary div{font-family:'Orbitron',monospace;font-size:1.05em;font-weight:700;color:#0ff;margin-bottom:6px;}
 button{display:none;width:100%;margin-top:22px;padding:16px;font-size:1.2em;font-weight:bold;border:none;border-radius:18px;cursor:pointer;background:linear-gradient(90deg,#0ff,#06b6d4);color:#000;}
 button.show{display:block;}
 button:hover{opacity:.9;}
@@ -37,19 +37,23 @@ button:hover{opacity:.9;}
   <div class="field show"><label>Pickup Address</label><input id="pickup" placeholder="Enter pickup location"></div>
   <div class="field show"><label>Drop-off Address</label><input id="dropoff" placeholder="Enter drop-off location"></div>
 </div>
+
 <div class="flex-row">
-  <div class="field" id="dateField"><label>Pickup Date</label><input id="pickupDate" readonly></div>
-  <div class="field" id="timeField"><label>Pickup Time</label><input id="pickupTime" readonly></div>
+  <div class="field" id="dateField"><label>Pickup Date</label><input id="pickupDate"></div>
+  <div class="field" id="timeField"><label>Pickup Time</label><input id="pickupTime"></div>
 </div>
+
 <div class="flex-row">
   <div class="field" id="vehicleField"><label>Vehicle</label><select id="vehicle"><option value="">Select</option><option>GMC Yukon</option><option>Cadillac Escalade</option><option>Chevy Suburban</option></select></div>
   <div class="field" id="passengersField"><label>Passengers</label><select id="passengers"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
   <div class="field" id="petsField"><label>Pets</label><select id="pets"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
 </div>
+
 <div class="flex-row">
   <div class="field" id="nameField"><label>Full Name</label><input id="name"></div>
   <div class="field" id="phoneField"><label>Phone</label><input id="phone" type="tel"></div>
 </div>
+
 <div class="flex-row">
   <div class="field" id="emailField"><label>Email</label><input id="email" type="email"></div>
 </div>
@@ -59,6 +63,8 @@ button:hover{opacity:.9;}
   <div id="sumDropoff"></div>
   <div id="sumDateTime"></div>
   <div id="sumVehicle"></div>
+  <div id="sumDuration"></div>
+  <div id="sumPrice"></div>
 </div>
 
 <button id="payBtn">Book & Pay</button>
@@ -67,97 +73,85 @@ button:hover{opacity:.9;}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
 const f = id => document.getElementById(id);
-const showField = id => f(id).classList.add("show");
-
-// Flatpickr
-flatpickr("#pickupDate",{minDate:"today"});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
 // Fields
-const fieldsIds = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
-const fields = fieldsIds.map(id => f(id));
+const pickup=f("pickup"), dropoff=f("dropoff"), pickupDate=f("pickupDate"), pickupTime=f("pickupTime"),
+      vehicle=f("vehicle"), passengers=f("passengers"), pets=f("pets"),
+      nameField=f("name"), phone=f("phone"), email=f("email"),
+      dateField=f("dateField"), timeField=f("timeField"),
+      vehicleField=f("vehicleField"), passengersField=f("passengersField"), petsField=f("petsField"),
+      nameWrap=f("nameField"), phoneWrap=f("phoneField"), emailWrap=f("emailField"),
+      tripSummary=f("tripSummary"), sumPickup=f("sumPickup"), sumDropoff=f("sumDropoff"),
+      sumDateTime=f("sumDateTime"), sumVehicle=f("sumVehicle"), sumDuration=f("sumDuration"), sumPrice=f("sumPrice"),
+      payBtn=f("payBtn");
 
-// Progressive reveal for non-address fields
-fieldsIds.forEach(id=>{
-  if(id !== "pickup" && id !== "dropoff"){
-    f(id).addEventListener("input", checkProgressive);
-    f(id).addEventListener("change", checkProgressive);
+const fields=[pickup, dropoff, pickupDate, pickupTime, vehicle, passengers, pets, nameField, phone, email];
+
+// Initialize flatpickr
+flatpickr(pickupDate,{minDate:"today", onChange:stateCheck});
+flatpickr(pickupTime,{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChange:stateCheck});
+
+// Show/hide helper
+const show=id=>f(id).classList.add("show");
+const hide=id=>f(id).classList.remove("show");
+
+// Sequential field logic and summary
+function stateCheck(){
+  tripSummary.classList.remove('show');
+  payBtn.classList.remove('show');
+
+  if(!pickup.value.trim() || !dropoff.value.trim()){hide('dateField'); hide('timeField'); hide('vehicleField'); hide('passengersField'); hide('petsField'); hide('nameField'); hide('phoneField'); hide('emailField'); return;}
+  show('dateField');
+  if(!pickupDate.value.trim()){hide('timeField'); hide('vehicleField'); hide('passengersField'); hide('petsField'); hide('nameField'); hide('phoneField'); hide('emailField'); return;}
+  show('timeField');
+  if(!pickupTime.value.trim()){hide('vehicleField'); hide('passengersField'); hide('petsField'); hide('nameField'); hide('phoneField'); hide('emailField'); return;}
+  show('vehicleField'); show('passengersField'); show('petsField');
+  if(!vehicle.value.trim() || !passengers.value.trim() || !pets.value.trim()){hide('nameField'); hide('phoneField'); hide('emailField'); return;}
+  show('nameField'); show('phoneField'); show('emailField');
+  if(fields.every(el=>el.value.trim()!='')){
+    renderSummary(); tripSummary.classList.add('show'); payBtn.classList.add('show');
   }
+}
+
+// Remove glow on input/change
+fields.forEach(fld=>{
+  fld.addEventListener('input',()=>{if(fld.value.trim()) fld.classList.remove('input-error'); stateCheck();});
+  fld.addEventListener('change',()=>{if(fld.value.trim()) fld.classList.remove('input-error'); stateCheck();});
 });
 
-// Remove error highlight when user types or selects
-fields.forEach(el => {
-  el.addEventListener("input", () => { if(el.value.trim()) el.classList.remove("input-error"); });
-  el.addEventListener("change", () => { if(el.value.trim()) el.classList.remove("input-error"); });
-});
-
-function checkProgressive(){
-  if(f("pickup").value && f("dropoff").value) showField("dateField");
-  if(f("pickupDate").value) showField("timeField");
-  if(f("pickupTime").value){
-    showField("vehicleField");
-    showField("passengersField");
-    showField("petsField");
-  }
-  if(f("pets").value){
-    showField("nameField");
-    showField("phoneField");
-    showField("emailField");
-    f("payBtn").classList.add("show");
-  }
-  checkAllFields();
+// Render trip summary
+function renderSummary(){
+  sumPickup.textContent="Pickup: "+pickup.value;
+  sumDropoff.textContent="Drop-off: "+dropoff.value;
+  sumDateTime.textContent="Date & Time: "+pickupDate.value+" at "+pickupTime.value;
+  sumVehicle.innerHTML="Vehicle: "+vehicle.value+"<br>Passengers: "+passengers.value+"<br>Pets: "+pets.value;
+  sumDuration.textContent="Estimated Duration: TBD";
+  sumPrice.textContent="Estimated Price: TBD";
 }
 
 // Validate fields and focus first missing
 function validateFields(){
-  let ok = true;
-  let firstMissing = null;
-
-  fields.forEach(el=>{
-    el.classList.remove("input-error");
-    if(!el.value.trim()){
-      el.classList.add("input-error");
-      if(!firstMissing) firstMissing = el;
-      ok = false;
+  let firstMissing=null;
+  fields.forEach(fld=>{
+    fld.classList.remove('input-error');
+    if(!fld.value.trim()){
+      fld.classList.add('input-error');
+      if(!firstMissing) firstMissing=fld;
     }
   });
-
-  if(firstMissing) firstMissing.focus();
-  return ok;
-}
-
-// Render summary
-function renderSummary(){
-  f("sumPickup").textContent = "Pickup: " + f("pickup").value;
-  f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
-  f("sumDateTime").textContent = "Date & Time: " + f("pickupDate").value + " at " + f("pickupTime").value;
-  f("sumVehicle").textContent = "Vehicle: " + f("vehicle").value +
-    " | Passengers: " + f("passengers").value + " | Pets: " + f("pets").value;
-  f("tripSummary").classList.add("show");
-}
-
-// Auto summary when all fields are filled
-function checkAllFields(){
-  const allFilled = fields.every(el => el.value.trim());
-  if(allFilled) renderSummary();
+  if(firstMissing){firstMissing.focus(); tripSummary.classList.remove('show'); return false;}
+  return true;
 }
 
 // Book & Pay
-f("payBtn").addEventListener("click", ()=>{
-  if(!validateFields()) return;
-  alert("Booking submitted successfully!");
-});
+payBtn.addEventListener('click',()=>{if(validateFields()) alert("Booking submitted successfully!");});
 
-// Google Autocomplete
+// Google Places Autocomplete
 function initAutocomplete(){
-  const pickup = f("pickup");
-  const dropoff = f("dropoff");
   const pickupAuto = new google.maps.places.Autocomplete(pickup);
   const dropoffAuto = new google.maps.places.Autocomplete(dropoff);
-
-  // Only trigger progressive after selecting a place
-  pickupAuto.addListener("place_changed", checkProgressive);
-  dropoffAuto.addListener("place_changed", checkProgressive);
+  pickupAuto.addListener("place_changed", stateCheck);
+  dropoffAuto.addListener("place_changed", stateCheck);
 }
 </script>
 
