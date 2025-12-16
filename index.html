@@ -94,7 +94,6 @@ const hide=id=>f(id).classList.remove("show");
 
 // Sequential field logic and summary
 function stateCheck(){
-  // Hide summary and pay button initially
   tripSummary.classList.remove('show');
   payBtn.classList.remove('show');
 
@@ -112,7 +111,7 @@ function stateCheck(){
   }
 }
 
-// Remove glow on input/change & check sequence
+// Fix missing-field glow: highlight empty fields and remove when typed
 fields.forEach(fld=>{
   fld.addEventListener('input',()=>{
     if(fld.value.trim()) fld.classList.remove('input-error');
@@ -138,10 +137,11 @@ function renderSummary(){
 function validateFields(){
   let firstMissing=null;
   fields.forEach(fld=>{
-    fld.classList.remove('input-error');
     if(!fld.value.trim()){
       fld.classList.add('input-error');
       if(!firstMissing) firstMissing=fld;
+    } else {
+      fld.classList.remove('input-error');
     }
   });
   if(firstMissing){
