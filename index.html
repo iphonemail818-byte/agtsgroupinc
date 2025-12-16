@@ -27,8 +27,7 @@ h1,h2{
 h1{font-size:2.8em;}
 h2{font-size:1.1em;margin-bottom:30px;}
 
-label{display:block;margin-top:8px;font-weight:bold;}
-
+label{font-weight:bold;}
 input,select{
   width:100%;
   padding:12px;
@@ -37,13 +36,12 @@ input,select{
   border:1px solid #333;
   border-radius:14px;
   color:#0ff;
-  font-size:1em;
 }
 input::placeholder{color:#555;}
 
 .input-error{
   border:2px solid #ff3b81 !important;
-  box-shadow:0 0 12px #ff3b81aa;
+  box-shadow:0 0 10px #ff3b81aa;
 }
 
 .flex-row{
@@ -55,9 +53,7 @@ input::placeholder{color:#555;}
   flex:1;
   display:none;
 }
-.field.show{
-  display:block;
-}
+.field.show{display:block;}
 
 #tripSummary{
   display:none;
@@ -65,11 +61,7 @@ input::placeholder{color:#555;}
   padding:20px;
   border-radius:18px;
   background:#222;
-  text-align:left;
   line-height:1.6em;
-}
-#tripSummary.show{
-  display:block;
 }
 
 button{
@@ -84,9 +76,6 @@ button{
   cursor:pointer;
   background:linear-gradient(90deg,#0ff,#06b6d4);
   color:#000;
-}
-button.show{
-  display:block;
 }
 
 @media(max-width:900px){
@@ -125,7 +114,7 @@ button.show{
   </div>
 </div>
 
-<!-- Ride details -->
+<!-- Ride -->
 <div class="flex-row">
   <div class="field" id="vehicleField">
     <label>Vehicle</label>
@@ -187,51 +176,54 @@ button.show{
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-const $ = id => document.getElementById(id);
-
-// Pickers
-flatpickr("#pickupDate",{minDate:"today"});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
-
-// Required fields
 const fields = [
   pickup, dropoff, pickupDate, pickupTime,
   vehicle, passengers, pets, name, phone, email
 ];
 
+flatpickr("#pickupDate",{minDate:"today"});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+
 // === SEQUENCE ===
-pickup.addEventListener("change", ()=> dateField.classList.add("show"));
-dropoff.addEventListener("change", ()=> dateField.classList.add("show"));
+function checkSequence(){
+  if(pickup.value && dropoff.value){
+    dateField.classList.add("show");
+  } else return;
 
-pickupDate.addEventListener("change", ()=> timeField.classList.add("show"));
+  if(pickupDate.value){
+    timeField.classList.add("show");
+  } else return;
 
-pickupTime.addEventListener("change", ()=>{
-  vehicleField.classList.add("show");
-  passengersField.classList.add("show");
-  petsField.classList.add("show");
-});
+  if(pickupTime.value){
+    vehicleField.classList.add("show");
+    passengersField.classList.add("show");
+    petsField.classList.add("show");
+  } else return;
 
-pets.addEventListener("change", ()=>{
-  nameField.classList.add("show");
-  phoneField.classList.add("show");
-  emailField.classList.add("show");
-  payBtn.classList.add("show");
-});
+  if(pets.value){
+    nameField.classList.add("show");
+    phoneField.classList.add("show");
+    emailField.classList.add("show");
+    payBtn.style.display="block";
+  }
+}
 
-// === LIVE VALIDATION + SUMMARY CONTROL ===
-fields.forEach(el=>{
-  el.addEventListener("input", ()=>{
-    if(el.value.trim()) el.classList.remove("input-error");
+fields.forEach(f=>{
+  f.addEventListener("change", ()=>{
+    f.classList.remove("input-error");
+    checkSequence();
     updateSummary();
   });
-  el.addEventListener("change", updateSummary);
+  f.addEventListener("input", ()=>{
+    f.classList.remove("input-error");
+    updateSummary();
+  });
 });
 
 function updateSummary(){
   const allFilled = fields.every(f=>f.value.trim());
-
   if(!allFilled){
-    tripSummary.classList.remove("show");
+    tripSummary.style.display="none";
     return;
   }
 
@@ -243,17 +235,17 @@ function updateSummary(){
     "Passengers: " + passengers.value + "<br>" +
     "Pets: " + pets.value;
 
-  tripSummary.classList.add("show");
+  tripSummary.style.display="block";
 }
 
 // === BOOK & PAY ===
-payBtn.addEventListener("click", ()=>{
-  let firstMissing = null;
+payBtn.onclick = ()=>{
+  let firstMissing=null;
 
   fields.forEach(f=>{
     if(!f.value.trim()){
       f.classList.add("input-error");
-      if(!firstMissing) firstMissing = f;
+      if(!firstMissing) firstMissing=f;
     }
   });
 
@@ -263,7 +255,7 @@ payBtn.addEventListener("click", ()=>{
   }
 
   alert("Booking submitted successfully!");
-});
+};
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
