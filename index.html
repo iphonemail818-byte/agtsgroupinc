@@ -1,272 +1,356 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AGTS Group Inc — Booking</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-body{
-  background:#000;
-  color:#0ff;
-  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
-  margin:0;
-}
-.container{
-  max-width:900px;
-  margin:40px auto;
-  padding:25px;
-}
-h1,h2{
-  text-align:center;
-  font-family:'Orbitron',sans-serif;
-}
-h1{font-size:2.8em;}
-h2{font-size:1.1em;margin-bottom:30px;}
-
-label{font-weight:bold;}
-input,select{
-  width:100%;
-  padding:12px;
-  margin-top:4px;
-  background:#111;
-  border:1px solid #333;
-  border-radius:14px;
-  color:#0ff;
-}
-input::placeholder{color:#555;}
-
-.input-error{
-  border:2px solid #ff3b81 !important;
-  box-shadow:0 0 10px #ff3b81aa;
-}
-
-.flex-row{
-  display:flex;
-  gap:12px;
-  margin-top:12px;
-}
-.field{
-  flex:1;
-  display:none;
-}
-.field.show{display:block;}
-
-#tripSummary{
-  display:none;
-  margin-top:24px;
-  padding:20px;
-  border-radius:18px;
-  background:#222;
-  line-height:1.6em;
-}
-
-button{
-  display:none;
-  width:100%;
-  margin-top:22px;
-  padding:16px;
-  font-size:1.2em;
-  font-weight:bold;
-  border:none;
-  border-radius:18px;
-  cursor:pointer;
-  background:linear-gradient(90deg,#0ff,#06b6d4);
-  color:#000;
-}
-
-@media(max-width:900px){
-  .flex-row{flex-direction:column;}
-}
+  body{background:#000;color:#0ff;font-family:Segoe UI,Tahoma,Verdana,sans-serif;margin:0;}
+  .container{max-width:900px;margin:40px auto;padding:25px;}
+  h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
+  h1{font-size:2.8em;} h2{font-size:1.1em;margin-bottom:30px;}
+  label{display:block;margin-top:8px;font-weight:bold;}
+  input,select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
+  input::placeholder{color:#555;}
+  .input-error{border:2px solid #ff3b81 !important;box-shadow:0 0 12px #ff3b81aa;}
+  .flex-row{display:flex;gap:12px;margin-top:12px;}
+  .field{flex:1;display:none;}
+  .field.show{display:block;}
+  #tripSummary{display:none;margin-top:24px;padding:20px;border-radius:18px;background:#222;line-height:1.6em;text-align:left;}
+  #tripSummary div{font-family:'Orbitron',monospace;font-size:1.05em;font-weight:700;color:#0ff;margin-bottom:6px;}
+  button{display:none;width:100%;margin-top:22px;padding:16px;font-size:1.2em;font-weight:bold;border:none;border-radius:18px;cursor:pointer;background:linear-gradient(90deg,#0ff,#06b6d4);color:#000;}
+  button.show{display:block;}
+  @media(max-width:900px){.flex-row{flex-direction:column;}}
 </style>
 </head>
-
 <body>
 <div class="container">
+  <h1>AGTS GROUP INC</h1>
+  <h2>www.agtsgroupinc.com</h2>
 
-<h1>AGTS GROUP INC</h1>
-<h2>www.agtsgroupinc.com</h2>
+  <div class="flex-row">
+    <div class="field show">
+      <label>Pickup Address</label>
+      <input id="pickup" placeholder="Enter pickup location">
+    </div>
+    <div class="field show">
+      <label>Drop-off Address</label>
+      <input id="dropoff" placeholder="Enter drop-off location">
+    </div>
+  </div>
 
-<!-- Addresses -->
-<div class="flex-row">
-  <div class="field show">
-    <label>Pickup Address</label>
-    <input id="pickup">
+  <div class="flex-row">
+    <div class="field" id="dateField">
+      <label>Pickup Date</label>
+      <input id="pickupDate" readonly>
+    </div>
+    <div class="field" id="timeField">
+      <label>Pickup Time</label>
+      <input id="pickupTime" readonly>
+    </div>
   </div>
-  <div class="field show">
-    <label>Drop-off Address</label>
-    <input id="dropoff">
-  </div>
-</div>
 
-<!-- Date / Time -->
-<div class="flex-row">
-  <div class="field" id="dateField">
-    <label>Pickup Date</label>
-    <input id="pickupDate" readonly>
+  <div class="flex-row">
+    <div class="field" id="vehicleField">
+      <label>Vehicle</label>
+      <select id="vehicle">
+        <option value="">Select</option>
+        <option>GMC Yukon</option>
+        <option>Cadillac Escalade</option>
+        <option>Chevy Suburban</option>
+      </select>
+    </div>
+    <div class="field" id="passengersField">
+      <label>Passengers</label>
+      <select id="passengers">
+        <option value="">Select</option>
+        <option>1</option><option>2</option><option>3</option>
+        <option>4</option><option>5</option><option>6</option>
+      </select>
+    </div>
+    <div class="field" id="petsField">
+      <label>Pets</label>
+      <select id="pets">
+        <option value="">Select</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
   </div>
-  <div class="field" id="timeField">
-    <label>Pickup Time</label>
-    <input id="pickupTime" readonly>
-  </div>
-</div>
 
-<!-- Ride -->
-<div class="flex-row">
-  <div class="field" id="vehicleField">
-    <label>Vehicle</label>
-    <select id="vehicle">
-      <option value="">Select</option>
-      <option>GMC Yukon</option>
-      <option>Cadillac Escalade</option>
-      <option>Chevy Suburban</option>
-    </select>
+  <div class="flex-row">
+    <div class="field" id="nameField">
+      <label>Full Name</label>
+      <input id="name" placeholder="Full name">
+    </div>
+    <div class="field" id="phoneField">
+      <label>Phone</label>
+      <input id="phone" placeholder="Phone">
+    </div>
   </div>
-  <div class="field" id="passengersField">
-    <label>Passengers</label>
-    <select id="passengers">
-      <option value="">Select</option>
-      <option>1</option><option>2</option><option>3</option>
-      <option>4</option><option>5</option><option>6</option>
-    </select>
-  </div>
-  <div class="field" id="petsField">
-    <label>Pets</label>
-    <select id="pets">
-      <option value="">Select</option>
-      <option>Yes</option>
-      <option>No</option>
-    </select>
-  </div>
-</div>
 
-<!-- Contact -->
-<div class="flex-row">
-  <div class="field" id="nameField">
-    <label>Full Name</label>
-    <input id="name">
+  <div class="flex-row">
+    <div class="field" id="emailField">
+      <label>Email</label>
+      <input id="email" type="email" placeholder="Email">
+    </div>
   </div>
-  <div class="field" id="phoneField">
-    <label>Phone</label>
-    <input id="phone">
+
+  <div id="tripSummary">
+    <div id="sumPickup"></div>
+    <div id="sumDropoff"></div>
+    <div id="sumDateTime"></div>
+    <div id="sumVehicle"></div>
+    <div id="sumDuration"></div>
+    <div id="sumPrice"></div>
   </div>
-</div>
 
-<div class="flex-row">
-  <div class="field" id="emailField">
-    <label>Email</label>
-    <input id="email">
-  </div>
-</div>
-
-<!-- Summary -->
-<div id="tripSummary">
-  <div id="sumPickup"></div>
-  <div id="sumDropoff"></div>
-  <div id="sumDateTime"></div>
-  <div id="sumVehicle"></div>
-</div>
-
-<button id="payBtn">Book & Pay</button>
-
+  <button id="payBtn">Book & Pay</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-const fields = [
-  pickup, dropoff, pickupDate, pickupTime,
-  vehicle, passengers, pets, name, phone, email
-];
+/*
+  Robust, deterministic state machine.
+  - All DOM elements grabbed explicitly
+  - Downstream fields are hidden when prerequisites are cleared
+  - Summary only shown when ALL required fields filled
+  - place_changed used for Google Places + blur fallback
+*/
 
-// Pickers
-flatpickr("#pickupDate",{minDate:"today",onChange:stateCheck});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K",onChange:stateCheck});
+const el = id => document.getElementById(id);
 
-// === STATE ENGINE ===
-function stateCheck(){
-  // Sequence
-  if(pickup.value && dropoff.value){
-    dateField.classList.add("show");
-  } else return;
+// Grab elements explicitly
+const pickup = el('pickup');
+const dropoff = el('dropoff');
+const pickupDate = el('pickupDate');
+const pickupTime = el('pickupTime');
+const vehicle = el('vehicle');
+const passengers = el('passengers');
+const pets = el('pets');
+const nameField = el('name');
+const phone = el('phone');
+const email = el('email');
 
-  if(pickupDate.value){
-    timeField.classList.add("show");
-  } else return;
+const dateField = el('dateField');
+const timeField = el('timeField');
+const vehicleField = el('vehicleField');
+const passengersField = el('passengersField');
+const petsField = el('petsField');
+const nameFieldWrap = el('nameField');
+const phoneFieldWrap = el('phoneField');
+const emailFieldWrap = el('emailField');
 
-  if(pickupTime.value){
-    vehicleField.classList.add("show");
-    passengersField.classList.add("show");
-    petsField.classList.add("show");
-  } else return;
+const tripSummary = el('tripSummary');
+const sumPickup = el('sumPickup');
+const sumDropoff = el('sumDropoff');
+const sumDateTime = el('sumDateTime');
+const sumVehicle = el('sumVehicle');
+const sumDuration = el('sumDuration');
+const sumPrice = el('sumPrice');
 
-  if(pets.value){
-    nameField.classList.add("show");
-    phoneField.classList.add("show");
-    emailField.classList.add("show");
-    payBtn.style.display="block";
+const payBtn = el('payBtn');
+
+// Required fields list (in sequence)
+const requiredFields = [pickup, dropoff, pickupDate, pickupTime, vehicle, passengers, pets, nameField, phone, email];
+
+// Initialize pickers (flatpickr)
+flatpickr(pickupDate, { minDate: "today", onChange: stateCheck });
+flatpickr(pickupTime, { enableTime: true, noCalendar: true, dateFormat: "h:i K", onChange: stateCheck });
+
+// Helper: show/hide wrappers (wrap id names)
+function showWrapper(wrapperEl) { wrapperEl.classList.add('show'); }
+function hideWrapper(wrapperEl) { wrapperEl.classList.remove('show'); }
+
+// Hide all downstream wrappers (used when earlier step cleared)
+function resetDownstreamFrom(stage) {
+  // stage is one of: 'pickup', 'dropoff', 'date', 'time', 'ride', 'contact'
+  if (stage === 'pickup' || stage === 'dropoff') {
+    hideWrapper(dateField);
+    hideWrapper(timeField);
+    hideWrapper(vehicleField);
+    hideWrapper(passengersField);
+    hideWrapper(petsField);
+    hideWrapper(nameFieldWrap);
+    hideWrapper(phoneFieldWrap);
+    hideWrapper(emailFieldWrap);
+    payBtn.style.display = 'none';
+  } else if (stage === 'date') {
+    hideWrapper(timeField);
+    hideWrapper(vehicleField);
+    hideWrapper(passengersField);
+    hideWrapper(petsField);
+    hideWrapper(nameFieldWrap);
+    hideWrapper(phoneFieldWrap);
+    hideWrapper(emailFieldWrap);
+    payBtn.style.display = 'none';
+  } else if (stage === 'time') {
+    hideWrapper(vehicleField);
+    hideWrapper(passengersField);
+    hideWrapper(petsField);
+    hideWrapper(nameFieldWrap);
+    hideWrapper(phoneFieldWrap);
+    hideWrapper(emailFieldWrap);
+    payBtn.style.display = 'none';
+  } else if (stage === 'ride') {
+    hideWrapper(nameFieldWrap);
+    hideWrapper(phoneFieldWrap);
+    hideWrapper(emailFieldWrap);
+    payBtn.style.display = 'none';
+  } else if (stage === 'contact') {
+    payBtn.style.display = 'block';
   }
-
-  updateSummary();
 }
 
-// Input listeners
-fields.forEach(f=>{
-  f.addEventListener("input", ()=>{
-    f.classList.remove("input-error");
-    stateCheck();
+// Determine whether a field is filled
+function isFilled(inputEl) {
+  return inputEl && String(inputEl.value || '').trim().length > 0;
+}
+
+// Central state checker — deterministic
+function stateCheck() {
+  // If pickup empty -> reset downstream and hide summary
+  if (!isFilled(pickup)) {
+    resetDownstreamFrom('pickup');
+    hideSummary();
+    return;
+  }
+  // If dropoff empty -> date hidden
+  if (!isFilled(dropoff)) {
+    resetDownstreamFrom('dropoff');
+    hideSummary();
+    return;
+  }
+  // both addresses present -> show date field
+  showWrapper(dateField);
+
+  // If date empty -> hide time and later
+  if (!isFilled(pickupDate)) {
+    resetDownstreamFrom('date');
+    hideSummary();
+    return;
+  }
+  // date selected -> show time
+  showWrapper(timeField);
+
+  // If time empty -> hide ride and later
+  if (!isFilled(pickupTime)) {
+    resetDownstreamFrom('time');
+    hideSummary();
+    return;
+  }
+  // time selected -> show ride fields
+  showWrapper(vehicleField);
+  showWrapper(passengersField);
+  showWrapper(petsField);
+
+  // If pets not chosen -> hide contact
+  if (!isFilled(pets)) {
+    resetDownstreamFrom('ride');
+    hideSummary();
+    return;
+  }
+  // pets chosen -> show contact fields
+  showWrapper(nameFieldWrap);
+  showWrapper(phoneFieldWrap);
+  showWrapper(emailFieldWrap);
+  payBtn.style.display = 'block';
+
+  // finally, check if all required are filled; if so show summary
+  const allFilled = requiredFields.every(isFilled);
+  if (allFilled) {
+    renderSummary();
+    showSummary();
+  } else {
+    hideSummary();
+  }
+}
+
+// Summary DOM helpers
+function showSummary() { tripSummary.style.display = 'block'; }
+function hideSummary() { tripSummary.style.display = 'none'; }
+
+// Populate summary (called only when all required are filled)
+function renderSummary(){
+  sumPickup.textContent = 'Pickup: ' + pickup.value;
+  sumDropoff.textContent = 'Drop-off: ' + dropoff.value;
+  sumDateTime.textContent = 'Date & Time: ' + pickupDate.value + ' at ' + pickupTime.value;
+  sumVehicle.innerHTML = 'Vehicle: ' + vehicle.value + '<br>' + 'Passengers: ' + passengers.value + '<br>' + 'Pets: ' + pets.value;
+  // placeholders — you can replace with computed values later
+  sumDuration.textContent = 'Estimated Duration: TBD';
+  sumPrice.textContent = 'Estimated Price: TBD';
+}
+
+// Remove input-error as user types
+requiredFields.forEach(f => {
+  f.addEventListener('input', () => {
+    if (isFilled(f)) f.classList.remove('input-error');
+    // do not modify wrappers here (prevents freezing on typing)
+    // call stateCheck only on change events and place_changed (and blur for addresses)
   });
-  f.addEventListener("change", stateCheck);
 });
 
-// === SUMMARY ===
-function updateSummary(){
-  const allFilled = fields.every(f=>f.value.trim());
-  if(!allFilled){
-    tripSummary.style.display="none";
-    return;
-  }
+// Use change and blur for progression
+requiredFields.forEach(f => {
+  f.addEventListener('change', stateCheck);
+});
 
-  sumPickup.textContent = "Pickup: " + pickup.value;
-  sumDropoff.textContent = "Drop-off: " + dropoff.value;
-  sumDateTime.textContent = "Date & Time: " + pickupDate.value + " at " + pickupTime.value;
-  sumVehicle.innerHTML =
-    "Vehicle: " + vehicle.value + "<br>" +
-    "Passengers: " + passengers.value + "<br>" +
-    "Pets: " + pets.value;
+// ADD blur fallback for addresses (user typed and didn't select)
+pickup.addEventListener('blur', () => {
+  // small debounce to allow autocomplete to populate value
+  setTimeout(stateCheck, 150);
+});
+dropoff.addEventListener('blur', () => {
+  setTimeout(stateCheck, 150);
+});
 
-  tripSummary.style.display="block";
-}
-
-// === PAY ===
-payBtn.onclick = ()=>{
-  let firstMissing=null;
-  fields.forEach(f=>{
-    if(!f.value.trim()){
-      f.classList.add("input-error");
-      if(!firstMissing) firstMissing=f;
+// BOOK & PAY: validate, highlight missing, focus first missing
+payBtn.addEventListener('click', () => {
+  let firstMissing = null;
+  requiredFields.forEach(f => {
+    f.classList.remove('input-error');
+    if (!isFilled(f)) {
+      f.classList.add('input-error');
+      if (!firstMissing) firstMissing = f;
     }
   });
-  if(firstMissing){
+  if (firstMissing) {
     firstMissing.focus();
+    hideSummary(); // do not show summary if missing
     return;
   }
-  alert("Booking submitted successfully!");
-};
-</script>
+  // all good
+  alert('Booking submitted successfully!');
+  // here you would proceed to payment / submit to backend
+});
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
-<script>
-function initAutocomplete(){
-  const p = new google.maps.places.Autocomplete(pickup);
-  const d = new google.maps.places.Autocomplete(dropoff);
-
-  p.addListener("place_changed", stateCheck);
-  d.addListener("place_changed", stateCheck);
+// Initialize Google Places Autocomplete and hook place_changed
+// The global callback below will call initPlaces after API loads
+function initPlacesOnceReady(){
+  try {
+    const pickupAuto = new google.maps.places.Autocomplete(pickup);
+    const dropoffAuto = new google.maps.places.Autocomplete(dropoff);
+    // When the user selects from the dropdown, place_changed will fire — treat it as a stable selection
+    pickupAuto.addListener('place_changed', stateCheck);
+    dropoffAuto.addListener('place_changed', stateCheck);
+  } catch (err) {
+    // API not available or blocked — stateCheck still works via blur/change
+    console.warn('Places init failed (safe fallback):', err);
+  }
 }
+
+// Run a first pass so UI shows initial visible fields if any values were prefilled
+stateCheck();
+
+// Expose a global initAutocomplete for Google API callback
+window.initAutocomplete = initPlacesOnceReady;
 </script>
 
+<!-- Put your API key here; callback must match window.initAutocomplete -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
