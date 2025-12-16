@@ -87,12 +87,8 @@ fieldsIds.forEach(id=>{
 
 // Remove error highlight when user types or selects
 fields.forEach(el => {
-  el.addEventListener("input", () => {
-    if(el.value.trim()) el.classList.remove("input-error");
-  });
-  el.addEventListener("change", () => {
-    if(el.value.trim()) el.classList.remove("input-error");
-  });
+  el.addEventListener("input", () => { if(el.value.trim()) el.classList.remove("input-error"); });
+  el.addEventListener("change", () => { if(el.value.trim()) el.classList.remove("input-error"); });
 });
 
 function checkProgressive(){
@@ -112,16 +108,21 @@ function checkProgressive(){
   checkAllFields();
 }
 
-// Validate fields
+// Validate fields and focus first missing
 function validateFields(){
   let ok = true;
+  let firstMissing = null;
+
   fields.forEach(el=>{
     el.classList.remove("input-error");
     if(!el.value.trim()){
       el.classList.add("input-error");
+      if(!firstMissing) firstMissing = el;
       ok = false;
     }
   });
+
+  if(firstMissing) firstMissing.focus();
   return ok;
 }
 
