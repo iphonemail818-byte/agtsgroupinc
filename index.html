@@ -63,10 +63,10 @@ input::placeholder{color:#555;}
   margin-top:26px;
   padding:20px;
   border-radius:18px;
-  background:#222;        /* solid background */
+  background:#222;
   text-align:left;
   line-height:1.6em;
-  transition:opacity .5s ease;
+  transition:opacity .4s ease;
 }
 #tripSummary.show{
   display:block;
@@ -191,37 +191,28 @@ button:hover{opacity:.9;}
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-const f = id => document.getElementById(id);
-
+const f=id=>document.getElementById(id);
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-const fields = [
-  pickup,dropoff,pickupDate,pickupTime,
-  vehicle,passengers,pets,name,phone,email
-];
+const fields=[pickup,dropoff,pickupDate,pickupTime,vehicle,passengers,pets,name,phone,email];
 
-pickup.addEventListener("input",()=>{});
-dropoff.addEventListener("input",()=>{});
+function show(id){f(id).classList.add("show");}
 
 pickup.addEventListener("change",()=>show("dateField"));
 dropoff.addEventListener("change",()=>show("dateField"));
 pickupDate.addEventListener("change",()=>show("timeField"));
-
 pickupTime.addEventListener("change",()=>{
   show("vehicleField");
   show("passengersField");
   show("petsField");
 });
-
 pets.addEventListener("change",()=>{
   show("nameField");
   show("phoneField");
   show("emailField");
   payBtn.classList.add("show");
 });
-
-function show(id){f(id).classList.add("show");}
 
 fields.forEach(el=>{
   el.addEventListener("input",()=>{
@@ -232,7 +223,12 @@ fields.forEach(el=>{
 });
 
 function checkAllFields(){
-  if(fields.every(el=>el.value.trim())) renderSummary();
+  const allFilled=fields.every(el=>el.value.trim());
+  if(allFilled){
+    renderSummary();
+  }else{
+    tripSummary.classList.remove("show");
+  }
 }
 
 function renderSummary(){
