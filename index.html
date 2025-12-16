@@ -78,12 +78,9 @@ const f = id => document.getElementById(id);
 const pickup=f("pickup"), dropoff=f("dropoff"), pickupDate=f("pickupDate"), pickupTime=f("pickupTime"),
       vehicle=f("vehicle"), passengers=f("passengers"), pets=f("pets"),
       nameField=f("name"), phone=f("phone"), email=f("email"),
-      dateField=f("dateField"), timeField=f("timeField"),
-      vehicleField=f("vehicleField"), passengersField=f("passengersField"), petsField=f("petsField"),
-      nameWrap=f("nameField"), phoneWrap=f("phoneField"), emailWrap=f("emailField"),
-      tripSummary=f("tripSummary"), sumPickup=f("sumPickup"), sumDropoff=f("sumDropoff"),
-      sumDateTime=f("sumDateTime"), sumVehicle=f("sumVehicle"), sumDuration=f("sumDuration"), sumPrice=f("sumPrice"),
-      payBtn=f("payBtn");
+      tripSummary=f("tripSummary"), payBtn=f("payBtn"),
+      sumPickup=f("sumPickup"), sumDropoff=f("sumDropoff"), sumDateTime=f("sumDateTime"), sumVehicle=f("sumVehicle"),
+      sumDuration=f("sumDuration"), sumPrice=f("sumPrice");
 
 const fields=[pickup, dropoff, pickupDate, pickupTime, vehicle, passengers, pets, nameField, phone, email];
 
@@ -97,6 +94,7 @@ const hide=id=>f(id).classList.remove("show");
 
 // Sequential field logic and summary
 function stateCheck(){
+  // Hide summary and pay button initially
   tripSummary.classList.remove('show');
   payBtn.classList.remove('show');
 
@@ -108,15 +106,22 @@ function stateCheck(){
   show('vehicleField'); show('passengersField'); show('petsField');
   if(!vehicle.value.trim() || !passengers.value.trim() || !pets.value.trim()){hide('nameField'); hide('phoneField'); hide('emailField'); return;}
   show('nameField'); show('phoneField'); show('emailField');
+  
   if(fields.every(el=>el.value.trim()!='')){
     renderSummary(); tripSummary.classList.add('show'); payBtn.classList.add('show');
   }
 }
 
-// Remove glow on input/change
+// Remove glow on input/change & check sequence
 fields.forEach(fld=>{
-  fld.addEventListener('input',()=>{if(fld.value.trim()) fld.classList.remove('input-error'); stateCheck();});
-  fld.addEventListener('change',()=>{if(fld.value.trim()) fld.classList.remove('input-error'); stateCheck();});
+  fld.addEventListener('input',()=>{
+    if(fld.value.trim()) fld.classList.remove('input-error');
+    stateCheck();
+  });
+  fld.addEventListener('change',()=>{
+    if(fld.value.trim()) fld.classList.remove('input-error');
+    stateCheck();
+  });
 });
 
 // Render trip summary
@@ -139,12 +144,19 @@ function validateFields(){
       if(!firstMissing) firstMissing=fld;
     }
   });
-  if(firstMissing){firstMissing.focus(); tripSummary.classList.remove('show'); return false;}
+  if(firstMissing){
+    firstMissing.focus();        
+    tripSummary.classList.remove('show'); 
+    payBtn.classList.remove('show');
+    return false;
+  }
   return true;
 }
 
 // Book & Pay
-payBtn.addEventListener('click',()=>{if(validateFields()) alert("Booking submitted successfully!");});
+payBtn.addEventListener('click',()=>{
+  if(validateFields()) alert("Booking submitted successfully!");
+});
 
 // Google Places Autocomplete
 function initAutocomplete(){
