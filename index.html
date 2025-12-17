@@ -59,7 +59,6 @@ button:hover{opacity:.9;}
   <div id="sumDropoff"></div>
   <div id="sumDateTime"></div>
   <div id="sumVehicle"></div>
-  <div id="sumPrice"></div>
 </div>
 
 <button id="payBtn">Book & Pay</button>
@@ -70,9 +69,11 @@ button:hover{opacity:.9;}
 const f = id => document.getElementById(id);
 const showField = id => f(id).classList.add("show");
 
+// Flatpickr
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
+// Fields
 const fieldsIds = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
 const fields = fieldsIds.map(id => f(id));
 
@@ -118,7 +119,8 @@ function validateFields(){
 }
 
 function calculateTrip(){
-  if(!f("pickup").value || !f("dropoff").value) return;
+  if(!f("pickup").value || !f("dropoff").value || !window.google) return;
+
   const service = new google.maps.DistanceMatrixService();
   service.getDistanceMatrix({
     origins: [f("pickup").value],
@@ -128,7 +130,7 @@ function calculateTrip(){
   }, (res, status) => {
     if(status !== "OK") return;
     const element = res.rows[0].elements[0];
-    if(element.status !== "OK") return;
+    if(!element || element.status !== "OK") return;
 
     const miles = element.distance.value / 1609.34;
     const minutes = element.duration.value / 60;
@@ -163,6 +165,7 @@ f("payBtn").addEventListener("click", ()=>{
 });
 
 function initAutocomplete(){
+  if(!window.google) return;
   const pickupAuto = new google.maps.places.Autocomplete(f("pickup"));
   const dropoffAuto = new google.maps.places.Autocomplete(f("dropoff"));
   [pickupAuto, dropoffAuto].forEach(auto => auto.addListener("place_changed", calculateTrip));
