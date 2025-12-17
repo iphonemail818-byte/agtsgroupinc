@@ -15,7 +15,7 @@ h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
 h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
 h2{font-size:1.1em;margin-bottom:30px;}
 label{display:block;margin-top:8px;font-weight:bold;}
-input, select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
+input,select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
 input::placeholder{color:#555;}
 .input-error{border:2px solid #ff3b81!important;box-shadow:0 0 14px #ff3b81,0 0 30px #ff3b81aa;}
 .flex-row{display:flex;gap:12px;margin-top:12px;}
@@ -33,6 +33,7 @@ button.show{display:block;}
 
 <body>
 <div class="container">
+
 <h1>AGTS GROUP INC</h1>
 <h2>www.agtsgroupinc.com</h2>
 
@@ -84,6 +85,7 @@ button.show{display:block;}
 </div>
 
 <button id="payBtn">Book & Pay</button>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -97,7 +99,6 @@ flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 let distanceMiles=0;
 let durationMinutes=0;
 
-// Progressive reveal (unchanged)
 function checkProgressive(){
   if(f("pickup").value && f("dropoff").value) show("dateField");
   if(f("pickupDate").value) show("timeField");
@@ -111,7 +112,6 @@ function checkProgressive(){
   checkAllFields();
 }
 
-// Summary
 function renderSummary(){
   f("sumPickup").textContent="Pickup: "+f("pickup").value;
   f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
@@ -121,7 +121,6 @@ function renderSummary(){
   f("tripSummary").classList.add("show");
 }
 
-// Distance + ETA
 function calculateDistance(){
   const svc=new google.maps.DistanceMatrixService();
   svc.getDistanceMatrix({
@@ -132,41 +131,35 @@ function calculateDistance(){
     const el=res.rows[0].elements[0];
     distanceMiles=el.distance.value/1609.34;
     durationMinutes=el.duration.value/60;
-
     f("sumDistance").textContent="Distance: "+distanceMiles.toFixed(1)+" miles";
     f("sumETA").textContent="ETA: "+Math.round(durationMinutes)+" minutes";
-    renderSummary();
     calculatePrice();
   });
 }
 
-// Pricing
 function calculatePrice(){
   if(!distanceMiles||!durationMinutes||!f("vehicle").value) return;
-
-  const base=1.0, perMile=1.4, perMin=0.35, service=2.5;
+  const base=1,perMile=1.4,perMin=0.35,service=2.5;
   const mult=parseFloat(f("vehicle").value);
-
-  let price=(base + distanceMiles*perMile + durationMinutes*perMin + service)*mult;
+  let price=(base+distanceMiles*perMile+durationMinutes*perMin+service)*mult;
   price=Math.max(price,18);
   f("sumPrice").textContent="Estimated Price: $"+price.toFixed(2);
 }
 
-// Required validation (unchanged)
 const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
 function checkAllFields(){ if(fields.every(el=>el.value.trim())) renderSummary(); }
-f("payBtn").onclick=()=>{ if(!fields.every(el=>el.value.trim())) return; alert("Booking submitted"); };
 
-// Google Places
+f("vehicle").addEventListener("change",calculatePrice);
+
 function initAutocomplete(){
   const p=new google.maps.places.Autocomplete(f("pickup"));
   const d=new google.maps.places.Autocomplete(f("dropoff"));
   p.addListener("place_changed",calculateDistance);
   d.addListener("place_changed",calculateDistance);
 }
-f("vehicle").addEventListener("change",calculatePrice);
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
+
 </body>
 </html>
