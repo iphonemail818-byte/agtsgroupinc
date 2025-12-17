@@ -15,12 +15,13 @@ h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
 h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
 h2{font-size:1.1em;margin-bottom:30px;}
 label{display:block;margin-top:8px;font-weight:bold;}
-input,select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
+input, select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
+input::placeholder{color:#555;}
 .input-error{border:2px solid #ff3b81!important;box-shadow:0 0 14px #ff3b81,0 0 30px #ff3b81aa;}
 .flex-row{display:flex;gap:12px;margin-top:12px;}
-.field{flex:1;display:none;opacity:0;transition:.4s;}
+.field{flex:1;display:none;opacity:0;transition:opacity .4s ease-in-out;}
 .field.show{display:block;opacity:1;}
-#tripSummary{display:none;opacity:0;margin-top:24px;padding:20px;border-radius:18px;border:1px solid #0ff;text-align:center;transition:.5s;}
+#tripSummary{display:none;opacity:0;margin-top:24px;padding:20px;border-radius:18px;background:#000;border:1px solid #0ff;text-align:center;transition:opacity .5s ease-in-out;}
 #tripSummary.show{display:block;opacity:1;}
 #tripSummary div{font-family:'Orbitron',monospace;font-weight:900;margin-bottom:6px;text-shadow:0 0 10px #0ff;}
 .price{font-size:1.3em;margin-top:10px;}
@@ -46,12 +47,13 @@ button.show{display:block;}
 </div>
 
 <div class="flex-row">
-  <div class="field" id="vehicleField"><label>Vehicle</label>
+  <div class="field" id="vehicleField">
+    <label>Vehicle</label>
     <select id="vehicle">
       <option value="">Select</option>
-      <option value="1.2">GMC Yukon</option>
+      <option value="1.15">GMC Yukon</option>
       <option value="1.25">Cadillac Escalade</option>
-      <option value="1.15">Chevy Suburban</option>
+      <option value="1.10">Chevy Suburban</option>
     </select>
   </div>
   <div class="field" id="passengersField"><label>Passengers</label>
@@ -92,58 +94,76 @@ const show=id=>f(id).classList.add("show");
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-let tripDistanceMiles=0;
-let tripDurationMinutes=0;
+let distanceMiles=0;
+let durationMinutes=0;
 
-function calculatePrice(){
-  if(!tripDistanceMiles || !tripDurationMinutes || !f("vehicle").value) return;
-
-  const base=0.8;
-  const perMile=1.2;
-  const perMin=0.3;
-  const service=2.5;
-  const multiplier=parseFloat(f("vehicle").value);
-
-  let price=(base + tripDistanceMiles*perMile + tripDurationMinutes*perMin + service)*multiplier;
-  price=Math.max(price,15);
-
-  f("sumPrice").textContent="Estimated Price: $"+price.toFixed(2);
+// Progressive reveal (unchanged)
+function checkProgressive(){
+  if(f("pickup").value && f("dropoff").value) show("dateField");
+  if(f("pickupDate").value) show("timeField");
+  if(f("pickupTime").value){
+    show("vehicleField");show("passengersField");show("petsField");
+  }
+  if(f("pets").value){
+    show("nameField");show("phoneField");show("emailField");
+    f("payBtn").classList.add("show");
+  }
+  checkAllFields();
 }
 
+// Summary
+function renderSummary(){
+  f("sumPickup").textContent="Pickup: "+f("pickup").value;
+  f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
+  f("sumDateTime").textContent="Date & Time: "+f("pickupDate").value+" at "+f("pickupTime").value;
+  f("sumVehicle").textContent="Vehicle: "+f("vehicle").selectedOptions[0]?.text+
+    " | Passengers: "+f("passengers").value+" | Pets: "+f("pets").value;
+  f("tripSummary").classList.add("show");
+}
+
+// Distance + ETA
 function calculateDistance(){
-  const service=new google.maps.DistanceMatrixService();
-  service.getDistanceMatrix({
+  const svc=new google.maps.DistanceMatrixService();
+  svc.getDistanceMatrix({
     origins:[f("pickup").value],
     destinations:[f("dropoff").value],
     travelMode:"DRIVING"
   },res=>{
     const el=res.rows[0].elements[0];
-    tripDistanceMiles=el.distance.value/1609.34;
-    tripDurationMinutes=el.duration.value/60;
+    distanceMiles=el.distance.value/1609.34;
+    durationMinutes=el.duration.value/60;
 
-    f("sumDistance").textContent="Distance: "+tripDistanceMiles.toFixed(1)+" miles";
-    f("sumETA").textContent="ETA: "+Math.round(tripDurationMinutes)+" minutes";
-
+    f("sumDistance").textContent="Distance: "+distanceMiles.toFixed(1)+" miles";
+    f("sumETA").textContent="ETA: "+Math.round(durationMinutes)+" minutes";
     renderSummary();
     calculatePrice();
   });
 }
 
-function renderSummary(){
-  f("sumPickup").textContent="Pickup: "+f("pickup").value;
-  f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
-  f("sumDateTime").textContent="Date & Time: "+f("pickupDate").value+" at "+f("pickupTime").value;
-  f("sumVehicle").textContent="Vehicle: "+f("vehicle").selectedOptions[0]?.text;
-  f("tripSummary").classList.add("show");
+// Pricing
+function calculatePrice(){
+  if(!distanceMiles||!durationMinutes||!f("vehicle").value) return;
+
+  const base=1.0, perMile=1.4, perMin=0.35, service=2.5;
+  const mult=parseFloat(f("vehicle").value);
+
+  let price=(base + distanceMiles*perMile + durationMinutes*perMin + service)*mult;
+  price=Math.max(price,18);
+  f("sumPrice").textContent="Estimated Price: $"+price.toFixed(2);
 }
 
+// Required validation (unchanged)
+const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
+function checkAllFields(){ if(fields.every(el=>el.value.trim())) renderSummary(); }
+f("payBtn").onclick=()=>{ if(!fields.every(el=>el.value.trim())) return; alert("Booking submitted"); };
+
+// Google Places
 function initAutocomplete(){
   const p=new google.maps.places.Autocomplete(f("pickup"));
   const d=new google.maps.places.Autocomplete(f("dropoff"));
   p.addListener("place_changed",calculateDistance);
   d.addListener("place_changed",calculateDistance);
 }
-
 f("vehicle").addEventListener("change",calculatePrice);
 </script>
 
