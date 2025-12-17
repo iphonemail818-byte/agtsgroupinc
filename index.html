@@ -26,9 +26,7 @@ h1,h2{
 }
 h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
 h2{font-size:1.1em;margin-bottom:30px;}
-
 label{display:block;margin-top:8px;font-weight:bold;}
-
 input, textarea, select{
   width:100%;
   padding:12px;
@@ -39,14 +37,11 @@ input, textarea, select{
   color:#0ff;
   font-size:1em;
 }
-
 input::placeholder{color:#555;}
-
 .input-error{
   border:2px solid #ff3b81 !important;
   box-shadow:0 0 14px #ff3b81,0 0 30px #ff3b81aa;
 }
-
 .flex-row{
   display:flex;
   gap:12px;
@@ -57,7 +52,6 @@ input::placeholder{color:#555;}
   display:none;
 }
 .field.show{display:block;}
-
 #tripSummary{
   display:none;
   margin-top:24px;
@@ -74,7 +68,6 @@ input::placeholder{color:#555;}
   text-shadow:0 0 10px #0ff;
   margin-bottom:6px;
 }
-
 button{
   display:none;
   width:100%;
@@ -89,7 +82,6 @@ button{
   color:#000;
 }
 button:hover{opacity:.9;}
-
 @media(max-width:900px){
   .flex-row{flex-direction:column;}
 }
@@ -175,8 +167,8 @@ button:hover{opacity:.9;}
   <div id="sumDropoff"></div>
   <div id="sumDateTime"></div>
   <div id="sumVehicle"></div>
-  <div id="sumDistance"></div>
   <div id="sumPrice"></div>
+  <div id="sumDuration"></div>
 </div>
 
 <button id="payBtn">Book & Pay</button>
@@ -195,93 +187,74 @@ const fields=[pickup,dropoff,pickupDate,pickupTime,vehicle,passengers,pets,name,
 function show(id){f(id).classList.add("show");}
 
 // Progressive reveal
-pickup.onchange=dropoff.onchange=()=>{
-  if(pickup.value && dropoff.value) show("dateField");
-};
-
-pickupDate.onchange=()=>show("timeField");
-
-pickupTime.onchange=()=>{
+pickupDate.onchange = ()=> show("timeField");
+pickupTime.onchange = ()=>{
   show("vehicleField");
   show("passengersField");
   show("petsField");
 };
-
-pets.onchange=()=>{
+pets.onchange = ()=>{
   show("nameField");
   show("phoneField");
   show("emailField");
   payBtn.style.display="block";
 };
 
-// Validate all fields
+// Validate
 function validate(){
   let ok=true;
   fields.forEach(el=>{
     el.classList.remove("input-error");
-    if(!el.value){
-      el.classList.add("input-error");
-      ok=false;
-    }
+    if(!el.value){ el.classList.add("input-error"); ok=false; }
   });
   return ok;
 }
 
-// Calculate distance, duration and price
-async function getDistanceAndPrice(){
-  return new Promise((resolve,reject)=>{
-    const service = new google.maps.DistanceMatrixService();
-    service.getDistanceMatrix({
-      origins: [pickup.value],
-      destinations: [dropoff.value],
-      travelMode: 'DRIVING'
-    }, (response,status)=>{
-      if(status==='OK'){
-        const element=response.rows[0].elements[0];
-        const distance_miles=element.distance.value/1609.34; // meters → miles
-        const duration_min=element.duration.value/60; // seconds → minutes
-        const price=(10 + distance_miles*2).toFixed(2); // base $10 + $2 per mile
-        resolve({distance:distance_miles.toFixed(1),duration:Math.ceil(duration_min),price});
-      }else reject(status);
-    });
-  });
+// Calculate Price & Duration (simple example)
+function calculatePriceDuration(){
+  let distance = Math.floor(Math.random()*20)+5; // 5-25 miles mock
+  let price = distance * 3; // $3 per mile
+  let duration = distance * 2; // 2 mins per mile mock
+  return {price, duration};
 }
 
-// Render summary
-async function renderSummary(){
+// Render Summary
+function renderSummary(){
+  const info = calculatePriceDuration();
   tripSummary.style.display="block";
   sumPickup.textContent="Pickup: "+pickup.value;
   sumDropoff.textContent="Drop-off: "+dropoff.value;
   sumDateTime.textContent="Date & Time: "+pickupDate.value+" at "+pickupTime.value;
   sumVehicle.textContent="Vehicle: "+vehicle.value+" | Passengers: "+passengers.value+" | Pets: "+pets.value;
-
-  try{
-    const {distance,duration,price}=await getDistanceAndPrice();
-    sumDistance.textContent=`Distance: ${distance} miles | Duration: ${duration} min`;
-    sumPrice.textContent=`Price: $${price}`;
-  }catch(e){
-    sumDistance.textContent="Distance: N/A";
-    sumPrice.textContent="Price: N/A";
-  }
+  sumPrice.textContent="Price: $"+info.price;
+  sumDuration.textContent="Estimated Duration: "+info.duration+" mins";
 }
 
-payBtn.onclick=async()=>{
+payBtn.onclick = ()=>{
   if(!validate()) return;
-  await renderSummary();
+  renderSummary();
   alert("Booking submitted successfully!");
 };
+
+// Google Autocomplete
+function initAutocomplete(){
+  const pickupAuto = new google.maps.places.Autocomplete(pickup,{types:["geocode"]});
+  const dropoffAuto = new google.maps.places.Autocomplete(dropoff,{types:["geocode"]});
+
+  pickupAuto.addListener("place_changed", checkPickupDropoff);
+  dropoffAuto.addListener("place_changed", checkPickupDropoff);
+}
+
+function checkPickupDropoff(){
+  if(pickup.value && dropoff.value){
+    show("dateField");
+  }
+}
 </script>
 
 <script
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete"
 async defer></script>
-
-<script>
-function initAutocomplete(){
-  new google.maps.places.Autocomplete(pickup,{types:["geocode"]});
-  new google.maps.places.Autocomplete(dropoff,{types:["geocode"]});
-}
-</script>
 
 </body>
 </html>
