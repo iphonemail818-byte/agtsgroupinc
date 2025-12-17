@@ -1,103 +1,110 @@
 <script>
-const f=id=>document.getElementById(id);
-const show=id=>f(id).classList.add("show");
+const f = id => document.getElementById(id);
+const show = id => f(id).classList.add("show");
 
-flatpickr("#pickupDate",{minDate:"today",onChange(){show("timeField")}});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K",
-  onChange(){
+// Flatpickr
+flatpickr("#pickupDate", { minDate:"today", onChange(){ show("timeField"); } });
+flatpickr("#pickupTime", { enableTime:true, noCalendar:true, dateFormat:"h:i K",
+  onChange(){ 
+    show("vehicleField");
+    show("passengersField");
+    show("petsField");
+  } 
+});
+
+// Fields
+const fieldIds = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
+const fields = fieldIds.map(f);
+
+// Trigger progressive reveal
+fields.forEach(el => {
+  el.addEventListener("input", checkProgressive);
+  el.addEventListener("change", checkProgressive);
+  el.addEventListener("input", () => el.classList.remove("input-error"));
+  el.addEventListener("change", () => el.classList.remove("input-error"));
+});
+
+function checkProgressive() {
+  if(f("pickup").value && f("dropoff").value) {
+    show("dateField");
+    calculateTrip(); // <-- trigger price & duration immediately
+  }
+  if(f("pickupDate").value) show("timeField");
+  if(f("pickupTime").value){
     show("vehicleField");
     show("passengersField");
     show("petsField");
   }
-});
-
-function unlockDate(){
-  if(f("pickup").value.trim() && f("dropoff").value.trim()){
-    show("dateField");
+  if(f("pets").value){
+    show("nameField");
+    show("phoneField");
+    show("emailField");
+    f("payBtn").classList.add("show");
   }
 }
 
-["blur","keyup","change"].forEach(e=>{
-  f("dropoff").addEventListener(e,unlockDate);
-});
+// Distance, duration & price
+function calculateTrip() {
+  if(!f("pickup").value || !f("dropoff").value) return;
 
-f("pets").onchange=()=>{
-  show("nameField");
-  show("phoneField");
-  show("emailField");
-  f("payBtn").classList.add("show");
-};
-
-const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
-
-fields.forEach(el=>{
-  el.oninput=()=>{
-    el.classList.remove("input-error");
-    if(fields.every(x=>x.value.trim())) calculateTrip();
-  };
-});
-
-function calculateTrip(){
   const service = new google.maps.DistanceMatrixService();
   service.getDistanceMatrix({
-    origins:[f("pickup").value],
-    destinations:[f("dropoff").value],
-    travelMode:"DRIVING",
-    unitSystem:google.maps.UnitSystem.IMPERIAL
-  },(res,status)=>{
-    if(status!=="OK") return;
+    origins: [f("pickup").value],
+    destinations: [f("dropoff").value],
+    travelMode: "DRIVING",
+    unitSystem: google.maps.UnitSystem.IMPERIAL
+  }, (res, status) => {
+    if(status !== "OK") return;
+    const data = res.rows[0].elements[0];
+    if(data.status !== "OK") return;
 
-    const data=res.rows[0].elements[0];
-    if(data.status!=="OK") return;
+    const miles = data.distance.value / 1609.34;
+    const minutes = data.duration.value / 60;
 
-    const miles=data.distance.value/1609.34;
-    const minutes=data.duration.value/60;
+    const baseFare = 25;
+    const perMile = 2.8;
+    const perMinute = 0.45;
 
-    // Pricing (20% cheaper than Uber avg)
-    const baseFare=25;
-    const perMile=2.8;
-    const perMinute=0.45;
+    let price = (miles * perMile) + (minutes * perMinute) + baseFare;
+    price = Math.max(price, 45);
 
-    let price=(miles*perMile)+(minutes*perMinute)+baseFare;
-    price=Math.max(price,45);
-
-    renderSummary(miles,minutes,price);
+    renderSummary(miles, minutes, price);
   });
 }
 
-function renderSummary(miles,minutes,price){
-  f("sumPickup").textContent="Pickup: "+f("pickup").value;
-  f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
-  f("sumDateTime").textContent=
-    "Date & Time: "+f("pickupDate").value+" at "+f("pickupTime").value;
-
-  f("sumVehicle").innerHTML=
-    "Vehicle: "+f("vehicle").value+"<br>"+
-    "Passengers: "+f("passengers").value+"<br>"+
-    "Pets: "+f("pets").value+"<br>"+
-    "Estimated Distance: "+miles.toFixed(1)+" miles<br>"+
-    "Estimated Duration: "+Math.round(minutes)+" mins<br>"+
-    "Estimated Price: $"+Math.round(price);
-
+// Render summary
+function renderSummary(miles, minutes, price){
+  f("sumPickup").textContent = "Pickup: " + f("pickup").value;
+  f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
+  f("sumDateTime").textContent = "Date & Time: " + f("pickupDate").value + " at " + f("pickupTime").value;
+  f("sumVehicle").innerHTML = 
+      "Vehicle: " + f("vehicle").value + "<br>" +
+      "Passengers: " + f("passengers").value + "<br>" +
+      "Pets: " + f("pets").value + "<br>" +
+      "Estimated Distance: " + miles.toFixed(1) + " miles<br>" +
+      "Estimated Duration: " + Math.round(minutes) + " mins<br>" +
+      "Estimated Price: $" + Math.round(price);
   f("tripSummary").classList.add("show");
 }
 
-f("payBtn").onclick=()=>{
-  let first=null;
-  fields.forEach(el=>{
+// Validate & Book
+f("payBtn").onclick = () => {
+  let firstMissing = null;
+  fields.forEach(el => {
     el.classList.remove("input-error");
-    if(!el.value.trim() && !first){
+    if(!el.value.trim() && !firstMissing){
       el.classList.add("input-error");
-      first=el;
+      firstMissing = el;
     }
   });
-  if(first){first.focus();return;}
+  if(firstMissing){ firstMissing.focus(); return; }
   alert("Booking submitted successfully!");
 };
 
-window.addEventListener("load",()=>{
-  const pickupAuto=new google.maps.places.Autocomplete(f("pickup"));
-  const dropoffAuto=new google.maps.places.Autocomplete(f("dropoff"));
-  dropoffAuto.addListener("place_changed",unlockDate);
+// Google Autocomplete
+window.addEventListener("load", () => {
+  const pickupAuto = new google.maps.places.Autocomplete(f("pickup"));
+  const dropoffAuto = new google.maps.places.Autocomplete(f("dropoff"));
+  [pickupAuto, dropoffAuto].forEach(auto => auto.addListener("place_changed", calculateTrip));
 });
 </script>
