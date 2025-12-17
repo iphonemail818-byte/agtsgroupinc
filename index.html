@@ -9,37 +9,35 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-/* (keep your styling exactly as before) */
 body{background:#000;color:#0ff;font-family:Segoe UI,Tahoma,Verdana,sans-serif;margin:0;}
 .container{max-width:900px;margin:40px auto;padding:25px;}
 h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
 h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
 h2{font-size:1.1em;margin-bottom:30px;}
 label{display:block;margin-top:8px;font-weight:bold;}
-input, select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
-input::placeholder{color:#555;}
-.input-error{border:2px solid #ff3b81 !important;box-shadow:0 0 14px #ff3b81,0 0 30px #ff3b81aa;}
+input,select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:14px;color:#0ff;font-size:1em;}
+.input-error{border:2px solid #ff3b81!important;box-shadow:0 0 14px #ff3b81,0 0 30px #ff3b81aa;}
 .flex-row{display:flex;gap:12px;margin-top:12px;}
-.field{flex:1;display:none;opacity:0;transition:opacity .4s ease-in-out;}
+.field{flex:1;display:none;opacity:0;transition:.4s;}
 .field.show{display:block;opacity:1;}
-#tripSummary{display:none;opacity:0;margin-top:24px;padding:20px;border-radius:18px;background:#000;border:1px solid #0ff;text-align:center;transition:opacity .5s ease-in-out;}
+#tripSummary{display:none;opacity:0;margin-top:24px;padding:20px;border-radius:18px;border:1px solid #0ff;text-align:center;transition:.5s;}
 #tripSummary.show{display:block;opacity:1;}
-#tripSummary div{font-family:'Orbitron',monospace;font-size:1.05em;font-weight:900;text-shadow:0 0 10px #0ff;margin-bottom:6px;}
-.breakdown{font-size:0.95em;text-shadow:none;font-weight:600;text-align:left;color:#0ff;margin-top:10px;}
+#tripSummary div{font-family:'Orbitron',monospace;font-weight:900;margin-bottom:6px;text-shadow:0 0 10px #0ff;}
+.price{font-size:1.3em;margin-top:10px;}
 button{display:none;width:100%;margin-top:22px;padding:16px;font-size:1.2em;font-weight:bold;border:none;border-radius:18px;cursor:pointer;background:linear-gradient(90deg,#0ff,#06b6d4);color:#000;}
 button.show{display:block;}
-button:hover{opacity:.9;}
 @media(max-width:900px){.flex-row{flex-direction:column;}}
 </style>
 </head>
+
 <body>
 <div class="container">
 <h1>AGTS GROUP INC</h1>
 <h2>www.agtsgroupinc.com</h2>
 
 <div class="flex-row">
-  <div class="field show"><label>Pickup Address</label><input id="pickup" placeholder="Enter pickup location"></div>
-  <div class="field show"><label>Drop-off Address</label><input id="dropoff" placeholder="Enter drop-off location"></div>
+  <div class="field show"><label>Pickup Address</label><input id="pickup"></div>
+  <div class="field show"><label>Drop-off Address</label><input id="dropoff"></div>
 </div>
 
 <div class="flex-row">
@@ -51,22 +49,26 @@ button:hover{opacity:.9;}
   <div class="field" id="vehicleField"><label>Vehicle</label>
     <select id="vehicle">
       <option value="">Select</option>
-      <option value="yukon">GMC Yukon</option>
-      <option value="escalade">Cadillac Escalade</option>
-      <option value="suburban">Chevy Suburban</option>
+      <option value="1.2">GMC Yukon</option>
+      <option value="1.25">Cadillac Escalade</option>
+      <option value="1.15">Chevy Suburban</option>
     </select>
   </div>
-  <div class="field" id="passengersField"><label>Passengers</label><select id="passengers"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></div>
-  <div class="field" id="petsField"><label>Pets</label><select id="pets"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
+  <div class="field" id="passengersField"><label>Passengers</label>
+    <select id="passengers"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+  </div>
+  <div class="field" id="petsField"><label>Pets</label>
+    <select id="pets"><option value="">Select</option><option>Yes</option><option>No</option></select>
+  </div>
 </div>
 
 <div class="flex-row">
   <div class="field" id="nameField"><label>Full Name</label><input id="name"></div>
-  <div class="field" id="phoneField"><label>Phone</label><input id="phone" type="tel"></div>
+  <div class="field" id="phoneField"><label>Phone</label><input id="phone"></div>
 </div>
 
 <div class="flex-row">
-  <div class="field" id="emailField"><label>Email</label><input id="email" type="email"></div>
+  <div class="field" id="emailField"><label>Email</label><input id="email"></div>
 </div>
 
 <div id="tripSummary">
@@ -74,288 +76,77 @@ button:hover{opacity:.9;}
   <div id="sumDropoff"></div>
   <div id="sumDateTime"></div>
   <div id="sumVehicle"></div>
-
-  <div class="breakdown" id="breakdownArea" aria-hidden="false">
-    <!-- price breakdown inserted here -->
-  </div>
+  <div id="sumDistance"></div>
+  <div id="sumETA"></div>
+  <div class="price" id="sumPrice"></div>
 </div>
 
 <button id="payBtn">Book & Pay</button>
 </div>
 
-<!-- load flatpickr -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-<!-- Main script: distance + price integrated -->
 <script>
-/* -------------------------
-   CONFIG: 20% cheaper than Lyft example (adjust anytime)
-   Sources: Lyft area rates used as baseline (public page). 
-   See citations in assistant message.
-   ------------------------- */
-const BASE_FARE = 0.79;      // $0.79 (approx 20% off Lyft $0.99)
-const PER_MILE = 1.02;       // $1.02 per mile (20% off $1.28)
-const PER_MIN = 0.13;        // $0.13 per minute (20% off $0.16)
-const SERVICE_FEE = 3.28;    // $3.28 (20% off $4.10)
-const MIN_FARE = 3.40;       // $3.40 (20% off $4.24)
+const f=id=>document.getElementById(id);
+const show=id=>f(id).classList.add("show");
 
-/* small vehicle multipliers for premium vehicles */
-const VEHICLE_MULTIPLIERS = {
-  yukon: 1.00,
-  escalade: 1.18,
-  suburban: 1.08
-};
+flatpickr("#pickupDate",{minDate:"today"});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-/* helper to get element */
-const f = id => document.getElementById(id);
+let tripDistanceMiles=0;
+let tripDurationMinutes=0;
 
-/* flatpickr */
-flatpickr("#pickupDate", { minDate: "today", onChange: stateCheck });
-flatpickr("#pickupTime", { enableTime:true, noCalendar:true, dateFormat:"h:i K", onChange: stateCheck });
+function calculatePrice(){
+  if(!tripDistanceMiles || !tripDurationMinutes || !f("vehicle").value) return;
 
-/* progressive reveal + base form behavior (kept as-is) */
-const fieldIds = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
-const fields = fieldIds.map(id => f(id));
+  const base=0.8;
+  const perMile=1.2;
+  const perMin=0.3;
+  const service=2.5;
+  const multiplier=parseFloat(f("vehicle").value);
 
-fields.forEach(el=>{
-  el.addEventListener('input', ()=>el.classList.remove('input-error'));
-  el.addEventListener('change', ()=>el.classList.remove('input-error'));
-});
+  let price=(base + tripDistanceMiles*perMile + tripDurationMinutes*perMin + service)*multiplier;
+  price=Math.max(price,15);
 
-/* progressive reveal handlers (same flow you approved) */
-f('pickup').addEventListener('change', ()=>f('dateField').classList.add('show'));
-f('dropoff').addEventListener('change', ()=>f('dateField').classList.add('show'));
-f('pickupDate').addEventListener('change', ()=>f('timeField').classList.add('show'));
-f('pickupTime').addEventListener('change', ()=>{
-  f('vehicleField').classList.add('show');
-  f('passengersField').classList.add('show');
-  f('petsField').classList.add('show');
-});
-f('pets').addEventListener('change', ()=>{
-  f('nameField').classList.add('show');
-  f('phoneField').classList.add('show');
-  f('emailField').classList.add('show');
-  f('payBtn').classList.add('show');
-});
+  f("sumPrice").textContent="Estimated Price: $"+price.toFixed(2);
+}
 
-/* DistanceMatrix variables */
-let lastDistanceMiles = 0;
-let lastDurationMinutes = 0;
-let lastDurationText = "";
-
-/* Use Google Maps JS DistanceMatrix service (client-side) */
-/* This function calls Google Distance Matrix and updates lastDistanceMiles & lastDurationMinutes */
-function calculateDistanceAndDuration(origin, destination, callback){
-  if(!origin || !destination) { if(callback) callback(false); return; }
-
-  // Use DistanceMatrixService from the Maps JS loaded by the script at bottom
-  if(!window.google || !google.maps || !google.maps.DistanceMatrixService){
-    console.warn('Google Maps not available yet');
-    if(callback) callback(false);
-    return;
-  }
-
-  const service = new google.maps.DistanceMatrixService();
+function calculateDistance(){
+  const service=new google.maps.DistanceMatrixService();
   service.getDistanceMatrix({
-    origins: [origin],
-    destinations: [destination],
-    travelMode: google.maps.TravelMode.DRIVING,
-    unitSystem: google.maps.UnitSystem.IMPERIAL,
-    // avoid: ['tolls'] // optional
-  }, (response, status) => {
-    if(status !== 'OK'){
-      console.warn('DistanceMatrix failed:', status);
-      if(callback) callback(false);
-      return;
-    }
-    try {
-      const elem = response.rows[0].elements[0];
-      if(elem.status !== 'OK'){ if(callback) callback(false); return; }
-      const meters = elem.distance.value; // meters
-      const seconds = elem.duration.value; // seconds
-      lastDistanceMiles = meters / 1609.34;
-      lastDurationMinutes = seconds / 60;
-      lastDurationText = elem.duration.text;
-      if(callback) callback(true);
-    } catch(e){
-      console.error('Distance parsing error', e);
-      if(callback) callback(false);
-    }
+    origins:[f("pickup").value],
+    destinations:[f("dropoff").value],
+    travelMode:"DRIVING"
+  },res=>{
+    const el=res.rows[0].elements[0];
+    tripDistanceMiles=el.distance.value/1609.34;
+    tripDurationMinutes=el.duration.value/60;
+
+    f("sumDistance").textContent="Distance: "+tripDistanceMiles.toFixed(1)+" miles";
+    f("sumETA").textContent="ETA: "+Math.round(tripDurationMinutes)+" minutes";
+
+    renderSummary();
+    calculatePrice();
   });
 }
 
-/* Price calculation using the formula described earlier */
-function computePrice(vehicleKey){
-  const vehicleMultiplier = VEHICLE_MULTIPLIERS[vehicleKey] || 1.0;
-
-  const distancePart = PER_MILE * lastDistanceMiles;
-  const timePart = PER_MIN * lastDurationMinutes;
-  const raw = BASE_FARE + distancePart + timePart + SERVICE_FEE;
-  const multiplied = raw * vehicleMultiplier;
-  const finalPrice = Math.max(multiplied, MIN_FARE);
-
-  // breakdown object
-  return {
-    distanceMiles: lastDistanceMiles,
-    durationMinutes: lastDurationMinutes,
-    durationText: lastDurationText,
-    base: BASE_FARE,
-    distancePart,
-    timePart,
-    serviceFee: SERVICE_FEE,
-    vehicleMultiplier,
-    raw,
-    multiplied,
-    price: finalPrice
-  };
+function renderSummary(){
+  f("sumPickup").textContent="Pickup: "+f("pickup").value;
+  f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
+  f("sumDateTime").textContent="Date & Time: "+f("pickupDate").value+" at "+f("pickupTime").value;
+  f("sumVehicle").textContent="Vehicle: "+f("vehicle").selectedOptions[0]?.text;
+  f("tripSummary").classList.add("show");
 }
 
-/* render the trip summary (keeps your style) */
-function renderSummaryWithPrice(){
-  const pickupVal = f('pickup').value;
-  const dropoffVal = f('dropoff').value;
-  const dateVal = f('pickupDate').value;
-  const timeVal = f('pickupTime').value;
-  const vehicleKey = f('vehicle').value || 'yukon';
-  const passengerVal = f('passengers').value;
-  const petsVal = f('pets').value;
-
-  // compute price (uses previously computed lastDistanceMiles/minutes)
-  const breakdown = computePrice(vehicleKey);
-
-  // Build summary content using your existing elements but include breakdown
-  f('sumPickup').textContent = "Pickup: " + pickupVal;
-  f('sumDropoff').textContent = "Drop-off: " + dropoffVal;
-  f('sumDateTime').textContent = "Date & Time: " + dateVal + " at " + timeVal;
-  f('sumVehicle').textContent = "Vehicle: " + f('vehicle').selectedOptions[0].text + "\nPassengers: " + passengerVal + "  Pets: " + petsVal;
-
-  // Build breakdown markup (left aligned, compact)
-  const bd = `
-    <div style="text-align:left;color:#0ff">
-      <div>Distance: ${breakdown.distanceMiles.toFixed(1)} mi • Duration: ${breakdown.durationText}</div>
-      <div>Base fare: $${breakdown.base.toFixed(2)}</div>
-      <div>Distance: $${breakdown.distancePart.toFixed(2)} (${PER_MILE.toFixed(2)}/mi)</div>
-      <div>Time: $${breakdown.timePart.toFixed(2)} (${PER_MIN.toFixed(2)}/min)</div>
-      <div>Service fee: $${breakdown.serviceFee.toFixed(2)}</div>
-      <div>Vehicle multiplier: ×${breakdown.vehicleMultiplier.toFixed(2)}</div>
-      <hr style="border-color:#0ff33;opacity:.12">
-      <div style="font-weight:900">Estimated price: $${breakdown.price.toFixed(2)}</div>
-    </div>
-  `;
-  f('breakdownArea').innerHTML = bd;
-
-  // Show trip summary block
-  f('tripSummary').classList.add('show');
-}
-
-/* checkAllFields (called by progressive flow) - when pickup+dropoff become available we attempt to compute distance */
-function checkAllFields(){
-  // keep your previous "all fields filled triggers summary" behaviour
-  const allFilledExceptSummary = fieldIds.every(id => {
-    const el = f(id);
-    return !!el.value && el.value.trim().length > 0;
-  });
-
-  // if both addresses exist, calculate distance
-  if(f('pickup').value && f('dropoff').value){
-    // calculate and then render summary (but only show summary when all required visible fields are filled)
-    calculateDistanceAndDuration(f('pickup').value, f('dropoff').value, (ok)=>{
-      if(!ok) return;
-      // if rest of required visible fields are filled, show summary with price
-      // find visible inputs (offsetParent !== null)
-      const visibleFields = fieldIds.map(id=>f(id)).filter(el => el && el.offsetParent !== null);
-      const allVisibleFilled = visibleFields.every(el => el.value && el.value.trim().length>0);
-
-      if(allVisibleFilled){
-        renderSummaryWithPrice();
-      } else {
-        // keep summary hidden until user completes visible fields
-        f('tripSummary').classList.remove('show');
-      }
-    });
-  }
-}
-
-/* initial progressive hook: wire up as before */
-fieldIds.forEach(id=>{
-  if(id !== 'pickup' && id !== 'dropoff'){
-    f(id).addEventListener('input', checkProgressive);
-    f(id).addEventListener('change', checkProgressive);
-  }
-});
-function checkProgressive(){
-  if(f('pickup').value && f('dropoff').value) f('dateField').classList.add('show');
-  if(f('pickupDate').value) f('timeField').classList.add('show');
-  if(f('pickupTime').value){
-    f('vehicleField').classList.add('show');
-    f('passengersField').classList.add('show');
-    f('petsField').classList.add('show');
-  }
-  if(f('pets').value){
-    f('nameField').classList.add('show');
-    f('phoneField').classList.add('show');
-    f('emailField').classList.add('show');
-    f('payBtn').classList.add('show');
-  }
-  checkAllFields();
-}
-
-/* Booking click: validate and force calculation if needed */
-f('payBtn').addEventListener('click', ()=>{
-  // same validation you had
-  let firstMissing = null;
-  fieldIds.forEach(id=>{
-    const el = f(id);
-    if(el.offsetParent !== null && (!el.value || !el.value.trim())){
-      el.classList.add('input-error');
-      if(!firstMissing) firstMissing = el;
-    } else {
-      el.classList.remove('input-error');
-    }
-  });
-  if(firstMissing){
-    firstMissing.focus();
-    f('tripSummary').classList.remove('show');
-    return;
-  }
-
-  // ensure distance/time computed now (in case user typed addresses rather than picked autocomplete)
-  calculateDistanceAndDuration(f('pickup').value, f('dropoff').value, (ok)=>{
-    if(!ok){
-      alert('Could not calculate distance — please check addresses.');
-      return;
-    }
-    renderSummaryWithPrice();
-    // proceed with your payment flow — currently alert for demo
-    alert('Booking submitted successfully! Total: $' + computePrice(f('vehicle').value || 'yukon').price.toFixed(2));
-  });
-});
-
-/* GOOGLE autocomplete: keep exactly as before but also trigger distance calc after place_changed */
 function initAutocomplete(){
-  const pickupInput = f('pickup');
-  const dropoffInput = f('dropoff');
-  const pickupAuto = new google.maps.places.Autocomplete(pickupInput);
-  const dropoffAuto = new google.maps.places.Autocomplete(dropoffInput);
-
-  pickupAuto.addListener('place_changed', ()=>{
-    checkProgressive();
-    // attempt distance calc
-    if(pickupInput.value && dropoffInput.value) calculateDistanceAndDuration(pickupInput.value, dropoffInput.value, ()=>{});
-  });
-  dropoffAuto.addListener('place_changed', ()=>{
-    checkProgressive();
-    if(pickupInput.value && dropoffInput.value) calculateDistanceAndDuration(pickupInput.value, dropoffInput.value, ()=>{});
-  });
+  const p=new google.maps.places.Autocomplete(f("pickup"));
+  const d=new google.maps.places.Autocomplete(f("dropoff"));
+  p.addListener("place_changed",calculateDistance);
+  d.addListener("place_changed",calculateDistance);
 }
 
-/* expose initAutocomplete to Google's callback loader (script tag below) */
-window.initAutocomplete = initAutocomplete;
-
+f("vehicle").addEventListener("change",calculatePrice);
 </script>
 
-<!-- Load Google Maps JS (Places + DistanceMatrix via DistanceMatrixService) -->
-<!-- Keep your own API key here; ensure billing & domain restrictions are configured -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
