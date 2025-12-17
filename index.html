@@ -9,37 +9,129 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-body{background:#000;color:#0ff;font-family:Segoe UI,Tahoma,Verdana,sans-serif;margin:0;}
-.container{max-width:900px;margin:40px auto;padding:25px;}
-h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
+body{
+  background:#000;
+  color:#0ff;
+  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
+  margin:0;
+}
+.container{
+  max-width:900px;
+  margin:40px auto;
+  padding:25px;
+}
+h1,h2{
+  text-align:center;
+  font-family:'Orbitron',sans-serif;
+}
 h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
-h2{font-size:1.1em;margin-bottom:20px;text-shadow:0 0 8px #0ff;}
+h2{font-size:1.1em;margin-bottom:30px;text-shadow:0 0 8px #0ff;}
+
 label{display:block;margin-top:8px;font-weight:bold;}
-input,select,textarea{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:12px;color:#0ff;font-size:1em;}
-input::placeholder,textarea::placeholder{color:#555;}
-.input-error{border:2px solid #0ff;box-shadow:0 0 12px #0ff,0 0 22px #0ff88;}
-.flex-row{display:flex;gap:12px;margin-top:12px;}
-.field{flex:1;display:none;opacity:0;transform:translateY(10px);transition:0.4s ease;}
-.field.show{display:block;opacity:1;transform:translateY(0);}
-#tripSummary{display:none;margin-top:18px;padding:18px;border-radius:15px;background:#000;text-align:center;}
-#tripSummary div{font-family:'Orbitron',monospace;font-size:1.2em;font-weight:900;text-shadow:0 0 12px #0ff;}
-button{display:none;width:100%;margin-top:20px;padding:14px;font-size:1.15em;font-weight:bold;border:none;border-radius:15px;cursor:pointer;background:linear-gradient(90deg,#0ff,#06b6d4);color:#000;}
+
+input, textarea, select{
+  width:100%;
+  padding:12px 40px 12px 12px;
+  margin-top:4px;
+  background:#111;
+  border:1px solid #333;
+  border-radius:12px;
+  color:#0ff;
+  font-size:1em;
+  transition:0.3s;
+  position: relative;
+}
+input::placeholder, textarea::placeholder{color:#555;}
+
+.input-error{
+  border:2px solid #0ff;
+  box-shadow:0 0 12px #0ff,0 0 22px #0ff88;
+  animation:pulseGlow 1.5s infinite;
+}
+@keyframes pulseGlow{
+  0%{box-shadow:0 0 8px #0ff;}
+  50%{box-shadow:0 0 22px #0ff;}
+  100%{box-shadow:0 0 8px #0ff;}
+}
+
+.flex-row{
+  display:flex;
+  gap:12px;
+  margin-top:12px;
+}
+.field{
+  flex:1;
+  display:none;
+  opacity:0;
+  transform:translateY(10px);
+  transition:0.4s ease;
+  position:relative;
+}
+.field.show{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* target icon inside input */
+.input-location{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #0ff88;
+  font-size: 18px;
+}
+
+#tripSummary{
+  display:none;
+  margin-top:18px;
+  padding:18px;
+  border-radius:15px;
+  background:#000;
+  text-align:center;
+  border:1px solid #0ff;
+}
+#tripSummary div{
+  font-family:'Orbitron',monospace;
+  font-size:1.2em;
+  font-weight:900;
+  text-shadow:0 0 12px #0ff;
+}
+
+button{
+  display:none;
+  width:100%;
+  margin-top:20px;
+  padding:14px;
+  font-size:1.15em;
+  font-weight:bold;
+  border:none;
+  border-radius:15px;
+  cursor:pointer;
+  background:linear-gradient(90deg,#0ff,#06b6d4);
+  color:#000;
+}
 </style>
 </head>
 
 <body>
 <div class="container">
+
 <h1>AGTS GROUP INC</h1>
 <h2>www.agtsgroupinc.com</h2>
 
 <div class="flex-row">
-  <div class="field show">
+  <div class="field show" style="position:relative;">
     <label>Pickup Address</label>
     <input id="pickup" placeholder="Start typing pickup location">
+    <span class="input-location" id="pickupLoc">&#128 target;</span>
   </div>
-  <div class="field show">
+  <div class="field show" style="position:relative;">
     <label>Drop-off Address</label>
     <input id="dropoff" placeholder="Start typing drop-off location">
+    <span class="input-location" id="dropoffLoc">&#128 target;</span>
   </div>
 </div>
 
@@ -55,30 +147,65 @@ button{display:none;width:100%;margin-top:20px;padding:14px;font-size:1.15em;fon
 </div>
 
 <div class="flex-row">
-  <div class="field" id="vehicleField"><label>Vehicle</label>
-    <select id="vehicle"><option value="">Select</option><option>GMC Yukon</option><option>Chevy Suburban</option><option>Cadillac Escalade</option></select>
+  <div class="field" id="vehicleField">
+    <label>Vehicle</label>
+    <select id="vehicle">
+      <option value="">Select</option>
+      <option>GMC Yukon</option>
+      <option>Chevy Suburban</option>
+      <option>Cadillac Escalade</option>
+    </select>
   </div>
-  <div class="field" id="passengersField"><label>Passengers</label>
-    <select id="passengers"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+  <div class="field" id="passengersField">
+    <label>Passengers</label>
+    <select id="passengers">
+      <option value="">Select</option>
+      <option>1</option><option>2</option><option>3</option>
+      <option>4</option><option>5</option><option>6</option>
+    </select>
   </div>
-  <div class="field" id="petsField"><label>Pets</label>
-    <select id="pets"><option value="">Select</option><option>Yes</option><option>No</option></select>
+  <div class="field" id="petsField">
+    <label>Pets</label>
+    <select id="pets">
+      <option value="">Select</option>
+      <option>Yes</option>
+      <option>No</option>
+    </select>
   </div>
 </div>
 
 <div class="flex-row">
-  <div class="field" id="nameField"><label>Full Name</label><input id="name"></div>
-  <div class="field" id="phoneField"><label>Phone</label><input id="phone"></div>
-</div>
-
-<div class="flex-row">
-  <div class="field" id="emailField"><label>Email</label><input id="email"></div>
-  <div class="field" id="referenceField"><label>Reference</label>
-    <select id="reference"><option value="">Select</option><option>Previous Passenger</option><option>Social Media</option><option>Friend / Family</option><option>Website</option></select>
+  <div class="field" id="nameField">
+    <label>Full Name</label>
+    <input id="name">
+  </div>
+  <div class="field" id="phoneField">
+    <label>Phone</label>
+    <input id="phone">
   </div>
 </div>
 
-<div class="field" id="notesField"><label>Notes</label><textarea id="notes"></textarea></div>
+<div class="flex-row">
+  <div class="field" id="emailField">
+    <label>Email</label>
+    <input id="email">
+  </div>
+  <div class="field" id="referenceField">
+    <label>Reference</label>
+    <select id="reference">
+      <option value="">Select</option>
+      <option>Previous Passenger</option>
+      <option>Social Media</option>
+      <option>Friend / Family</option>
+      <option>Website</option>
+    </select>
+  </div>
+</div>
+
+<div class="field" id="notesField">
+  <label>Notes</label>
+  <textarea id="notes"></textarea>
+</div>
 
 <div id="tripSummary">
   <div id="sumPickup"></div>
@@ -89,84 +216,83 @@ button{display:none;width:100%;margin-top:20px;padding:14px;font-size:1.15em;fon
 </div>
 
 <button id="payBtn">Book & Pay</button>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
+// Flatpickr
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
 const f=id=>document.getElementById(id);
+const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
 
-/* Progressive Reveal */
-f("pickup").addEventListener("change", ()=>f("dateField").classList.add("show"));
-f("dropoff").addEventListener("change", ()=>f("dateField").classList.add("show"));
-
-f("pickupDate").addEventListener("change", ()=>f("timeField").classList.add("show"));
-
-f("pickupTime").addEventListener("change", ()=>{
-  f("vehicleField").classList.add("show");
-  f("passengersField").classList.add("show");
-  f("petsField").classList.add("show");
+// Progressive reveal
+f("pickup").addEventListener("input",()=>f("dateField").classList.add("show"));
+f("dropoff").addEventListener("input",()=>f("dateField").classList.add("show"));
+f("pickupDate").addEventListener("change",()=>f("timeField").classList.add("show"));
+f("pickupTime").addEventListener("change",()=>{
+  ["vehicleField","passengersField","petsField"].forEach(id=>f(id).classList.add("show"));
 });
-
-f("pets").addEventListener("change", ()=>{
+f("pets").addEventListener("change",()=>{
   ["nameField","phoneField","emailField","referenceField","notesField"].forEach(id=>f(id).classList.add("show"));
-  f("payBtn").classList.add("show");
+  f("payBtn").style.display="block";
 });
 
-/* Validation */
-const requiredFields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
-
-/* Distance & Price */
-function fetchDistancePrice(){
-  const origin = f("pickup").value;
-  const dest   = f("dropoff").value;
-  if(!origin||!dest) return;
-
-  new google.maps.DistanceMatrixService().getDistanceMatrix({
-    origins:[origin], destinations:[dest], travelMode:'DRIVING',
-    unitSystem:google.maps.UnitSystem.IMPERIAL
-  }, (res,status)=>{
-    if(status==="OK"){
-      const el = res.rows[0].elements[0];
-      const miles = el.distance.value/1609.34;
-      const mins  = el.duration.value/60;
-      f("sumDuration").textContent = "Duration: " + Math.round(mins) + " min";
-      f("sumPrice").textContent = "Estimated: $" + Math.max(35, (miles*3).toFixed(2));
-    }
-  });
-}
-
-/* Update Summary */
+// Summary update
 function updateSummary(){
-  if(requiredFields.every(el=>el.value.trim())){
+  if(fields.every(el=>el.value)){
     f("tripSummary").style.display="block";
     f("sumPickup").textContent="Pickup: "+f("pickup").value;
     f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
     f("sumDateTime").textContent=`${f("pickupDate").value} at ${f("pickupTime").value}`;
-    fetchDistancePrice();
+    f("sumDuration").textContent="Duration: 25 min";
+    f("sumPrice").textContent="Estimated: $75.00";
   }
 }
-
-requiredFields.forEach(el=>{
-  el.addEventListener("input", updateSummary);
-  el.addEventListener("change", updateSummary);
+fields.forEach(el=>{
+  el.addEventListener("input",updateSummary);
+  el.addEventListener("change",updateSummary);
 });
 
-/* Submit */
-f("payBtn").addEventListener("click",()=>{
-  let firstMissing=null;
-  requiredFields.forEach(el=>el.classList.remove("input-error"));
-  requiredFields.forEach(el=>{ if(!el.value.trim() && !firstMissing){ el.classList.add("input-error"); firstMissing=el; }});
-  if(firstMissing){ firstMissing.focus(); return; }
-  updateSummary();
+// Booking
+f("payBtn").onclick=()=>{
+  let bad=null;
+  fields.forEach(el=>{
+    el.classList.remove("input-error");
+    if(!el.value && !bad){el.classList.add("input-error");bad=el;}
+  });
+  if(bad){bad.focus();return;}
   alert("Booking submitted successfully!");
-});
+};
+
+// Geolocation for target icons
+function useLocation(inputField){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const lat=pos.coords.latitude;
+      const lng=pos.coords.longitude;
+      // Google Geocode API
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=YOUR_GOOGLE_API_KEY_HERE`)
+        .then(res=>res.json())
+        .then(data=>{
+          if(data.results[0]) inputField.value=data.results[0].formatted_address;
+          inputField.dispatchEvent(new Event('input'));
+        });
+    },err=>alert("Location permission denied"));
+  } else alert("Geolocation not supported");
+}
+
+f("pickupLoc").onclick=()=>useLocation(f("pickup"));
+f("dropoffLoc").onclick=()=>useLocation(f("dropoff"));
 </script>
 
-<!-- Google Maps API Loads Autocomplete + Distance Matrix -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
+<!-- ✅ Google Places Autocomplete -->
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY_HERE&libraries=places&callback=initAutocomplete"
+  async defer></script>
 
 <script>
 function initAutocomplete(){
