@@ -81,11 +81,11 @@ button:hover{opacity:.9;}
 <div class="flex-row">
   <div class="field" id="dateField">
     <label>Pickup Date</label>
-    <input id="pickupDate" inputmode="none">
+    <input id="pickupDate">
   </div>
   <div class="field" id="timeField">
     <label>Pickup Time</label>
-    <input id="pickupTime" inputmode="none">
+    <input id="pickupTime">
   </div>
 </div>
 
@@ -153,15 +153,8 @@ button:hover{opacity:.9;}
 const f=id=>document.getElementById(id);
 const show=id=>f(id).classList.add("show");
 
-flatpickr("#pickupDate",{
-  minDate:"today",
-  onChange(){ show("timeField"); }
-});
-
-flatpickr("#pickupTime",{
-  enableTime:true,
-  noCalendar:true,
-  dateFormat:"h:i K",
+flatpickr("#pickupDate",{minDate:"today",onChange(){show("timeField")}});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K",
   onChange(){
     show("vehicleField");
     show("passengersField");
@@ -175,35 +168,36 @@ function unlockDate(){
   }
 }
 
-["blur","change","keyup"].forEach(evt=>{
-  f("dropoff").addEventListener(evt,unlockDate);
+["blur","keyup","change"].forEach(e=>{
+  f("dropoff").addEventListener(e,unlockDate);
 });
 
-f("pets").addEventListener("change",()=>{
+f("pets").onchange=()=>{
   show("nameField");
   show("phoneField");
   show("emailField");
   f("payBtn").classList.add("show");
-});
+};
 
 const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
+
+fields.forEach(el=>{
+  el.oninput=()=>{
+    el.classList.remove("input-error");
+    if(fields.every(x=>x.value.trim())) renderSummary();
+  };
+});
 
 function renderSummary(){
   f("sumPickup").textContent="Pickup: "+f("pickup").value;
   f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
   f("sumDateTime").textContent="Date & Time: "+f("pickupDate").value+" at "+f("pickupTime").value;
-  f("sumVehicle").textContent="Vehicle: "+f("vehicle").value+
+  f("sumVehicle").textContent=
+    "Vehicle: "+f("vehicle").value+
     " | Passengers: "+f("passengers").value+
     " | Pets: "+f("pets").value;
   f("tripSummary").classList.add("show");
 }
-
-fields.forEach(el=>{
-  el.addEventListener("input",()=>{
-    el.classList.remove("input-error");
-    if(fields.every(x=>x.value.trim())) renderSummary();
-  });
-});
 
 f("payBtn").onclick=()=>{
   let first=null;
@@ -214,18 +208,18 @@ f("payBtn").onclick=()=>{
       first=el;
     }
   });
-  if(first){ first.focus(); return; }
+  if(first){first.focus();return;}
   alert("Booking submitted successfully!");
 };
 
-function initAutocomplete(){
-  const p=new google.maps.places.Autocomplete(f("pickup"));
-  const d=new google.maps.places.Autocomplete(f("dropoff"));
-  d.addListener("place_changed",unlockDate);
-}
+window.addEventListener("load",()=>{
+  const pickupAuto=new google.maps.places.Autocomplete(f("pickup"));
+  const dropoffAuto=new google.maps.places.Autocomplete(f("dropoff"));
+  dropoffAuto.addListener("place_changed",unlockDate);
+});
 </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places"></script>
 
 </body>
 </html>
