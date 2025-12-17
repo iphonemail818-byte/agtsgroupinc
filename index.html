@@ -66,29 +66,25 @@ button:hover{opacity:.9;}
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-const f = id => document.getElementById(id);
-const showField = id => f(id).classList.add("show");
+const f=id=>document.getElementById(id);
+const showField=id=>f(id).classList.add("show");
 
 // Flatpickr
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-// Fields
-const fieldsIds = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
-const fields = fieldsIds.map(id => f(id));
-
+// Progressive form logic
+const fieldsIds=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"];
+const fields=fieldsIds.map(id=>f(id));
 fields.forEach(el=>{
   el.addEventListener("input", checkProgressive);
   el.addEventListener("change", checkProgressive);
-  el.addEventListener("input", () => el.classList.remove("input-error"));
-  el.addEventListener("change", () => el.classList.remove("input-error"));
+  el.addEventListener("input",()=>el.classList.remove("input-error"));
+  el.addEventListener("change",()=>el.classList.remove("input-error"));
 });
 
 function checkProgressive(){
-  if(f("pickup").value && f("dropoff").value){
-    showField("dateField");
-    calculateTrip();
-  }
+  if(f("pickup").value && f("dropoff").value) showField("dateField");
   if(f("pickupDate").value) showField("timeField");
   if(f("pickupTime").value){
     showField("vehicleField");
@@ -101,17 +97,17 @@ function checkProgressive(){
     showField("emailField");
     f("payBtn").classList.add("show");
   }
+  calculateTrip();
 }
 
 function validateFields(){
-  let ok = true;
-  let firstMissing = null;
+  let ok=true, firstMissing=null;
   fields.forEach(el=>{
     el.classList.remove("input-error");
     if(!el.value.trim()){
       el.classList.add("input-error");
-      if(!firstMissing) firstMissing = el;
-      ok = false;
+      if(!firstMissing) firstMissing=el;
+      ok=false;
     }
   });
   if(firstMissing) firstMissing.focus();
@@ -120,42 +116,36 @@ function validateFields(){
 
 function calculateTrip(){
   if(!f("pickup").value || !f("dropoff").value || !window.google) return;
-
-  const service = new google.maps.DistanceMatrixService();
-  service.getDistanceMatrix({
-    origins: [f("pickup").value],
-    destinations: [f("dropoff").value],
-    travelMode: 'DRIVING',
-    unitSystem: google.maps.UnitSystem.IMPERIAL
-  }, (res, status) => {
-    if(status !== "OK") return;
-    const element = res.rows[0].elements[0];
-    if(!element || element.status !== "OK") return;
-
-    const miles = element.distance.value / 1609.34;
-    const minutes = element.duration.value / 60;
-
-    const baseFare = 25;
-    const perMile = 2.8;
-    const perMinute = 0.45;
-
-    let price = (miles*perMile) + (minutes*perMinute) + baseFare;
-    price = Math.max(price, 45);
-
-    renderSummary(miles, minutes, price);
-  });
+  try{
+    const service=new google.maps.DistanceMatrixService();
+    service.getDistanceMatrix({
+      origins:[f("pickup").value],
+      destinations:[f("dropoff").value],
+      travelMode:'DRIVING',
+      unitSystem:google.maps.UnitSystem.IMPERIAL
+    }, (res,status)=>{
+      if(status!=="OK") return;
+      const elem=res.rows[0].elements[0];
+      if(!elem || elem.status!=="OK") return;
+      const miles=elem.distance.value/1609.34;
+      const minutes=elem.duration.value/60;
+      const baseFare=25, perMile=2.8, perMinute=0.45;
+      let price=(miles*perMile)+(minutes*perMinute)+baseFare;
+      price=Math.max(price,45);
+      renderSummary(miles,minutes,price);
+    });
+  }catch(e){
+    console.error("DistanceMatrix failed", e);
+    renderSummary();
+  }
 }
 
 function renderSummary(miles=0, minutes=0, price=0){
-  f("sumPickup").textContent = "Pickup: " + f("pickup").value;
-  f("sumDropoff").textContent = "Drop-off: " + f("dropoff").value;
-  f("sumDateTime").textContent = "Date & Time: " + f("pickupDate").value + " at " + f("pickupTime").value;
-  f("sumVehicle").innerHTML = "Vehicle: " + f("vehicle").value +
-                              " | Passengers: " + f("passengers").value +
-                              " | Pets: " + f("pets").value +
-                              "<br>Estimated Distance: " + miles.toFixed(1) + " mi" +
-                              "<br>Estimated Duration: " + Math.round(minutes) + " mins" +
-                              "<br>Estimated Price: $" + Math.round(price);
+  f("sumPickup").textContent="Pickup: "+f("pickup").value;
+  f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
+  f("sumDateTime").textContent="Date & Time: "+f("pickupDate").value+" at "+f("pickupTime").value;
+  f("sumVehicle").innerHTML="Vehicle: "+f("vehicle").value+" | Passengers: "+f("passengers").value+" | Pets: "+f("pets").value+
+                            "<br>Distance: "+miles.toFixed(1)+" mi<br>Duration: "+Math.round(minutes)+" mins<br>Price: $"+Math.round(price);
   f("tripSummary").classList.add("show");
 }
 
@@ -166,11 +156,11 @@ f("payBtn").addEventListener("click", ()=>{
 
 function initAutocomplete(){
   if(!window.google) return;
-  const pickupAuto = new google.maps.places.Autocomplete(f("pickup"));
-  const dropoffAuto = new google.maps.places.Autocomplete(f("dropoff"));
-  [pickupAuto, dropoffAuto].forEach(auto => auto.addListener("place_changed", calculateTrip));
+  const pickupAuto=new google.maps.places.Autocomplete(f("pickup"));
+  const dropoffAuto=new google.maps.places.Autocomplete(f("dropoff"));
+  [pickupAuto,dropoffAuto].forEach(auto=>auto.addListener("place_changed", calculateTrip));
 }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
