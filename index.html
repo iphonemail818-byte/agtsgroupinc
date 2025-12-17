@@ -15,6 +15,7 @@ h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
 h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
 h2{font-size:1.1em;margin-bottom:30px;}
 label{display:block;margin-top:8px;font-weight:bold;}
+
 input,select{
   width:100%;padding:12px;margin-top:4px;
   background:#111;border:1px solid #333;
@@ -28,21 +29,20 @@ input::placeholder{color:#555;}
 }
 
 .flex-row{display:flex;gap:12px;margin-top:12px;}
-.field{flex:1;display:none;opacity:0;transition:opacity .4s ease-in-out;}
+.field{flex:1;display:none;opacity:0;transition:opacity .35s ease;}
 .field.show{display:block;opacity:1;}
 
 #tripSummary{
   display:none;opacity:0;margin-top:24px;
   padding:20px;border-radius:18px;
   background:#000;border:1px solid #0ff;
-  text-align:center;transition:opacity .5s ease-in-out;
+  text-align:center;transition:opacity .5s ease;
 }
 #tripSummary.show{display:block;opacity:1;}
 
 #tripSummary div{
   font-family:'Orbitron',monospace;
   font-size:1.05em;font-weight:900;
-  text-shadow:0 0 10px #0ff;
   margin-bottom:6px;
 }
 
@@ -150,14 +150,12 @@ button:hover{opacity:.9;}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
-const f = id => document.getElementById(id);
-const show = id => f(id).classList.add("show");
+const f=id=>document.getElementById(id);
+const show=id=>f(id).classList.add("show");
 
 flatpickr("#pickupDate",{
   minDate:"today",
-  onChange(){
-    show("timeField");
-  }
+  onChange(){ show("timeField"); }
 });
 
 flatpickr("#pickupTime",{
@@ -171,43 +169,14 @@ flatpickr("#pickupTime",{
   }
 });
 
-const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"]
-  .map(f);
-
-function validate(){
-  let first=null;
-  fields.forEach(el=>{
-    el.classList.remove("input-error");
-    if(!el.value.trim()){
-      el.classList.add("input-error");
-      if(!first) first=el;
-    }
-  });
-  if(first) first.focus();
-  return !first;
+function unlockDate(){
+  if(f("pickup").value.trim() && f("dropoff").value.trim()){
+    show("dateField");
+  }
 }
 
-function summary(){
-  f("sumPickup").textContent="Pickup: "+f("pickup").value;
-  f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
-  f("sumDateTime").textContent=
-    "Date & Time: "+f("pickupDate").value+" at "+f("pickupTime").value;
-  f("sumVehicle").textContent=
-    "Vehicle: "+f("vehicle").value+
-    " | Passengers: "+f("passengers").value+
-    " | Pets: "+f("pets").value;
-  f("tripSummary").classList.add("show");
-}
-
-fields.forEach(el=>{
-  el.addEventListener("input",()=>{
-    el.classList.remove("input-error");
-    if(fields.every(f=>f.value.trim())) summary();
-  });
-  el.addEventListener("change",()=>{
-    el.classList.remove("input-error");
-    if(fields.every(f=>f.value.trim())) summary();
-  });
+["blur","change","keyup"].forEach(evt=>{
+  f("dropoff").addEventListener(evt,unlockDate);
 });
 
 f("pets").addEventListener("change",()=>{
@@ -217,15 +186,42 @@ f("pets").addEventListener("change",()=>{
   f("payBtn").classList.add("show");
 });
 
+const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
+
+function renderSummary(){
+  f("sumPickup").textContent="Pickup: "+f("pickup").value;
+  f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
+  f("sumDateTime").textContent="Date & Time: "+f("pickupDate").value+" at "+f("pickupTime").value;
+  f("sumVehicle").textContent="Vehicle: "+f("vehicle").value+
+    " | Passengers: "+f("passengers").value+
+    " | Pets: "+f("pets").value;
+  f("tripSummary").classList.add("show");
+}
+
+fields.forEach(el=>{
+  el.addEventListener("input",()=>{
+    el.classList.remove("input-error");
+    if(fields.every(x=>x.value.trim())) renderSummary();
+  });
+});
+
 f("payBtn").onclick=()=>{
-  if(!validate()) return;
+  let first=null;
+  fields.forEach(el=>{
+    el.classList.remove("input-error");
+    if(!el.value.trim() && !first){
+      el.classList.add("input-error");
+      first=el;
+    }
+  });
+  if(first){ first.focus(); return; }
   alert("Booking submitted successfully!");
 };
 
 function initAutocomplete(){
   const p=new google.maps.places.Autocomplete(f("pickup"));
   const d=new google.maps.places.Autocomplete(f("dropoff"));
-  d.addListener("place_changed",()=>show("dateField"));
+  d.addListener("place_changed",unlockDate);
 }
 </script>
 
