@@ -13,12 +13,11 @@ body{background:#000;color:#0ff;font-family:Segoe UI,Tahoma,Verdana,sans-serif;m
 .container{max-width:900px;margin:40px auto;padding:25px;}
 h1,h2{text-align:center;font-family:'Orbitron',sans-serif;}
 h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
-h2{font-size:1.1em;margin-bottom:30px;text-shadow:0 0 8px #0ff;}
+h2{font-size:1.1em;margin-bottom:20px;text-shadow:0 0 8px #0ff;}
 label{display:block;margin-top:8px;font-weight:bold;}
-input, textarea, select{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:12px;color:#0ff;font-size:1em;transition:0.3s;}
-input::placeholder, textarea::placeholder{color:#555;}
-.input-error{border:2px solid #0ff;box-shadow:0 0 12px #0ff,0 0 22px #0ff88;animation:pulseGlow 1.5s infinite;}
-@keyframes pulseGlow{0%{box-shadow:0 0 8px #0ff;}50%{box-shadow:0 0 22px #0ff;}100%{box-shadow:0 0 8px #0ff;}}
+input,select,textarea{width:100%;padding:12px;margin-top:4px;background:#111;border:1px solid #333;border-radius:12px;color:#0ff;font-size:1em;}
+input::placeholder,textarea::placeholder{color:#555;}
+.input-error{border:2px solid #0ff;box-shadow:0 0 12px #0ff,0 0 22px #0ff88;}
 .flex-row{display:flex;gap:12px;margin-top:12px;}
 .field{flex:1;display:none;opacity:0;transform:translateY(10px);transition:0.4s ease;}
 .field.show{display:block;opacity:1;transform:translateY(0);}
@@ -27,19 +26,32 @@ input::placeholder, textarea::placeholder{color:#555;}
 button{display:none;width:100%;margin-top:20px;padding:14px;font-size:1.15em;font-weight:bold;border:none;border-radius:15px;cursor:pointer;background:linear-gradient(90deg,#0ff,#06b6d4);color:#000;}
 </style>
 </head>
+
 <body>
 <div class="container">
 <h1>AGTS GROUP INC</h1>
 <h2>www.agtsgroupinc.com</h2>
 
 <div class="flex-row">
-  <div class="field show"><label>Pickup Address</label><input id="pickup" placeholder="Start typing pickup location"></div>
-  <div class="field show"><label>Drop-off Address</label><input id="dropoff" placeholder="Start typing drop-off location"></div>
+  <div class="field show">
+    <label>Pickup Address</label>
+    <input id="pickup" placeholder="Start typing pickup location">
+  </div>
+  <div class="field show">
+    <label>Drop-off Address</label>
+    <input id="dropoff" placeholder="Start typing drop-off location">
+  </div>
 </div>
 
 <div class="flex-row">
-  <div class="field" id="dateField"><label>Pickup Date</label><input id="pickupDate" readonly></div>
-  <div class="field" id="timeField"><label>Pickup Time</label><input id="pickupTime" readonly></div>
+  <div class="field" id="dateField">
+    <label>Pickup Date</label>
+    <input id="pickupDate" readonly>
+  </div>
+  <div class="field" id="timeField">
+    <label>Pickup Time</label>
+    <input id="pickupTime" readonly>
+  </div>
 </div>
 
 <div class="flex-row">
@@ -85,71 +97,83 @@ flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
 const f=id=>document.getElementById(id);
-const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
 
-f("pickup").addEventListener("input",()=>f("dateField").classList.add("show"));
-f("dropoff").addEventListener("input",()=>f("dateField").classList.add("show"));
-f("pickupDate").addEventListener("change",()=>f("timeField").classList.add("show"));
-f("pickupTime").addEventListener("change",()=>["vehicleField","passengersField","petsField"].forEach(id=>f(id).classList.add("show")));
-f("pets").addEventListener("change",()=>["nameField","phoneField","emailField","referenceField","notesField"].forEach(id=>f(id).classList.add("show"))); 
-f("payBtn").style.display="block";
+/* Progressive Reveal */
+f("pickup").addEventListener("change", ()=>f("dateField").classList.add("show"));
+f("dropoff").addEventListener("change", ()=>f("dateField").classList.add("show"));
 
-function calculateDistanceAndPrice(){
-  const origin=f("pickup").value;
-  const destination=f("dropoff").value;
-  if(!origin || !destination) return;
+f("pickupDate").addEventListener("change", ()=>f("timeField").classList.add("show"));
 
-  const service = new google.maps.DistanceMatrixService();
-  service.getDistanceMatrix({
-    origins: [origin],
-    destinations: [destination],
-    travelMode: 'DRIVING',
-    unitSystem: google.maps.UnitSystem.IMPERIAL,
-  }, (response, status)=>{
-    if(status==='OK'){
-      const element=response.rows[0].elements[0];
-      const distanceMiles=element.distance.value/1609.34; // meters to miles
-      const durationMin=element.duration.value/60; // seconds to minutes
-      const ratePerMile=3.5; // $3.50 per mile, adjust as needed
-      const price=Math.max(50, (distanceMiles*ratePerMile).toFixed(2)); // minimum $50
-      f("sumDuration").textContent=`Duration: ${Math.round(durationMin)} min`;
-      f("sumPrice").textContent=`Estimated: $${price}`;
+f("pickupTime").addEventListener("change", ()=>{
+  f("vehicleField").classList.add("show");
+  f("passengersField").classList.add("show");
+  f("petsField").classList.add("show");
+});
+
+f("pets").addEventListener("change", ()=>{
+  ["nameField","phoneField","emailField","referenceField","notesField"].forEach(id=>f(id).classList.add("show"));
+  f("payBtn").classList.add("show");
+});
+
+/* Validation */
+const requiredFields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
+
+/* Distance & Price */
+function fetchDistancePrice(){
+  const origin = f("pickup").value;
+  const dest   = f("dropoff").value;
+  if(!origin||!dest) return;
+
+  new google.maps.DistanceMatrixService().getDistanceMatrix({
+    origins:[origin], destinations:[dest], travelMode:'DRIVING',
+    unitSystem:google.maps.UnitSystem.IMPERIAL
+  }, (res,status)=>{
+    if(status==="OK"){
+      const el = res.rows[0].elements[0];
+      const miles = el.distance.value/1609.34;
+      const mins  = el.duration.value/60;
+      f("sumDuration").textContent = "Duration: " + Math.round(mins) + " min";
+      f("sumPrice").textContent = "Estimated: $" + Math.max(35, (miles*3).toFixed(2));
     }
   });
 }
 
+/* Update Summary */
 function updateSummary(){
-  if(fields.every(el=>el.value)){
+  if(requiredFields.every(el=>el.value.trim())){
     f("tripSummary").style.display="block";
     f("sumPickup").textContent="Pickup: "+f("pickup").value;
     f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
     f("sumDateTime").textContent=`${f("pickupDate").value} at ${f("pickupTime").value}`;
-    calculateDistanceAndPrice();
+    fetchDistancePrice();
   }
 }
 
-fields.forEach(el=>el.addEventListener("input",updateSummary));
-fields.forEach(el=>el.addEventListener("change",updateSummary));
+requiredFields.forEach(el=>{
+  el.addEventListener("input", updateSummary);
+  el.addEventListener("change", updateSummary);
+});
 
-f("payBtn").onclick=()=>{
-  let bad=null;
-  fields.forEach(el=>{el.classList.remove("input-error"); if(!el.value && !bad){el.classList.add("input-error"); bad=el;}});
-  if(bad){bad.focus(); return;}
+/* Submit */
+f("payBtn").addEventListener("click",()=>{
+  let firstMissing=null;
+  requiredFields.forEach(el=>el.classList.remove("input-error"));
+  requiredFields.forEach(el=>{ if(!el.value.trim() && !firstMissing){ el.classList.add("input-error"); firstMissing=el; }});
+  if(firstMissing){ firstMissing.focus(); return; }
+  updateSummary();
   alert("Booking submitted successfully!");
-};
+});
 </script>
 
-<!-- GOOGLE AUTOCOMPLETE -->
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY_HERE&libraries=places" async defer></script>
+<!-- Google Maps API Loads Autocomplete + Distance Matrix -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCwqL-rHPCbSZpMagWpfSVZzb1bU6M_HTg&libraries=places&callback=initAutocomplete" async defer></script>
+
 <script>
 function initAutocomplete(){
-  const pickupAuto = new google.maps.places.Autocomplete(f("pickup"), { types:["geocode"] });
-  const dropoffAuto = new google.maps.places.Autocomplete(f("dropoff"), { types:["geocode"] });
-
-  pickupAuto.addListener("place_changed",()=>{ const p=pickupAuto.getPlace(); if(p?.formatted_address){f("pickup").value=p.formatted_address; updateSummary();} });
-  dropoffAuto.addListener("place_changed",()=>{ const p=dropoffAuto.getPlace(); if(p?.formatted_address){f("dropoff").value=p.formatted_address; updateSummary();} });
+  new google.maps.places.Autocomplete(f("pickup"),{types:["geocode"]});
+  new google.maps.places.Autocomplete(f("dropoff"),{types:["geocode"]});
 }
-window.initAutocomplete=initAutocomplete;
 </script>
+
 </body>
 </html>
