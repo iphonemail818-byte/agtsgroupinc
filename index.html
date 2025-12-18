@@ -1,3 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AGTS Group Inc — Booking</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 <style>
 :root{
   --bg:#0b0b0b;
@@ -15,7 +25,6 @@ body{
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   margin:0;
-  line-height:1.4;
 }
 
 .container{
@@ -28,7 +37,6 @@ h1{
   text-align:center;
   font-family:'Orbitron',sans-serif;
   font-size:2.6rem;
-  letter-spacing:1px;
   margin-bottom:6px;
 }
 
@@ -41,7 +49,6 @@ h2{
 
 label{
   font-size:.82rem;
-  letter-spacing:.4px;
   margin-bottom:6px;
   display:block;
   color:#cfffff;
@@ -49,24 +56,18 @@ label{
 
 input,select,textarea{
   width:100%;
-  padding:14px 14px;
-  background:rgba(18,18,18,.9);
+  padding:14px;
+  background:#111;
   border:1px solid var(--border);
   border-radius:12px;
   color:var(--text);
   font-size:.95rem;
-  transition:all .25s ease;
-}
-
-input::placeholder,textarea::placeholder{
-  color:#6e6e6e;
 }
 
 input:focus,select:focus,textarea:focus{
   outline:none;
   border-color:var(--accent);
-  box-shadow:0 0 0 2px rgba(0,255,255,.12);
-  background:#111;
+  box-shadow:0 0 0 2px rgba(0,255,255,.15);
 }
 
 .flex-row{
@@ -80,7 +81,7 @@ input:focus,select:focus,textarea:focus{
   display:none;
   opacity:0;
   transform:translateY(8px);
-  transition:opacity .35s ease,transform .35s ease;
+  transition:.35s ease;
 }
 
 .field.show{
@@ -89,62 +90,199 @@ input:focus,select:focus,textarea:focus{
   transform:translateY(0);
 }
 
-/* Missing field glow – elegant, not aggressive */
 .input-error{
   border-color:#ff6b9f !important;
   box-shadow:0 0 0 2px rgba(255,107,159,.25);
 }
 
-/* Trip summary – classic card */
 #tripSummary{
   display:none;
-  margin-top:34px;
-  padding:22px 20px;
+  margin-top:32px;
+  padding:22px;
   border-radius:16px;
-  background:linear-gradient(180deg,#0e0e0e,#090909);
+  background:#0f0f0f;
   border:1px solid var(--border);
 }
 
 #tripSummary div{
-  font-size:.95rem;
   margin-bottom:8px;
-  letter-spacing:.3px;
 }
 
-#tripSummary div:last-child{
-  margin-bottom:0;
-  font-weight:600;
-  font-size:1.05rem;
-}
-
-/* Primary action button */
 button{
   display:none;
-  margin-top:32px;
+  margin-top:28px;
   width:100%;
   padding:15px;
   border-radius:14px;
   border:none;
+  background:linear-gradient(90deg,#0ff,#5fe3ff);
   font-size:1.05rem;
   font-weight:600;
-  letter-spacing:.4px;
-  background:linear-gradient(90deg,#0ff,#5fe3ff);
-  color:#000;
   cursor:pointer;
-  transition:transform .2s ease,opacity .2s ease;
-}
-
-button:hover{
-  transform:translateY(-1px);
-  opacity:.95;
-}
-
-button:active{
-  transform:translateY(0);
 }
 
 @media(max-width:900px){
   .flex-row{flex-direction:column}
-  .container{margin:24px auto}
 }
 </style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>AGTS GROUP INC</h1>
+<h2>www.agtsgroupinc.com</h2>
+
+<div class="flex-row">
+  <div class="field show">
+    <label>Pickup Address</label>
+    <input id="pickup" placeholder="Enter pickup location">
+  </div>
+  <div class="field show">
+    <label>Drop-off Address</label>
+    <input id="dropoff" placeholder="Enter destination">
+  </div>
+</div>
+
+<div class="flex-row">
+  <div class="field" id="dateField">
+    <label>Pickup Date</label>
+    <input id="pickupDate" readonly>
+  </div>
+  <div class="field" id="timeField">
+    <label>Pickup Time</label>
+    <input id="pickupTime" readonly>
+  </div>
+</div>
+
+<div class="flex-row">
+  <div class="field" id="vehicleField">
+    <label>Vehicle</label>
+    <select id="vehicle">
+      <option value="">Select</option>
+      <option>GMC Yukon</option>
+      <option>Chevy Suburban</option>
+      <option>Cadillac Escalade</option>
+    </select>
+  </div>
+  <div class="field" id="passengersField">
+    <label>Passengers</label>
+    <select id="passengers">
+      <option value="">Select</option>
+      <option>1</option><option>2</option><option>3</option>
+      <option>4</option><option>5</option><option>6</option>
+    </select>
+  </div>
+  <div class="field" id="petsField">
+    <label>Pets</label>
+    <select id="pets">
+      <option value="">Select</option>
+      <option>Yes</option>
+      <option>No</option>
+    </select>
+  </div>
+</div>
+
+<div class="flex-row">
+  <div class="field" id="nameField">
+    <label>Full Name</label>
+    <input id="name">
+  </div>
+  <div class="field" id="phoneField">
+    <label>Phone</label>
+    <input id="phone">
+  </div>
+</div>
+
+<div class="flex-row">
+  <div class="field" id="emailField">
+    <label>Email</label>
+    <input id="email">
+  </div>
+  <div class="field" id="referenceField">
+    <label>Reference (Optional)</label>
+    <select id="reference">
+      <option value="">Select</option>
+      <option>Previous Passenger</option>
+      <option>Social Media</option>
+      <option>Friend / Family</option>
+      <option>Website</option>
+    </select>
+  </div>
+</div>
+
+<div class="field" id="notesField">
+  <label>Notes (Optional)</label>
+  <textarea id="notes"></textarea>
+</div>
+
+<div id="tripSummary">
+  <div id="sumPickup"></div>
+  <div id="sumDropoff"></div>
+  <div id="sumDateTime"></div>
+</div>
+
+<button id="payBtn">Book & Pay</button>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+flatpickr("#pickupDate",{minDate:"today"});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+
+const f=id=>document.getElementById(id);
+
+const mandatory=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
+
+f("pickup").oninput=()=>f("dateField").classList.add("show");
+f("dropoff").oninput=()=>f("dateField").classList.add("show");
+f("pickupDate").onchange=()=>f("timeField").classList.add("show");
+f("pickupTime").onchange=()=>{
+  ["vehicleField","passengersField","petsField"].forEach(i=>f(i).classList.add("show"));
+};
+f("pets").onchange=()=>{
+  ["nameField","phoneField","emailField","referenceField","notesField"].forEach(i=>f(i).classList.add("show"));
+};
+
+function updateSummary(){
+  if(mandatory.every(el=>el.value)){
+    f("tripSummary").style.display="block";
+    f("payBtn").style.display="block";
+    f("sumPickup").textContent="Pickup: "+f("pickup").value;
+    f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
+    f("sumDateTime").textContent=f("pickupDate").value+" at "+f("pickupTime").value;
+  }
+}
+
+mandatory.forEach(el=>{
+  el.oninput=updateSummary;
+  el.onchange=updateSummary;
+});
+
+f("payBtn").onclick=()=>{
+  let firstMissing=null;
+  mandatory.forEach(el=>{
+    el.classList.remove("input-error");
+    if(!el.value && !firstMissing){
+      el.classList.add("input-error");
+      firstMissing=el;
+    }
+  });
+  if(firstMissing){firstMissing.focus();return;}
+  alert("Booking submitted successfully!");
+};
+</script>
+
+<script
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places">
+</script>
+
+<script>
+new google.maps.places.Autocomplete(pickup);
+new google.maps.places.Autocomplete(dropoff);
+</script>
+
+</body>
+</html>
