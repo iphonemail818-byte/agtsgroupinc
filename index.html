@@ -1,299 +1,574 @@
-Let’s do based on this code 
-
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>AGTS Group Inc — Booking</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Flatpickr (locked version via CDN) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
 
 <style>
+/* ---------- DESIGN (LOCKED) ---------- */
+:root{
+  --bg: #050608;
+  --panel: #0b0d10;
+  --accent: #00f0ff;
+  --muted: #8b98a0;
+  --card: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+}
+*{box-sizing:border-box}
 body{
-  background:#000;
-  color:#0ff;
-  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
   margin:0;
+  font-family:Inter,Segoe UI,Helvetica,Arial,sans-serif;
+  background:
+    radial-gradient(1200px 400px at 50% -100px, #07131a, transparent),
+    var(--bg);
+  color:#e8fbff;
+  -webkit-font-smoothing:antialiased;
 }
 .container{
-  max-width:900px;
-  margin:40px auto;
-  padding:25px;
+  max-width:960px;
+  margin:48px auto;
+  padding:28px;
 }
-h1,h2{
+.header{
   text-align:center;
-  font-family:'Orbitron',sans-serif;
+  margin-bottom:28px;
 }
-h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
-h2{font-size:1.1em;margin-bottom:30px;text-shadow:0 0 8px #0ff;}
+.header h1{
+  font-family:Orbitron, sans-serif;
+  color:var(--accent);
+  margin:0;
+  font-size:2.6rem;
+  text-shadow:0 0 14px rgba(0,240,255,.35);
+}
+.header p{margin:8px 0 0;color:var(--muted);}
 
-label{display:block;margin-top:8px;font-weight:bold;}
+/* Card */
+.card{
+  background:var(--card);
+  border:1px solid rgba(255,255,255,.03);
+  padding:26px;
+  border-radius:18px;
+  box-shadow: 0 30px 60px rgba(0,0,0,.6);
+}
 
-input, textarea, select{
+/* Form styles */
+label{display:block;margin-top:14px;font-weight:600;color:#cfffff}
+.row{display:flex;gap:16px;margin-top:12px}
+.row > *{flex:1}
+input,select,textarea{
   width:100%;
-  padding:12px 38px 12px 12px; /* space for icon */
-  margin-top:4px;
-  background:#111;
-  border:1px solid #333;
-  border-radius:12px;
-  color:#0ff;
-  font-size:1em;
-  transition:0.3s;
-  position:relative;
-}
-input::placeholder, textarea::placeholder{color:#555;}
-
-.input-error{
-  border:2px solid #0ff;
-  box-shadow:0 0 12px #0ff,0 0 22px #0ff88;
-  animation:pulseGlow 1.5s infinite;
-}
-@keyframes pulseGlow{
-  0%{box-shadow:0 0 8px #0ff;}
-  50%{box-shadow:0 0 22px #0ff;}
-  100%{box-shadow:0 0 8px #0ff;}
-}
-
-.flex-row{
-  display:flex;
-  gap:12px;
-  margin-top:12px;
-}
-.field{
-  flex:1;
-  display:none;
-  opacity:0;
-  transform:translateY(10px);
-  transition:0.4s ease;
-}
-.field.show{
-  display:block;
-  opacity:1;
-  transform:translateY(0);
-}
-
-#tripSummary{
-  display:none;
-  margin-top:18px;
-  padding:18px;
-  border-radius:15px;
-  background:#000;
-  text-align:center;
-}
-#tripSummary div{
-  font-family:'Orbitron',monospace;
-  font-size:1.2em;
-  font-weight:900;
-  text-shadow:0 0 12px #0ff;
-}
-
-button{
-  display:none;
-  width:100%;
-  margin-top:20px;
   padding:14px;
-  font-size:1.15em;
-  font-weight:bold;
-  border:none;
-  border-radius:15px;
-  cursor:pointer;
-  background:linear-gradient(90deg,#0ff,#06b6d4);
-  color:#000;
+  border-radius:12px;
+  background:#0f1417;
+  border:1px solid rgba(255,255,255,.04);
+  color:#eaffff;
+  font-size:1rem;
+  transition:all .22s;
+}
+input::placeholder, textarea::placeholder{color:#6c7b82}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:var(--accent);
+  box-shadow:0 0 0 4px rgba(0,240,255,.08);
+  background:#111418;
 }
 
-/* Current location icon */
-.location-icon{
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  font-size:18px;
+/* Fields reveal */
+.field{display:none;opacity:0;transform:translateY(8px);transition:opacity .28s, transform .28s}
+.field.show{display:block;opacity:1;transform:none}
+
+/* Summary card */
+.summary{
+  margin-top:22px;
+  padding:18px;
+  border-radius:12px;
+  background:linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,0));
+  border:1px solid rgba(255,255,255,.03);
+}
+.summary div{font-family:Orbitron,monospace;margin-bottom:8px;color:#cfffff}
+
+/* Missing field highlight (gentle) */
+.input-error{
+  border-color:#ff6b9f!important;
+  box-shadow:0 0 0 3px rgba(255,107,159,.12);
+}
+
+/* Primary action */
+.button{
+  margin-top:20px;
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  font-weight:700;
+  font-size:1.02rem;
+  background:linear-gradient(90deg,var(--accent),#00bcd4);
+  color:#001015;
   cursor:pointer;
-  color:#0ff;
+  box-shadow:0 12px 30px rgba(0,240,255,.12);
+}
+
+/* small helper */
+.helper{font-size:.9rem;color:var(--muted);margin-top:8px}
+
+@media(max-width:900px){
+  .row{flex-direction:column}
+  .container{padding:18px}
 }
 </style>
 </head>
-
 <body>
-<div class="container">
+  <div class="container">
+    <div class="header">
+      <h1>AGTS GROUP INC</h1>
+      <p>Luxury Chauffeur — Book your ride</p>
+    </div>
 
-<h1>AGTS GROUP INC</h1>
-<h2>www.agtsgroupinc.com</h2>
+    <div class="card" id="card-root">
+      <!-- Pickup / Dropoff -->
+      <label>Pickup Address</label>
+      <div style="position:relative">
+        <input id="pickup" placeholder="Start typing pickup location" autocomplete="street-address" />
+        <button id="pickupCurrentBtn" title="Use current location" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--accent);cursor:pointer;font-size:16px;">📍</button>
+      </div>
 
-<div class="flex-row">
-  <div class="field show" style="position:relative">
-    <label>Pickup Address</label>
-    <input id="pickup" placeholder="Start typing pickup location">
-    <span class="location-icon" id="pickupLocation">&#x1F4CD;</span>
+      <label>Drop-off Address</label>
+      <input id="dropoff" placeholder="Start typing drop-off location" autocomplete="street-address" />
+
+      <!-- date/time -->
+      <div class="row">
+        <div id="dateField" class="field">
+          <label>Pickup Date</label>
+          <input id="pickupDate" readonly />
+        </div>
+        <div id="timeField" class="field">
+          <label>Pickup Time</label>
+          <input id="pickupTime" readonly />
+        </div>
+      </div>
+
+      <!-- vehicle / pax / pets -->
+      <div class="row">
+        <div id="vehicleField" class="field">
+          <label>Vehicle</label>
+          <select id="vehicle">
+            <option value="">Select</option>
+            <option value="1.00">GMC Yukon</option>
+            <option value="1.15">Chevy Suburban</option>
+            <option value="1.25">Cadillac Escalade</option>
+          </select>
+        </div>
+        <div id="passengersField" class="field">
+          <label>Passengers</label>
+          <select id="passengers"><option value="">Select</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+        </div>
+        <div id="petsField" class="field">
+          <label>Pets</label>
+          <select id="pets"><option value="">Select</option><option>Yes</option><option>No</option></select>
+        </div>
+      </div>
+
+      <!-- personal -->
+      <div class="row">
+        <div id="nameField" class="field">
+          <label>Full Name</label>
+          <input id="name" />
+        </div>
+        <div id="phoneField" class="field">
+          <label>Phone</label>
+          <input id="phone" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div id="emailField" class="field">
+          <label>Email</label>
+          <input id="email" />
+        </div>
+        <div id="referenceField" class="field">
+          <label>Reference (Optional)</label>
+          <select id="reference">
+            <option value="">Select</option>
+            <option>Previous Passenger</option>
+            <option>Social Media</option>
+            <option>Friend / Family</option>
+            <option>Website</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="notesField" class="field">
+        <label>Notes (Optional)</label>
+        <textarea id="notes"></textarea>
+      </div>
+
+      <!-- summary -->
+      <div id="summaryCard" class="summary" style="display:none">
+        <div id="sumRoute"></div>
+        <div id="sumDateTime"></div>
+        <div id="sumVehicle"></div>
+        <div id="sumDuration"></div>
+        <div id="sumPrice"></div>
+        <div id="sumReference" style="opacity:.9"></div>
+        <div id="sumNotes" style="opacity:.9"></div>
+      </div>
+
+      <button id="bookBtn" class="button" style="display:none">Book & Pay</button>
+      <div class="helper" id="helperText">All mandatory fields must be filled. Reference & Notes optional.</div>
+    </div>
   </div>
-  <div class="field show">
-    <label>Drop-off Address</label>
-    <input id="dropoff" placeholder="Start typing drop-off location">
-  </div>
-</div>
 
-<div class="flex-row">
-  <div class="field" id="dateField">
-    <label>Pickup Date</label>
-    <input id="pickupDate" readonly>
-  </div>
-  <div class="field" id="timeField">
-    <label>Pickup Time</label>
-    <input id="pickupTime" readonly>
-  </div>
-</div>
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 
-<div class="flex-row">
-  <div class="field" id="vehicleField">
-    <label>Vehicle</label>
-    <select id="vehicle">
-      <option value="">Select</option>
-      <option>GMC Yukon</option>
-      <option>Chevy Suburban</option>
-      <option>Cadillac Escalade</option>
-    </select>
-  </div>
-  <div class="field" id="passengersField">
-    <label>Passengers</label>
-    <select id="passengers">
-      <option value="">Select</option>
-      <option>1</option><option>2</option><option>3</option>
-      <option>4</option><option>5</option><option>6</option>
-    </select>
-  </div>
-  <div class="field" id="petsField">
-    <label>Pets</label>
-    <select id="pets">
-      <option value="">Select</option>
-      <option>Yes</option>
-      <option>No</option>
-    </select>
-  </div>
-</div>
+  <script>
+  /************************************************************************
+   * UTILITIES & LOCKED CONFIG
+   * - Do not change unless you know consequences
+   ************************************************************************/
+  const f = id => document.getElementById(id);
 
-<div class="flex-row">
-  <div class="field" id="nameField">
-    <label>Full Name</label>
-    <input id="name">
-  </div>
-  <div class="field" id="phoneField">
-    <label>Phone</label>
-    <input id="phone">
-  </div>
-</div>
+  // Pricing rules (one place to tweak)
+  const PRICING = {
+    baseFare: 25.00,          // flat base
+    perMile: 4.00,            // $ per mile
+    perMinute: 0.75,          // $ per minute
+    discountFactor: 0.80,     // 20% cheaper than baseline
+    minFare: 40.00            // minimum total
+  };
 
-<div class="flex-row">
-  <div class="field" id="emailField">
-    <label>Email</label>
-    <input id="email">
-  </div>
-  <div class="field" id="referenceField">
-    <label>Reference (Optional)</label>
-    <select id="reference">
-      <option value="">Select</option>
-      <option>Previous Passenger</option>
-      <option>Social Media</option>
-      <option>Friend / Family</option>
-      <option>Website</option>
-    </select>
-  </div>
-</div>
+  // Simple debounce helper to avoid spamming Distance Matrix while typing
+  function debounce(fn, wait=400){
+    let t;
+    return (...args)=>{
+      clearTimeout(t);
+      t = setTimeout(()=>fn(...args), wait);
+    };
+  }
 
-<div class="field" id="notesField">
-  <label>Notes (Optional)</label>
-  <textarea id="notes"></textarea>
-</div>
+  /************************************************************************
+   * ELEMENT REFERENCES (LOCKED)
+   ************************************************************************/
+  const elems = {
+    pickup: f('pickup'),
+    dropoff: f('dropoff'),
+    pickupDate: f('pickupDate'),
+    pickupTime: f('pickupTime'),
+    dateField: f('dateField'),
+    timeField: f('timeField'),
+    vehicleField: f('vehicleField'),
+    passengersField: f('passengersField'),
+    petsField: f('petsField'),
+    nameField: f('nameField'),
+    phoneField: f('phoneField'),
+    emailField: f('emailField'),
+    notesField: f('notesField'),
+    referenceField: f('referenceField'),
+    bookBtn: f('bookBtn'),
+    summaryCard: f('summaryCard'),
+    sumRoute: f('sumRoute'),
+    sumDateTime: f('sumDateTime'),
+    sumVehicle: f('sumVehicle'),
+    sumDuration: f('sumDuration'),
+    sumPrice: f('sumPrice'),
+    sumReference: f('sumReference'),
+    sumNotes: f('sumNotes'),
+    pickupCurrentBtn: f('pickupCurrentBtn')
+  };
 
-<div id="tripSummary">
-  <div id="sumPickup"></div>
-  <div id="sumDropoff"></div>
-  <div id="sumDateTime"></div>
-  <div id="sumDuration"></div>
-  <div id="sumPrice"></div>
-  <div id="sumReference"></div>
-  <div id="sumNotes"></div>
-</div>
+  // Arrays of required & optional fields (DOM elements)
+  const requiredFields = [
+    elems.pickup, elems.dropoff,
+    elems.pickupDate, elems.pickupTime,
+    f('vehicle'), f('passengers'), f('pets'),
+    f('name'), f('phone'), f('email')
+  ];
+  const optionalFields = [ f('reference'), f('notes') ];
 
-<button id="payBtn">Book & Pay</button>
+  /************************************************************************
+   * FLATPICKR INIT (LOCKED)
+   ************************************************************************/
+  flatpickr("#pickupDate", { minDate: "today" });
+  flatpickr("#pickupTime", { enableTime: true, noCalendar: true, dateFormat: "h:i K" });
 
-</div>
+  /************************************************************************
+   * AUTOCOMPLETE & GOOGLE API (safe init)
+   * - initAutocomplete is used as a callback by the Google script or
+   *   can be called later if API loads after page load.
+   ************************************************************************/
+  let googleLoaded = false;
+  let placesInitialized = false;
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-flatpickr("#pickupDate",{minDate:"today"});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+  function initAutocomplete() {
+    if (!window.google || !google.maps) {
+      console.warn("Google API not available.");
+      googleLoaded = false;
+      return;
+    }
+    googleLoaded = true;
+    try {
+      // Initialize Places Autocomplete
+      const pickupAC = new google.maps.places.Autocomplete(elems.pickup, { types: ["geocode"] });
+      const dropoffAC = new google.maps.places.Autocomplete(elems.dropoff, { types: ["geocode"] });
 
-const f=id=>document.getElementById(id);
-const fields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
-
-// Show fields progressively
-f("pickup").addEventListener("input",()=>f("dateField").classList.add("show"));
-f("dropoff").addEventListener("input",()=>f("dateField").classList.add("show"));
-f("pickupDate").addEventListener("change",()=>f("timeField").classList.add("show"));
-f("pickupTime").addEventListener("change",()=>{
-  ["vehicleField","passengersField","petsField"].forEach(id=>f(id).classList.add("show"));
-});
-f("pets").addEventListener("change",()=>{
-  ["nameField","phoneField","emailField","referenceField","notesField"].forEach(id=>f(id).classList.add("show"));
-  f("payBtn").style.display="block";
-});
-
-// Update summary dynamically
-function updateSummary(){
-  f("tripSummary").style.display="block";
-  f("sumPickup").textContent="Pickup: "+f("pickup").value;
-  f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
-  f("sumDateTime").textContent=`${f("pickupDate").value} at ${f("pickupTime").value}`;
-  f("sumDuration").textContent="Duration: XX min";
-  f("sumPrice").textContent="Estimated: $XX.XX";
-  f("sumReference").textContent = f("reference").value ? "Reference: "+f("reference").value : "";
-  f("sumNotes").textContent = f("notes").value ? "Notes: "+f("notes").value : "";
-}
-
-[...fields, f("reference"), f("notes")].forEach(el=>{
-  el.addEventListener("input",updateSummary);
-  el.addEventListener("change",updateSummary);
-});
-
-// Validation on submit
-f("payBtn").onclick=()=>{
-  let bad=null;
-  fields.forEach(el=>{
-    el.classList.remove("input-error");
-    if(!el.value && !bad){el.classList.add("input-error"); bad=el;}
-  });
-  if(bad){bad.focus(); return;}
-  alert("Booking submitted successfully!");
-};
-
-// Current location functionality
-f("pickupLocation").onclick=()=>{
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(pos=>{
-      const latlng = new google.maps.LatLng(pos.coords.latitude,pos.coords.longitude);
-      const geocoder = new google.maps.Geocoder();
-      geocoder.geocode({'location':latlng}, (results,status)=>{
-        if(status==='OK' && results[0]) f("pickup").value=results[0].formatted_address;
-        f("dateField").classList.add("show");
-        f("pickup").focus();
-        updateSummary();
+      // When places are selected, trigger progressive reveal and preview calc
+      pickupAC.addListener('place_changed', () => {
+        const p = pickupAC.getPlace();
+        if (p && p.formatted_address) elems.pickup.value = p.formatted_address;
+        showDateIfBothAddresses();
+        debouncedPreview();
       });
-    }, err=>{alert("Unable to get your location.");});
-  } else alert("Geolocation not supported.");
-};
-</script>
+      dropoffAC.addListener('place_changed', () => {
+        const p = dropoffAC.getPlace();
+        if (p && p.formatted_address) elems.dropoff.value = p.formatted_address;
+        showDateIfBothAddresses();
+        debouncedPreview();
+      });
 
-<!-- Google APIs -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
-<script>
-function initAutocomplete(){
-  new google.maps.places.Autocomplete(f("pickup"),{types:["geocode"]});
-  new google.maps.places.Autocomplete(f("dropoff"),{types:["geocode"]});
-}
-window.onload=initAutocomplete;
-</script>
+      placesInitialized = true;
+    } catch (err) {
+      console.error("initAutocomplete error:", err);
+      placesInitialized = false;
+    }
+  }
 
+  /************************************************************************
+   * Progressive reveal logic (LOCKED)
+   ************************************************************************/
+  function show(elId){ const e = f(elId); if(e) e.classList.add('show'); }
+  function showDateIfBothAddresses(){
+    if (elems.pickup.value.trim() && elems.dropoff.value.trim()) show('dateField');
+  }
+
+  elems.pickup.addEventListener('input', ()=>{
+    showDateIfBothAddresses();
+    debouncedPreview();
+  });
+  elems.dropoff.addEventListener('input', ()=>{ showDateIfBothAddresses(); debouncedPreview(); });
+
+  elems.pickupDate.addEventListener('change', ()=>{ show('timeField'); debouncedPreview(); });
+  elems.pickupTime.addEventListener('change', ()=>{ ['vehicleField','passengersField','petsField'].forEach(show); debouncedPreview(); });
+  f('pets').addEventListener('change', ()=>{ ['nameField','phoneField','emailField','referenceField','notesField'].forEach(show); elems.bookBtn.style.display = 'block'; debouncedPreview(); });
+
+  // Remove input-error class when user types
+  [...requiredFields, ...optionalFields].forEach(el=>{
+    el.addEventListener('input', ()=>el.classList.remove('input-error'));
+  });
+
+  /************************************************************************
+   * Distance + Pricing (LOCKED)
+   * - calculateDistanceAndPrice: returns {miles, minutes, price}
+   ************************************************************************/
+  function milesFromMeters(m) { return m / 1609.344; }
+  function minutesFromSeconds(s) { return s / 60; }
+
+  function computePrice(miles, minutes, vehicleMultiplier = 1.0){
+    const { baseFare, perMile, perMinute, discountFactor, minFare } = PRICING;
+    let price = baseFare + (miles * perMile) + (minutes * perMinute);
+    price = price * vehicleMultiplier * (1.0);     // vehicle multiplier applied here
+    price = price * discountFactor;                // 20% cheaper (if discountFactor is 0.8)
+    if (price < minFare) price = minFare;
+    return Number(price.toFixed(2));
+  }
+
+  // Wrapper to call Google Distance Matrix. Returns Promise.
+  function getDistanceMatrix(from, to){
+    return new Promise((resolve, reject)=>{
+      if(!window.google || !google.maps || !google.maps.DistanceMatrixService){
+        return reject(new Error('Google Maps API not loaded'));
+      }
+      const service = new google.maps.DistanceMatrixService();
+      service.getDistanceMatrix({
+        origins: [from],
+        destinations: [to],
+        travelMode: google.maps.TravelMode.DRIVING,
+        unitSystem: google.maps.UnitSystem.IMPERIAL,
+        avoidFerries: false,
+        avoidTolls: false
+      }, (response, status) => {
+        if (status !== 'OK') return reject(new Error('DistanceMatrix status: '+status));
+        try {
+          const element = response.rows[0].elements[0];
+          if (!element || element.status !== 'OK') return reject(new Error('Route not available'));
+          const meters = element.distance.value;
+          const seconds = element.duration.value;
+          resolve({ meters, seconds, distanceText: element.distance.text, durationText: element.duration.text });
+        } catch (err){ reject(err); }
+      });
+    });
+  }
+
+  /************************************************************************
+   * Preview & Summary Rendering (LOCKED)
+   ************************************************************************/
+  async function calculateAndRenderPreview(){
+    // show summary skeleton only when we have addresses and date/time
+    elems.summaryCard.style.display = 'none';
+    if (!elems.pickup.value.trim() || !elems.dropoff.value.trim() || !elems.pickupDate.value || !elems.pickupTime.value) {
+      // Not enough details yet → hide price/duration
+      return;
+    }
+
+    // show a loading hint while waiting
+    elems.sumRoute.textContent = `Route: ${elems.pickup.value} → ${elems.dropoff.value}`;
+    elems.sumDateTime.textContent = `${elems.pickupDate.value} at ${elems.pickupTime.value}`;
+    elems.sumVehicle.textContent = `Vehicle: ${f('vehicle').value ? f('vehicle').options[f('vehicle').selectedIndex].text : '—'}`;
+    elems.sumDuration.textContent = `Calculating duration...`;
+    elems.sumPrice.textContent = `Calculating price...`;
+    elems.summaryCard.style.display = 'block';
+
+    try {
+      const dm = await getDistanceMatrix(elems.pickup.value, elems.dropoff.value);
+      const miles = milesFromMeters(dm.meters);
+      const minutes = minutesFromSeconds(dm.seconds);
+      const vehicleMultiplier = parseFloat(f('vehicle').value) || 1.0;
+      const price = computePrice(miles, minutes, vehicleMultiplier);
+
+      elems.sumDuration.textContent = `Estimated Duration: ${dm.durationText}`;
+      elems.sumPrice.textContent = `Estimated Price: $${price.toFixed(2)}`;
+      // optional fields in summary
+      elems.sumReference.textContent = f('reference').value ? `Reference: ${f('reference').value}` : '';
+      elems.sumNotes.textContent = f('notes').value ? `Notes: ${f('notes').value}` : '';
+    } catch (err) {
+      elems.sumDuration.textContent = 'Unable to calculate travel time';
+      elems.sumPrice.textContent = 'Unable to estimate price';
+      console.warn('DistanceMatrix error:', err);
+    }
+  }
+
+  const debouncedPreview = debounce(calculateAndRenderPreview, 500);
+
+  /************************************************************************
+   * Submit (Book & Pay) — uses Distance Matrix to get final values
+   ************************************************************************/
+  async function onBook(){
+    // Validate required fields
+    let firstMissing = null;
+    requiredFields.forEach(el=>{
+      el.classList.remove('input-error');
+      if(!el.value && !firstMissing) firstMissing = el;
+    });
+    if(firstMissing){
+      firstMissing.classList.add('input-error');
+      firstMissing.focus();
+      return;
+    }
+
+    // Block UI: show loading in button (simple)
+    const btn = elems.bookBtn;
+    const prevText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Calculating...';
+
+    try {
+      const dm = await getDistanceMatrix(elems.pickup.value, elems.dropoff.value);
+      const miles = milesFromMeters(dm.meters);
+      const minutes = minutesFromSeconds(dm.seconds);
+      const vehicleMultiplier = parseFloat(f('vehicle').value) || 1.0;
+      const price = computePrice(miles, minutes, vehicleMultiplier);
+
+      // Render final summary
+      elems.sumRoute.textContent = `${elems.pickup.value} → ${elems.dropoff.value}`;
+      elems.sumDateTime.textContent = `${elems.pickupDate.value} at ${elems.pickupTime.value}`;
+      elems.sumVehicle.textContent = `Vehicle: ${f('vehicle').options[f('vehicle').selectedIndex].text} | Passengers: ${f('passengers').value} | Pets: ${f('pets').value}`;
+      elems.sumDuration.textContent = `Estimated Duration: ${dm.durationText}`;
+      elems.sumPrice.textContent = `Estimated Price: $${price.toFixed(2)}`;
+      elems.sumReference.textContent = f('reference').value ? `Reference: ${f('reference').value}` : '';
+      elems.sumNotes.textContent = f('notes').value ? `Notes: ${f('notes').value}` : '';
+      elems.summaryCard.style.display = 'block';
+
+      // Final action: here we only show success alert (add payment integration later)
+      alert(`Booking submitted successfully!\nEstimated: $${price.toFixed(2)} • ${dm.durationText}`);
+    } catch (err) {
+      alert('Unable to calculate route or price. Please verify addresses and try again.');
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = prevText;
+    }
+  }
+
+  elems.bookBtn.addEventListener('click', onBook);
+
+  /************************************************************************
+   * Current location button (LOCKED)
+   ************************************************************************/
+  elems.pickupCurrentBtn.addEventListener('click', ()=>{
+    if (!navigator.geolocation) { alert('Geolocation not supported'); return; }
+    elems.pickupCurrentBtn.disabled = true;
+    elems.pickupCurrentBtn.textContent = '…';
+    navigator.geolocation.getCurrentPosition(async (pos)=>{
+      try {
+        if (!window.google || !google.maps || !google.maps.Geocoder) {
+          alert('Geolocation OK but Google Geocoder not available yet. Paste address or try again.');
+          return;
+        }
+        const latlng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: latlng }, (results, status)=>{
+          if (status === 'OK' && results && results[0]) {
+            elems.pickup.value = results[0].formatted_address;
+            showDateIfBothAddresses();
+            debouncedPreview();
+          } else {
+            alert('Unable to find address for your location.');
+          }
+        });
+      } catch (err) {
+        console.error(err);
+        alert('Error using geolocation.');
+      } finally {
+        elems.pickupCurrentBtn.disabled = false;
+        elems.pickupCurrentBtn.textContent = '📍';
+      }
+    }, (err)=>{
+      elems.pickupCurrentBtn.disabled = false;
+      elems.pickupCurrentBtn.textContent = '📍';
+      alert('Location access denied or unavailable.');
+    }, { enableHighAccuracy: false, timeout: 8000 });
+  });
+
+  /************************************************************************
+   * Safe Google loader: If API already loaded by callback, initAutocomplete will
+   * run automatically. Otherwise, we will call it after the script loads.
+   ************************************************************************/
+  function safeInitGoogle(){
+    try { initAutocomplete(); } catch(e){ /* initAutocomplete defined below by Google callback */ }
+  }
+
+  // If google script is present when this runs, initialize immediately
+  if(window.google && window.google.maps){ initAutocomplete(); }
+
+  // Expose initAutocomplete as global callback for Google script
+  window.initAutocomplete = function(){ initAutocomplete(); };
+
+  // Also attempt a safe init after a short delay in case script loads late
+  setTimeout(()=>{ if(!googleLoaded && window.google && window.google.maps) initAutocomplete(); }, 1500);
+
+  /************************************************************************
+   * Small UX: when required fields change, show book button & run preview
+   ************************************************************************/
+  [...requiredFields].forEach(el=>{
+    el.addEventListener('input', ()=>{ elems.bookBtn.style.display = 'block'; debouncedPreview(); });
+    el.addEventListener('change', ()=>{ elems.bookBtn.style.display = 'block'; debouncedPreview(); });
+  });
+
+  // Final safety: expose a global health check function (dev)
+  window.agts_health = ()=>({
+    googleLoaded,
+    placesInitialized,
+    requiredCount: requiredFields.length
+  });
+
+  </script>
+
+  <!-- GOOGLE API (LOCKED) - callback name must match window.initAutocomplete above -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places&callback=initAutocomplete" async defer></script>
 </body>
 </html>
