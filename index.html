@@ -5,224 +5,302 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AGTS Group Inc — Booking</title>
 
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-:root{
-  --cyan:#00f0ff;
-  --cyan-soft:#7ffaff;
-  --bg:#050608;
-  --panel:#0b0d10;
-  --border:#1f2933;
-}
-
-*{box-sizing:border-box}
-
 body{
+  background:#000;
+  color:#0ff;
+  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
   margin:0;
-  background:
-    radial-gradient(1200px 400px at 50% -100px, #0f1c22, transparent),
-    var(--bg);
-  color:#e9fbff;
-  font-family:Inter,Segoe UI,Tahoma,sans-serif;
 }
-
-/* Layout */
 .container{
-  max-width:960px;
-  margin:50px auto;
-  padding:30px;
+  max-width:900px;
+  margin:40px auto;
+  padding:25px;
 }
-
-/* Header */
-.header{
+h1,h2{
   text-align:center;
-  margin-bottom:40px;
+  font-family:'Orbitron',sans-serif;
 }
-.header h1{
-  font-family:Orbitron,sans-serif;
-  font-size:2.8em;
-  margin:0;
-  letter-spacing:2px;
-  color:var(--cyan);
-  text-shadow:0 0 18px rgba(0,240,255,.6);
-}
-.header p{
-  margin-top:10px;
-  opacity:.85;
-  font-size:1.05em;
-}
+h1{font-size:2.8em;text-shadow:0 0 15px #0ff;}
+h2{font-size:1.1em;margin-bottom:30px;text-shadow:0 0 8px #0ff;}
 
-/* Card */
-.card{
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)),
-    var(--panel);
-  border:1px solid var(--border);
-  border-radius:22px;
-  padding:30px;
-  box-shadow:
-    0 30px 60px rgba(0,0,0,.7),
-    inset 0 0 0 1px rgba(255,255,255,.02);
-}
+label{display:block;margin-top:8px;font-weight:bold;}
 
-/* Form */
-label{
-  display:block;
-  margin-top:18px;
-  margin-bottom:6px;
-  font-size:.9em;
-  letter-spacing:.4px;
-  opacity:.9;
-}
-
-input,select,textarea{
+input, textarea, select{
   width:100%;
-  padding:15px 16px;
-  background:#0f1419;
-  border:1px solid #1e2933;
-  border-radius:14px;
-  color:#eaffff;
+  padding:12px 36px 12px 12px;
+  margin-top:4px;
+  background:#111;
+  border:1px solid #333;
+  border-radius:12px;
+  color:#0ff;
   font-size:1em;
-  outline:none;
-  transition:.25s ease;
+  transition:0.3s;
+}
+input::placeholder, textarea::placeholder{color:#555;}
+
+.input-error{
+  border:2px solid #0ff;
+  box-shadow:0 0 12px #0ff,0 0 22px #0ff88;
+  animation:pulseGlow 1.5s infinite;
+}
+@keyframes pulseGlow{
+  0%{box-shadow:0 0 8px #0ff;}
+  50%{box-shadow:0 0 22px #0ff;}
+  100%{box-shadow:0 0 8px #0ff;}
 }
 
-input::placeholder,textarea::placeholder{color:#6b7a88}
-
-input:focus,select:focus,textarea:focus{
-  border-color:var(--cyan);
-  box-shadow:0 0 0 2px rgba(0,240,255,.15);
-}
-
-textarea{resize:none;min-height:90px}
-
-/* Grid */
-.row{
+.flex-row{
   display:flex;
-  gap:16px;
+  gap:12px;
+  margin-top:12px;
 }
-.row > div{flex:1}
+.field{
+  flex:1;
+  display:none;
+  opacity:0;
+  transform:translateY(10px);
+  transition:0.4s ease;
+}
+.field.show{
+  display:block;
+  opacity:1;
+  transform:translateY(0);
+}
 
-/* Button */
-button{
-  margin-top:34px;
-  width:100%;
+#tripSummary{
+  display:none;
+  margin-top:18px;
   padding:18px;
-  font-size:1.15em;
-  font-weight:600;
-  letter-spacing:.5px;
-  border:none;
-  border-radius:18px;
-  background:
-    linear-gradient(90deg,#00f0ff,#00bcd4);
-  color:#001014;
-  cursor:pointer;
-  box-shadow:
-    0 10px 30px rgba(0,240,255,.35);
-  transition:.25s ease;
-}
-button:hover{
-  transform:translateY(-1px);
-  box-shadow:0 14px 36px rgba(0,240,255,.45);
-}
-
-/* Footer hint */
-.footer-hint{
+  border-radius:15px;
+  background:#000;
   text-align:center;
-  margin-top:22px;
-  font-size:.85em;
-  opacity:.7;
+  border:1px solid #0ff;
+}
+#tripSummary div{
+  font-family:'Orbitron',monospace;
+  font-size:1.2em;
+  font-weight:900;
+  text-shadow:0 0 12px #0ff;
 }
 
-/* Responsive */
-@media(max-width:900px){
-  .row{flex-direction:column}
-  .container{margin:20px auto}
+button{
+  display:none;
+  width:100%;
+  margin-top:20px;
+  padding:14px;
+  font-size:1.15em;
+  font-weight:bold;
+  border:none;
+  border-radius:15px;
+  cursor:pointer;
+  background:linear-gradient(90deg,#0ff,#06b6d4);
+  color:#000;
 }
+
+.current-location{
+  position:relative;
+}
+.current-location-icon{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:20px;
+  height:20px;
+  cursor:pointer;
+  opacity:0.6;
+}
+.current-location-icon:hover{opacity:1;}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-  <div class="header">
-    <h1>AGTS GROUP INC</h1>
-    <p>Premium Chauffeur · Private Transportation · Executive Travel</p>
-  </div>
+<h1>AGTS GROUP INC</h1>
+<h2>www.agtsgroupinc.com</h2>
 
-  <div class="card">
-
+<div class="flex-row">
+  <div class="field show current-location">
     <label>Pickup Address</label>
-    <input id="pickup" placeholder="Enter pickup location">
-
+    <input id="pickup" placeholder="Start typing pickup location">
+    <img src="https://img.icons8.com/ios-filled/50/0ff/marker.png" class="current-location-icon" id="pickupLocationIcon" title="Use current location"/>
+  </div>
+  <div class="field show">
     <label>Drop-off Address</label>
-    <input id="dropoff" placeholder="Enter destination">
-
-    <div class="row">
-      <div>
-        <label>Pickup Date</label>
-        <input type="date">
-      </div>
-      <div>
-        <label>Pickup Time</label>
-        <input type="time">
-      </div>
-    </div>
-
-    <div class="row">
-      <div>
-        <label>Vehicle</label>
-        <select>
-          <option>GMC Yukon</option>
-          <option>Cadillac Escalade</option>
-          <option>Chevy Suburban</option>
-        </select>
-      </div>
-      <div>
-        <label>Passengers</label>
-        <select>
-          <option>1</option><option>2</option><option>3</option>
-          <option>4</option><option>5</option><option>6</option>
-        </select>
-      </div>
-    </div>
-
-    <label>Full Name</label>
-    <input placeholder="Your full name">
-
-    <label>Phone</label>
-    <input placeholder="Phone number">
-
-    <label>Email</label>
-    <input placeholder="Email address">
-
-    <label>Reference (optional)</label>
-    <input placeholder="How did you hear about us?">
-
-    <label>Notes (optional)</label>
-    <textarea placeholder="Special requests, luggage, flight info, etc."></textarea>
-
-    <button>Book & Pay</button>
-
-    <div class="footer-hint">
-      Secure booking · Professional chauffeurs · Luxury fleet
-    </div>
-
+    <input id="dropoff" placeholder="Start typing drop-off location">
   </div>
 </div>
 
-<!-- Google Places -->
+<div class="flex-row">
+  <div class="field" id="dateField">
+    <label>Pickup Date</label>
+    <input id="pickupDate" readonly>
+  </div>
+  <div class="field" id="timeField">
+    <label>Pickup Time</label>
+    <input id="pickupTime" readonly>
+  </div>
+</div>
+
+<div class="flex-row">
+  <div class="field" id="vehicleField">
+    <label>Vehicle</label>
+    <select id="vehicle">
+      <option value="">Select</option>
+      <option>GMC Yukon</option>
+      <option>Chevy Suburban</option>
+      <option>Cadillac Escalade</option>
+    </select>
+  </div>
+  <div class="field" id="passengersField">
+    <label>Passengers</label>
+    <select id="passengers">
+      <option value="">Select</option>
+      <option>1</option><option>2</option><option>3</option>
+      <option>4</option><option>5</option><option>6</option>
+    </select>
+  </div>
+  <div class="field" id="petsField">
+    <label>Pets</label>
+    <select id="pets">
+      <option value="">Select</option>
+      <option>Yes</option>
+      <option>No</option>
+    </select>
+  </div>
+</div>
+
+<div class="flex-row">
+  <div class="field" id="nameField">
+    <label>Full Name</label>
+    <input id="name">
+  </div>
+  <div class="field" id="phoneField">
+    <label>Phone</label>
+    <input id="phone">
+  </div>
+</div>
+
+<div class="flex-row">
+  <div class="field" id="emailField">
+    <label>Email</label>
+    <input id="email">
+  </div>
+  <div class="field" id="referenceField">
+    <label>Reference (optional)</label>
+    <select id="reference">
+      <option value="">Select</option>
+      <option>Previous Passenger</option>
+      <option>Social Media</option>
+      <option>Friend / Family</option>
+      <option>Website</option>
+    </select>
+  </div>
+</div>
+
+<div class="field" id="notesField">
+  <label>Notes (optional)</label>
+  <textarea id="notes" placeholder="Any special requests"></textarea>
+</div>
+
+<div id="tripSummary">
+  <div id="sumPickup"></div>
+  <div id="sumDropoff"></div>
+  <div id="sumDateTime"></div>
+  <div id="sumDuration"></div>
+  <div id="sumPrice"></div>
+</div>
+
+<button id="payBtn">Book & Pay</button>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
+// Flatpickr
+flatpickr("#pickupDate",{minDate:"today"});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+
+const f=id=>document.getElementById(id);
+
+// Fields
+const fieldsRequired = ["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
+const optionalFields = ["reference","notes"].map(f);
+
+// Progressive reveal
+[f("pickup"), f("dropoff")].forEach(el=>{
+  el.addEventListener("input",()=>f("dateField").classList.add("show"));
+});
+f("pickupDate").addEventListener("change",()=>f("timeField").classList.add("show"));
+f("pickupTime").addEventListener("change",()=>{
+  ["vehicleField","passengersField","petsField"].forEach(id=>f(id).classList.add("show"));
+});
+f("pets").addEventListener("change",()=>{
+  ["nameField","phoneField","emailField","referenceField","notesField"].forEach(id=>f(id).classList.add("show"));
+  f("payBtn").style.display="block";
+});
+
+// Current location
+f("pickupLocationIcon").addEventListener("click",()=>{
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({location:{lat,lng}},(results,status)=>{
+        if(status==="OK" && results[0]) f("pickup").value=results[0].formatted_address;
+      });
+    },()=>alert("Location access denied"));
+  }else{alert("Geolocation not supported");}
+});
+
+// Summary
+function updateSummary(){
+  if(fieldsRequired.every(el=>el.value)){
+    f("tripSummary").style.display="block";
+    f("sumPickup").textContent="Pickup: "+f("pickup").value;
+    f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
+    f("sumDateTime").textContent=`${f("pickupDate").value} at ${f("pickupTime").value}`;
+    f("sumDuration").textContent="Duration: XX min"; // placeholder
+    f("sumPrice").textContent="Estimated: $XX.XX"; // placeholder
+  }
+}
+
+[...fieldsRequired,...optionalFields].forEach(el=>{
+  el.addEventListener("input",updateSummary);
+  el.addEventListener("change",updateSummary);
+});
+
+// Booking validation
+f("payBtn").onclick=()=>{
+  let bad=null;
+  fieldsRequired.forEach(el=>{
+    el.classList.remove("input-error");
+    if(!el.value && !bad){el.classList.add("input-error"); bad=el;}
+  });
+  if(bad){bad.focus(); return;}
+  updateSummary();
+  alert("Booking submitted successfully!");
+};
+
+// Google Autocomplete
 function initAutocomplete(){
-  if(!window.google) return;
-  new google.maps.places.Autocomplete(
-    document.getElementById("pickup")
-  );
-  new google.maps.places.Autocomplete(
-    document.getElementById("dropoff")
-  );
+  const pickupAuto=new google.maps.places.Autocomplete(f("pickup"),{types:["geocode"]});
+  const dropoffAuto=new google.maps.places.Autocomplete(f("dropoff"),{types:["geocode"]});
+  pickupAuto.addListener("place_changed",()=>{
+    const p=pickupAuto.getPlace();
+    if(p?.formatted_address) f("pickup").value=p.formatted_address;
+  });
+  dropoffAuto.addListener("place_changed",()=>{
+    const p=dropoffAuto.getPlace();
+    if(p?.formatted_address) f("dropoff").value=p.formatted_address;
+  });
 }
 </script>
 
