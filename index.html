@@ -9,112 +9,47 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-/* ---------- Base Styles ---------- */
-body {
-  background: #010101;
-  color: #0ff;
-  font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
-  margin: 0;
-}
-.container {
-  max-width: 920px;
-  margin: 40px auto;
-  padding: 25px;
-}
-h1, h2 {
-  text-align: center;
-  font-family: 'Orbitron', sans-serif;
-  margin: 0 0 10px;
-}
-h1 { font-size: 2.8em; text-shadow: 0 0 15px #0ff; }
-h2 { font-size: 1.1em; margin-bottom: 30px; text-shadow: 0 0 8px #0ff; }
+body{background:#000;color:#0ff;font-family:Segoe UI,Tahoma,Verdana,sans-serif;margin:0}
+.container{max-width:900px;margin:40px auto;padding:25px}
+h1,h2{text-align:center;font-family:'Orbitron',sans-serif}
+h1{font-size:2.6em;text-shadow:0 0 15px #0ff}
+h2{font-size:1.05em;margin-bottom:30px}
 
-/* ---------- Inputs & Selects ---------- */
-label {
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
-}
-input, select, textarea {
-  width: 100%;
-  padding: 12px;
-  margin-top: 4px;
-  border-radius: 12px;
-  border: 1px solid #333;
-  background: #111;
-  color: #0ff;
-  font-size: 1em;
-  transition: all 0.3s;
-}
-input::placeholder, textarea::placeholder { color: #555; }
-input:focus, select:focus, textarea:focus { border-color: #0ff; box-shadow: 0 0 12px #0ff; outline: none; }
+label{font-weight:bold;margin-top:6px;display:block}
 
-/* ---------- Optional Glow for Errors ---------- */
-.input-error {
-  border: 2px solid #ff3b81 !important;
-  box-shadow: 0 0 14px #ff3b81, 0 0 30px #ff3b81aa;
-  animation: pulseGlow 1.5s infinite;
-}
-@keyframes pulseGlow { 0%,100%{box-shadow:0 0 8px #ff3b81;} 50%{box-shadow:0 0 22px #ff3b81;} }
-
-/* ---------- Layout ---------- */
-.flex-row {
-  display: flex;
-  gap: 12px;
-  margin-top: 12px;
-}
-.field {
-  flex: 1;
-  display: none;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.4s ease;
-}
-.field.show {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
+input,select,textarea{
+  width:100%;padding:12px;background:#111;border:1px solid #333;
+  border-radius:14px;color:#0ff;font-size:1em
 }
 
-/* ---------- Booking Summary ---------- */
-#tripSummary {
-  display: none;
-  margin-top: 20px;
-  padding: 20px;
-  border-radius: 15px;
-  background: #000;
-  border: 1px solid #0ff;
-  text-align: center;
-}
-#tripSummary div {
-  font-family: 'Orbitron', monospace;
-  font-size: 1.1em;
-  font-weight: 900;
-  text-shadow: 0 0 12px #0ff;
-  margin-bottom: 6px;
+input::placeholder{color:#555}
+
+.input-error{
+  border:2px solid #ff3b81!important;
+  box-shadow:0 0 14px #ff3b81,0 0 28px #ff3b81aa;
 }
 
-/* ---------- Buttons ---------- */
-button {
-  display: none;
-  width: 100%;
-  margin-top: 20px;
-  padding: 14px;
-  font-size: 1.15em;
-  font-weight: bold;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  background: linear-gradient(90deg,#0ff,#06b6d4);
-  color: #000;
-  transition: all 0.3s;
-}
-button:hover { opacity: 0.9; }
+.flex{display:flex;gap:12px;margin-top:12px}
+.field{flex:1;display:none}
+.field.show{display:block}
 
-/* ---------- Responsive ---------- */
-@media(max-width:900px){
-  .flex-row { flex-direction: column; }
+#summary{
+  display:none;margin-top:22px;padding:18px;border-radius:16px;
+  background:#050505;text-align:center
 }
+#summary div{
+  font-family:'Orbitron',monospace;
+  font-weight:900;
+  margin-bottom:6px
+}
+
+button{
+  display:none;width:100%;margin-top:22px;padding:16px;
+  font-size:1.15em;font-weight:bold;border:none;border-radius:16px;
+  background:linear-gradient(90deg,#0ff,#06b6d4);cursor:pointer
+}
+
+@media(max-width:900px){.flex{flex-direction:column}}
 </style>
 </head>
 
@@ -122,42 +57,38 @@ button:hover { opacity: 0.9; }
 <div class="container">
 
 <h1>AGTS GROUP INC</h1>
-<h2>Luxury Chauffeur Booking</h2>
+<h2>www.agtsgroupinc.com</h2>
 
-<!-- Pickup & Dropoff -->
-<div class="flex-row">
-  <div class="field show" style="position:relative;">
+<div class="flex">
+  <div class="field show">
     <label>Pickup Address</label>
-    <input id="pickup" placeholder="Start typing pickup location">
-    <span id="currentLocation" style="position:absolute; right:10px; top:40px; cursor:pointer; color:#0ff; font-size:1.2em;">📍</span>
+    <input id="pickup" placeholder="Enter pickup location">
   </div>
   <div class="field show">
     <label>Drop-off Address</label>
-    <input id="dropoff" placeholder="Start typing drop-off location">
+    <input id="dropoff" placeholder="Enter destination">
   </div>
 </div>
 
-<!-- Date & Time -->
-<div class="flex-row">
+<div class="flex">
   <div class="field" id="dateField">
     <label>Pickup Date</label>
-    <input id="pickupDate" readonly>
+    <input id="date" readonly>
   </div>
   <div class="field" id="timeField">
     <label>Pickup Time</label>
-    <input id="pickupTime" readonly>
+    <input id="time" readonly>
   </div>
 </div>
 
-<!-- Vehicle / Passengers / Pets -->
-<div class="flex-row">
+<div class="flex">
   <div class="field" id="vehicleField">
     <label>Vehicle</label>
     <select id="vehicle">
       <option value="">Select</option>
-      <option>GMC Yukon</option>
-      <option>Chevy Suburban</option>
-      <option>Cadillac Escalade</option>
+      <option value="1">GMC Yukon</option>
+      <option value="1.15">Chevy Suburban</option>
+      <option value="1.35">Cadillac Escalade</option>
     </select>
   </div>
   <div class="field" id="passengersField">
@@ -178,8 +109,7 @@ button:hover { opacity: 0.9; }
   </div>
 </div>
 
-<!-- Name / Phone -->
-<div class="flex-row">
+<div class="flex">
   <div class="field" id="nameField">
     <label>Full Name</label>
     <input id="name">
@@ -190,16 +120,18 @@ button:hover { opacity: 0.9; }
   </div>
 </div>
 
-<!-- Email / Reference -->
-<div class="flex-row">
+<div class="flex">
   <div class="field" id="emailField">
     <label>Email</label>
     <input id="email">
   </div>
-  <div class="field" id="referenceField">
+</div>
+
+<div class="flex">
+  <div class="field" id="refField">
     <label>Reference (Optional)</label>
     <select id="reference">
-      <option value="">Select</option>
+      <option value="">Optional</option>
       <option>Previous Passenger</option>
       <option>Social Media</option>
       <option>Friend / Family</option>
@@ -208,103 +140,104 @@ button:hover { opacity: 0.9; }
   </div>
 </div>
 
-<!-- Notes -->
 <div class="field" id="notesField">
   <label>Notes (Optional)</label>
   <textarea id="notes"></textarea>
 </div>
 
-<!-- Booking Summary -->
-<div id="tripSummary">
-  <div id="sumPickup"></div>
-  <div id="sumDropoff"></div>
-  <div id="sumDateTime"></div>
-  <div id="sumVehicle"></div>
-  <div id="sumDuration"></div>
-  <div id="sumPrice"></div>
+<div id="summary">
+  <div id="sRoute"></div>
+  <div id="sDate"></div>
+  <div id="sVehicle"></div>
+  <div id="sDuration"></div>
+  <div id="sPrice"></div>
 </div>
 
-<button id="payBtn">Book & Pay</button>
+<button id="pay">Book & Pay</button>
 
 </div>
 
-<!-- Flatpickr -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
+flatpickr("#date",{minDate:"today"});
+flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+
 const f=id=>document.getElementById(id);
 
-/* ---------- Date & Time Pickers ---------- */
-flatpickr("#pickupDate",{minDate:"today"});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+const required=[
+  "pickup","dropoff","date","time","vehicle",
+  "passengers","pets","name","phone","email"
+].map(f);
 
-/* ---------- Progressive Field Reveal ---------- */
-["pickup","dropoff"].forEach(id=>{
-  f(id).addEventListener("input",()=>f("dateField").classList.add("show"));
-});
-f("pickupDate").addEventListener("change",()=>f("timeField").classList.add("show"));
-f("pickupTime").addEventListener("change",()=>["vehicleField","passengersField","petsField"].forEach(id=>f(id).classList.add("show")));
-f("pets").addEventListener("change",()=>["nameField","phoneField","emailField","referenceField","notesField"].forEach(id=>f(id).classList.add("show")), f("payBtn").style.display="block");
+function show(id){f(id).classList.add("show")}
 
-/* ---------- Current Location ---------- */
-f("currentLocation").addEventListener("click",()=>{
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(pos=>{
-      const lat=pos.coords.latitude;
-      const lng=pos.coords.longitude;
-      const geocoder=new google.maps.Geocoder();
-      geocoder.geocode({location:{lat,lng}},(results,status)=>{
-        if(status==="OK" && results[0]){
-          f("pickup").value=results[0].formatted_address;
-          f("dateField").classList.add("show");
-        }
-      });
-    });
-  } else { alert("Geolocation not supported."); }
-});
+pickup.onchange=dropoff.onchange=()=>show("dateField");
+date.onchange=()=>show("timeField");
+time.onchange=()=>{
+  show("vehicleField");show("passengersField");show("petsField");
+};
+pets.onchange=()=>{
+  show("nameField");show("phoneField");show("emailField");
+  show("refField");show("notesField");
+  pay.style.display="block";
+};
 
-/* ---------- Summary ---------- */
-const requiredFields=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
-function updateSummary(){
-  if(requiredFields.every(el=>el.value)){
-    f("tripSummary").style.display="block";
-    f("sumPickup").textContent="Pickup: "+f("pickup").value;
-    f("sumDropoff").textContent="Drop-off: "+f("dropoff").value;
-    f("sumDateTime").textContent=`${f("pickupDate").value} at ${f("pickupTime").value}`;
-    f("sumVehicle").textContent=`Vehicle: ${f("vehicle").value} | Passengers: ${f("passengers").value} | Pets: ${f("pets").value}`;
-    f("sumDuration").textContent="Duration: XX min";
-    f("sumPrice").textContent="Estimated: $XX.XX";
-  }
+function validate(){
+  let first=null;
+  required.forEach(el=>{
+    el.classList.remove("input-error");
+    if(!el.value && !first){
+      el.classList.add("input-error");
+      first=el;
+    }
+  });
+  if(first){first.focus();return false}
+  return true;
 }
-[...requiredFields].forEach(el=>{ el.addEventListener("input",updateSummary); el.addEventListener("change",updateSummary); });
 
-/* ---------- Book & Pay ---------- */
-f("payBtn").onclick=()=>{
-  let firstMissing=null;
-  requiredFields.forEach(el=>{ el.classList.remove("input-error"); if(!el.value && !firstMissing){el.classList.add("input-error"); firstMissing=el;}});
-  if(firstMissing){firstMissing.focus(); return;}
-  alert("Booking submitted successfully!");
+function calculatePrice(distanceMiles){
+  const base=Math.max(35,distanceMiles*3);
+  return base*parseFloat(vehicle.value);
+}
+
+function renderSummary(distance,duration){
+  summary.style.display="block";
+  sRoute.textContent=`${pickup.value} → ${dropoff.value}`;
+  sDate.textContent=`${date.value} at ${time.value}`;
+  sVehicle.textContent=`Vehicle: ${vehicle.options[vehicle.selectedIndex].text}`;
+  sDuration.textContent=`Duration: ${duration}`;
+  sPrice.textContent=`Estimated: $${distance}`;
+}
+
+pay.onclick=()=>{
+  if(!validate()) return;
+
+  const service=new google.maps.DistanceMatrixService();
+  service.getDistanceMatrix({
+    origins:[pickup.value],
+    destinations:[dropoff.value],
+    travelMode:'DRIVING'
+  },(res,status)=>{
+    if(status!=="OK") return alert("Distance error");
+    const el=res.rows[0].elements[0];
+    const miles=el.distance.value/1609.34;
+    const price=calculatePrice(miles).toFixed(2);
+    renderSummary(price,el.duration.text);
+    alert("Booking submitted successfully!");
+  });
 };
 </script>
 
-<!-- Google APIs -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places&callback=initAutocomplete" async defer></script>
+<script
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"
+async defer></script>
 
 <script>
-function initAutocomplete(){
-  const pickupAuto=new google.maps.places.Autocomplete(f("pickup"),{types:["geocode"]});
-  const dropoffAuto=new google.maps.places.Autocomplete(f("dropoff"),{types:["geocode"]});
-
-  pickupAuto.addListener("place_changed",()=>{
-    const p=pickupAuto.getPlace();
-    if(p?.formatted_address){ f("pickup").value=p.formatted_address; f("dateField").classList.add("show"); }
-  });
-
-  dropoffAuto.addListener("place_changed",()=>{
-    const p=dropoffAuto.getPlace();
-    if(p?.formatted_address){ f("dropoff").value=p.formatted_address; f("dateField").classList.add("show"); }
-  });
-}
+window.onload=()=>{
+  new google.maps.places.Autocomplete(pickup);
+  new google.maps.places.Autocomplete(dropoff);
+};
 </script>
 
 </body>
