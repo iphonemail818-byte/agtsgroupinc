@@ -9,67 +9,81 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-*{box-sizing:border-box}
 body{
-  background:#000;
-  color:#0ff;
-  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
   margin:0;
+  background:#0b0b0b;
+  color:#e6ffff;
+  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
 }
-.container{max-width:900px;margin:30px auto;padding:20px}
-h1,h2{text-align:center;font-family:'Orbitron',sans-serif}
-h1{font-size:2.4em;text-shadow:0 0 12px #0ff}
-h2{font-size:1em;margin-bottom:25px;opacity:.85}
-
-label{display:block;margin-top:10px;font-weight:bold}
-input,textarea,select{
-  width:100%;padding:14px;margin-top:6px;
-  background:#111;border:1px solid #333;
-  border-radius:14px;color:#0ff;font-size:1em
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:24px;
 }
-input::placeholder,textarea::placeholder{color:#555}
+h1,h2{
+  text-align:center;
+  font-family:'Orbitron',sans-serif;
+}
+h1{font-size:2.6em;}
+h2{font-size:1em;opacity:.85;margin-bottom:30px;}
 
-.field{display:none;margin-top:12px}
-.field.show{display:block}
+label{font-weight:600;margin-top:10px;display:block;}
 
-.row{display:flex;gap:12px}
-@media(max-width:768px){.row{flex-direction:column}}
+input,select,textarea{
+  width:100%;
+  padding:14px;
+  margin-top:6px;
+  background:#151515;
+  border:1px solid #333;
+  border-radius:14px;
+  color:#e6ffff;
+  font-size:1em;
+}
+
+input::placeholder{color:#777;}
+
+.field{display:none;}
+.field.show{display:block;}
+
+.flex{display:flex;gap:12px;flex-wrap:wrap;}
+.flex .field{flex:1 1 100%;}
+
+@media(min-width:768px){
+  .flex .field{flex:1;}
+}
 
 .input-error{
-  border:2px solid #0ff;
-  box-shadow:0 0 12px #0ff;
-  animation:pulse 1.4s infinite
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 6px #0ff}
-  50%{box-shadow:0 0 20px #0ff}
-  100%{box-shadow:0 0 6px #0ff}
-}
-
-.loc-wrap{position:relative}
-.loc-icon{
-  position:absolute;right:14px;top:50%;
-  transform:translateY(-50%);
-  cursor:pointer;font-size:18px
+  border:2px solid #00ffff;
+  box-shadow:0 0 14px #00ffff;
 }
 
 #tripSummary{
-  display:none;margin-top:22px;
-  padding:18px;border-radius:16px;
-  background:#050505;text-align:center
+  display:none;
+  margin-top:24px;
+  padding:20px;
+  border-radius:18px;
+  background:#111;
 }
-#tripSummary div{
-  font-family:'Orbitron',monospace;
-  font-weight:900;margin-bottom:6px
+#tripSummary div{margin:6px 0;font-weight:600;}
+
+#sumPrice{
+  font-size:1.5em;
+  font-weight:900;
+  margin-top:10px;
 }
 
 button{
-  display:none;width:100%;margin-top:22px;
-  padding:16px;font-size:1.1em;
-  font-weight:bold;border:none;
-  border-radius:18px;
-  background:linear-gradient(90deg,#0ff,#06b6d4);
-  color:#000
+  display:none;
+  margin-top:22px;
+  width:100%;
+  padding:16px;
+  font-size:1.2em;
+  border:none;
+  border-radius:16px;
+  background:linear-gradient(90deg,#00ffff,#3fd5ff);
+  color:#000;
+  font-weight:800;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -78,22 +92,20 @@ button{
 <div class="container">
 
 <h1>AGTS GROUP INC</h1>
-<h2>www.agtsgroupinc.com</h2>
+<h2>Luxury Chauffeur Booking</h2>
 
-<div class="field show">
-  <label>Pickup Address</label>
-  <div class="loc-wrap">
+<div class="flex">
+  <div class="field show">
+    <label>Pickup Address</label>
     <input id="pickup" placeholder="Enter pickup location">
-    <span class="loc-icon" id="useLocation">📍</span>
+  </div>
+  <div class="field show">
+    <label>Drop-off Address</label>
+    <input id="dropoff" placeholder="Enter destination">
   </div>
 </div>
 
-<div class="field show">
-  <label>Drop-off Address</label>
-  <input id="dropoff" placeholder="Enter destination">
-</div>
-
-<div class="row">
+<div class="flex">
   <div class="field" id="dateField">
     <label>Pickup Date</label>
     <input id="pickupDate" readonly>
@@ -104,14 +116,14 @@ button{
   </div>
 </div>
 
-<div class="row">
+<div class="flex">
   <div class="field" id="vehicleField">
     <label>Vehicle</label>
     <select id="vehicle">
       <option value="">Select</option>
-      <option value="1">GMC Yukon</option>
-      <option value="1.1">Chevy Suburban</option>
-      <option value="1.25">Cadillac Escalade</option>
+      <option data-m="1">GMC Yukon</option>
+      <option data-m="1.1">Chevy Suburban</option>
+      <option data-m="1.25">Cadillac Escalade</option>
     </select>
   </div>
   <div class="field" id="passengersField">
@@ -126,38 +138,54 @@ button{
     <label>Pets</label>
     <select id="pets">
       <option value="">Select</option>
-      <option>Yes</option><option>No</option>
+      <option>No</option>
+      <option>Yes</option>
     </select>
   </div>
 </div>
 
-<div class="row">
-  <div class="field" id="nameField"><label>Full Name</label><input id="name"></div>
-  <div class="field" id="phoneField"><label>Phone</label><input id="phone"></div>
+<div class="flex">
+  <div class="field" id="nameField">
+    <label>Full Name</label>
+    <input id="name">
+  </div>
+  <div class="field" id="phoneField">
+    <label>Phone</label>
+    <input id="phone" placeholder="(555) 555-5555">
+  </div>
 </div>
 
-<div class="field" id="emailField"><label>Email</label><input id="email"></div>
-
-<div class="field" id="referenceField">
-  <label>Reference (Optional)</label>
-  <select id="reference">
-    <option value="">Select</option>
-    <option>Previous Passenger</option>
-    <option>Social Media</option>
-    <option>Friend / Family</option>
-    <option>Website</option>
-  </select>
+<div class="flex">
+  <div class="field" id="emailField">
+    <label>Email</label>
+    <input id="email">
+  </div>
+  <div class="field" id="referenceField">
+    <label>Reference (Optional)</label>
+    <select id="reference">
+      <option value="">—</option>
+      <option>Previous Passenger</option>
+      <option>Social Media</option>
+      <option>Referral</option>
+      <option>Website</option>
+    </select>
+  </div>
 </div>
 
-<div class="field" id="notesField"><label>Notes (Optional)</label><textarea id="notes"></textarea></div>
+<div class="field" id="notesField">
+  <label>Notes (Optional)</label>
+  <textarea id="notes"></textarea>
+</div>
 
 <div id="tripSummary">
-  <div id="sumDistance"></div>
+  <div id="sumRoute"></div>
+  <div id="sumDate"></div>
   <div id="sumDuration"></div>
   <div id="sumPrice"></div>
 </div>
 
 <button id="payBtn">Book & Pay</button>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -166,67 +194,92 @@ flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
 const f=id=>document.getElementById(id);
-const required=[pickup,dropoff,pickupDate,pickupTime,vehicle,passengers,pets,name,phone,email];
+const required=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
 
-pickup.onchange=dropoff.onchange=()=>dateField.classList.add("show");
-pickupDate.onchange=()=>timeField.classList.add("show");
-pickupTime.onchange=()=>["vehicleField","passengersField","petsField"].forEach(i=>f(i).classList.add("show"));
-pets.onchange=()=>["nameField","phoneField","emailField","referenceField","notesField"].forEach(i=>f(i).classList.add("show"));
+let distanceMiles=0,durationMin=0;
 
-function validate(){
-  let bad=null;
+function show(id){f(id).classList.add("show");}
+
+pickup.oninput=dropoff.oninput=()=>{
+  if(pickup.value && dropoff.value) show("dateField");
+};
+
+pickupDate.onchange=()=>show("timeField");
+
+pickupTime.onchange=()=>{
+  ["vehicleField","passengersField","petsField"].forEach(show);
+};
+
+pets.onchange=()=>{
+  ["nameField","phoneField","emailField","referenceField","notesField"].forEach(show);
+};
+
+email.onblur=validateGlow;
+
+function validateGlow(){
+  let first=null;
   required.forEach(el=>{
     el.classList.remove("input-error");
-    if(!el.value && !bad){bad=el}
+    if(!el.value && !first){el.classList.add("input-error");first=el;}
   });
-  if(bad){bad.classList.add("input-error");bad.focus();return false}
-  return true;
+  if(first) first.focus();
 }
 
-payBtn.onclick=()=>{if(validate())alert("Booking submitted successfully!")};
+function calculate(){
+  if(!pickup.value || !dropoff.value) return;
+
+  const service=new google.maps.DistanceMatrixService();
+  service.getDistanceMatrix({
+    origins:[pickup.value],
+    destinations:[dropoff.value],
+    travelMode:"DRIVING"
+  },res=>{
+    if(res.rows[0].elements[0].status!=="OK") return;
+
+    distanceMiles=res.rows[0].elements[0].distance.value/1609;
+    durationMin=res.rows[0].elements[0].duration.value/60;
+
+    renderSummary();
+  });
+}
+
+function renderSummary(){
+  if(!required.every(el=>el.value)) return;
+
+  const base=15;
+  const perMile=3.2;
+  const perMin=0.6;
+  const mult=f("vehicle").selectedOptions[0].dataset.m;
+
+  let price=base+(distanceMiles*perMile)+(durationMin*perMin);
+  price*=mult;
+  if(price<45) price=45;
+
+  f("tripSummary").style.display="block";
+  f("payBtn").style.display="block";
+
+  sumRoute.textContent=`${pickup.value} → ${dropoff.value}`;
+  sumDate.textContent=`${pickupDate.value} at ${pickupTime.value}`;
+  sumDuration.textContent=`${Math.round(durationMin)} min • ${distanceMiles.toFixed(1)} miles`;
+  sumPrice.textContent=`Estimated $${price.toFixed(2)}`;
+}
+
+["pickup","dropoff","vehicle"].forEach(id=>{
+  f(id).addEventListener("blur",calculate);
+});
+
+payBtn.onclick=()=>{
+  validateGlow();
+  if(required.every(el=>el.value)){
+    alert("Booking submitted successfully!");
+  }
+};
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 <script>
 new google.maps.places.Autocomplete(pickup);
 new google.maps.places.Autocomplete(dropoff);
-
-const service=new google.maps.DistanceMatrixService();
-
-function calculate(){
-  if(!pickup.value||!dropoff.value||!vehicle.value)return;
-
-  service.getDistanceMatrix({
-    origins:[pickup.value],
-    destinations:[dropoff.value],
-    travelMode:'DRIVING'
-  },res=>{
-    const el=res.rows[0].elements[0];
-    const miles=el.distance.value/1609.34;
-    const mins=el.duration.value/60;
-
-    const base=15;
-    const price=(base + miles*4 + mins*0.8) * parseFloat(vehicle.value);
-
-    sumDistance.textContent=`Distance: ${miles.toFixed(1)} miles`;
-    sumDuration.textContent=`Duration: ${Math.round(mins)} minutes`;
-    sumPrice.textContent=`Estimated Price: $${price.toFixed(2)}`;
-
-    tripSummary.style.display="block";
-    payBtn.style.display="block";
-  });
-}
-
-[pickup,dropoff,vehicle].forEach(el=>el.addEventListener("change",calculate));
-
-useLocation.onclick=()=>{
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const g=new google.maps.Geocoder();
-    g.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(r,s)=>{
-      if(s==="OK")pickup.value=r[0].formatted_address;
-    });
-  });
-};
 </script>
 
 </body>
