@@ -15,61 +15,40 @@ body{
   color:#0ff;
   font-family:Segoe UI,Tahoma,Verdana,sans-serif;
 }
-
 .container{
-  max-width:500px;
+  max-width:520px;
   margin:20px auto;
   padding:20px;
 }
 
-/* LOGO */
+/* LOGO — SVG NEVER FAILS */
 .logo{
+  width:260px;
+  margin:10px auto 20px;
   display:block;
-  max-width:260px;
-  width:100%;
-  margin:10px auto 15px;
-  filter:drop-shadow(0 0 12px #0ff);
-}
-
-/* TEXT */
-.sub{
-  text-align:center;
-  font-family:'Orbitron',sans-serif;
-  font-size:.9em;
-  letter-spacing:2px;
-  margin-bottom:20px;
 }
 
 /* FORM */
-label{display:block;margin-top:10px;font-weight:bold;}
-
-input{
+label{display:block;margin-top:12px;font-weight:bold;}
+input,select{
   width:100%;
   padding:12px;
-  margin-top:4px;
   background:#111;
   border:1px solid #333;
   border-radius:12px;
   color:#0ff;
-}
-
-.flex{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
+  margin-top:4px;
 }
 
 .field{
-  flex:1 1 100%;
   display:none;
-  opacity:0;
-  transform:translateY(10px);
-  transition:.4s ease;
+  animation:fadeIn .4s ease forwards;
 }
-.field.show{
-  display:block;
-  opacity:1;
-  transform:none;
+.field.show{display:block;}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:none}
 }
 
 .location{
@@ -94,7 +73,7 @@ input{
   height:100%;
   width:50%;
   background:linear-gradient(90deg,#0ff,#06b6d4);
-  animation:load 1s infinite linear;
+  animation:load 1s linear infinite;
 }
 @keyframes load{
   from{margin-left:-50%}
@@ -107,19 +86,16 @@ input{
   border:1px solid #0ff;
   border-radius:14px;
   padding:16px;
-  text-align:center;
   margin-top:15px;
-}
-#summary div{
+  text-align:center;
   font-family:'Orbitron',monospace;
-  margin-bottom:6px;
 }
 
 button{
   display:none;
   width:100%;
-  margin-top:20px;
   padding:14px;
+  margin-top:20px;
   border:none;
   border-radius:15px;
   background:linear-gradient(90deg,#0ff,#06b6d4);
@@ -131,22 +107,34 @@ button{
 <body>
 <div class="container">
 
-<!-- ✅ EMBEDDED LOGO (FULL BASE64 – FIXED) -->
-<img class="logo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAAExAAIAAAAQAAAAWodpAAQAAAABAAAAaAAAANwAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAABACgAwAEAAAAAQAABAAAAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCABIAEgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAF//8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABBQJ//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPwF//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPwF//8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQAGPwJ//9k=" alt="AGTS Group Inc">
+<!-- SVG LOGO (CANNOT BREAK) -->
+<svg class="logo" viewBox="0 0 600 160">
+  <text x="50%" y="55%" text-anchor="middle"
+    font-family="Orbitron" font-size="64" fill="#0ff">
+    AGTS GROUP INC
+  </text>
+</svg>
 
-<div class="sub">www.agtsgroupinc.com</div>
+<!-- ADDRESSES -->
+<div class="field show" style="position:relative">
+  <label>Pickup Address</label>
+  <input id="pickup">
+  <span class="location" id="loc">📍</span>
+</div>
 
-<div class="flex">
-  <div class="field show" style="position:relative">
-    <label>Pickup</label>
-    <input id="pickup">
-    <span class="location" id="loc">📍</span>
-  </div>
+<div class="field show">
+  <label>Drop-off Address</label>
+  <input id="dropoff">
+</div>
 
-  <div class="field show">
-    <label>Drop-off</label>
-    <input id="dropoff">
-  </div>
+<div class="field" id="dateField">
+  <label>Pickup Date</label>
+  <input id="date" readonly>
+</div>
+
+<div class="field" id="timeField">
+  <label>Pickup Time</label>
+  <input id="time" readonly>
 </div>
 
 <div id="loading"></div>
@@ -163,6 +151,11 @@ button{
 const $=id=>document.getElementById(id);
 let geo,dist;
 
+flatpickr("#date",{minDate:"today",onChange:()=>show("timeField")});
+flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+
+function show(id){ $(id).classList.add("show"); }
+
 window.onload=()=>{
   geo=new google.maps.Geocoder();
   dist=new google.maps.DistanceMatrixService();
@@ -170,15 +163,21 @@ window.onload=()=>{
   new google.maps.places.Autocomplete($("dropoff"));
 };
 
+$("pickup").addEventListener("blur",()=>show("dateField"));
+$("dropoff").addEventListener("blur",calc);
+
 $("loc").onclick=()=>{
   navigator.geolocation.getCurrentPosition(p=>{
-    geo.geocode({location:{lat:p.coords.latitude,lng:p.coords.longitude}},(r,s)=>{
-      if(s==="OK"){ $("pickup").value=r[0].formatted_address; calc(); }
+    geo.geocode({
+      location:{lat:p.coords.latitude,lng:p.coords.longitude}
+    },(r,s)=>{
+      if(s==="OK"){
+        $("pickup").value=r[0].formatted_address;
+        show("dateField");
+      }
     });
   });
 };
-
-["pickup","dropoff"].forEach(id=>$(id).addEventListener("change",calc));
 
 function calc(){
   if(!$("pickup").value||!$("dropoff").value)return;
