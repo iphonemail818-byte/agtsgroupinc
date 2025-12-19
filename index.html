@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AGTS Group Inc — Booking</title>
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-
-<!-- Flatpickr -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
@@ -152,9 +149,9 @@ button{
 <body>
 <div class="container">
 
-<!-- LOGO -->
+<!-- EMBEDDED LOGO -->
 <div class="logo-wrap">
-  <img src="images/logo.png" alt="AGTS Group Inc Logo">
+  <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAAExAAIAAAAQAAAAWodpAAQAAAABAAAAaAAAANwAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAABACgAwAEAAAAAQAABAAAAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCABIAEgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAX/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAF//8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABBQJ//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAwEBPwF//8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAgBAgEBPwF//8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQAGPwJ//9k=" alt="AGTS Group Inc Logo">
   <div class="logo-sub">www.agtsgroupinc.com</div>
 </div>
 
@@ -174,7 +171,6 @@ button{
 
 <div id="loadingBar"></div>
 
-<!-- DATE / TIME -->
 <div class="flex-row">
   <div class="field" id="dateField">
     <label>Pickup Date</label>
@@ -186,14 +182,11 @@ button{
   </div>
 </div>
 
-<!-- SUMMARY -->
 <div id="tripSummary"></div>
-
 <button id="payBtn">Book & Pay</button>
 
 </div>
 
-<!-- LIBRARIES -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
@@ -205,49 +198,30 @@ flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
 let geocoder, distanceService;
 
-function initMaps(){
+window.onload = () => {
   geocoder = new google.maps.Geocoder();
   distanceService = new google.maps.DistanceMatrixService();
-
   new google.maps.places.Autocomplete(f("pickup"));
   new google.maps.places.Autocomplete(f("dropoff"));
-}
+};
 
-window.addEventListener("load",initMaps);
-
-/* CURRENT LOCATION */
 f("pickupLocation").onclick = () => {
-  if(!navigator.geolocation){
-    alert("Geolocation not supported");
-    return;
-  }
-
   navigator.geolocation.getCurrentPosition(pos=>{
-    const latlng = {
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude
-    };
-
-    geocoder.geocode({ location: latlng }, (results,status)=>{
-      if(status==="OK" && results[0]){
-        f("pickup").value = results[0].formatted_address;
+    geocoder.geocode({
+      location:{lat:pos.coords.latitude,lng:pos.coords.longitude}
+    },(res,status)=>{
+      if(status==="OK" && res[0]){
+        f("pickup").value = res[0].formatted_address;
         f("dateField").classList.add("show");
         updateSummary();
-      } else {
-        alert("Unable to detect address");
       }
     });
-  }, ()=>{
-    alert("Location permission denied");
   });
 };
 
-/* SUMMARY + DISTANCE */
 function updateSummary(){
   if(!f("pickup").value || !f("dropoff").value) return;
-
   f("loadingBar").style.display="block";
-  f("tripSummary").style.display="none";
 
   distanceService.getDistanceMatrix({
     origins:[f("pickup").value],
@@ -258,22 +232,19 @@ function updateSummary(){
     f("loadingBar").style.display="none";
     if(status!=="OK") return;
 
-    const miles = res.rows[0].elements[0].distance.value / 1609.34;
-    const price = 50 + miles * 2;
+    const miles=res.rows[0].elements[0].distance.value/1609.34;
+    const price=50+miles*2;
 
-    f("tripSummary").innerHTML = `
-      <div>Pickup: ${f("pickup").value}</div>
-      <div>Drop-off: ${f("dropoff").value}</div>
-      <div>Distance: ${miles.toFixed(1)} mi</div>
-      <div>Estimated Price: $${price.toFixed(2)}</div>
-    `;
-
+    f("tripSummary").innerHTML=`
+      <div>${f("pickup").value}</div>
+      <div>${f("dropoff").value}</div>
+      <div>${miles.toFixed(1)} mi</div>
+      <div>$${price.toFixed(2)}</div>`;
     f("tripSummary").style.display="block";
     f("payBtn").style.display="block";
   });
 }
 
-/* EVENTS */
 ["pickup","dropoff"].forEach(id=>{
   f(id).addEventListener("change",()=>{
     f("dateField").classList.add("show");
