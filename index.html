@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AGTS Group Inc — Booking</title>
 
-<!-- Fonts & Libraries -->
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+<!-- Flatpickr -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
@@ -17,10 +19,10 @@
 }
 
 body{
+  margin:0;
   background:var(--bg);
   color:var(--accent);
   font-family:Segoe UI,Tahoma,Verdana,sans-serif;
-  margin:0;
 }
 
 .container{
@@ -37,6 +39,9 @@ body{
 .logo-wrap img{
   max-width:260px;
   width:100%;
+  height:auto;
+  display:block;
+  margin:auto;
   filter:drop-shadow(0 0 14px var(--accent));
 }
 .logo-sub{
@@ -50,18 +55,15 @@ body{
 /* FORM */
 label{display:block;margin-top:8px;font-weight:bold;}
 
-input, textarea, select{
+input{
   width:100%;
-  padding:12px 38px 12px 12px;
+  padding:12px 40px 12px 12px;
   margin-top:4px;
   background:var(--panel);
   border:1px solid #333;
   border-radius:12px;
   color:var(--accent);
-  font-size:1em;
 }
-
-input::placeholder, textarea::placeholder{color:#555;}
 
 .flex-row{
   display:flex;
@@ -83,22 +85,10 @@ input::placeholder, textarea::placeholder{color:#555;}
   transform:translateY(0);
 }
 
-/* ERROR */
-.input-error{
-  border:2px solid var(--accent);
-  box-shadow:0 0 12px var(--accent);
-  animation:pulse 1.4s infinite;
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 8px var(--accent)}
-  50%{box-shadow:0 0 22px var(--accent)}
-  100%{box-shadow:0 0 8px var(--accent)}
-}
-
 /* LOCATION ICON */
 .location-icon{
   position:absolute;
-  right:10px;
+  right:12px;
   top:50%;
   transform:translateY(-50%);
   cursor:pointer;
@@ -110,16 +100,17 @@ input::placeholder, textarea::placeholder{color:#555;}
   height:6px;
   background:#222;
   border-radius:3px;
-  margin-top:12px;
   overflow:hidden;
+  margin-top:12px;
+  position:relative;
 }
 #loadingBar::after{
   content:"";
+  position:absolute;
   width:50%;
   height:100%;
   background:linear-gradient(90deg,#0ff,#06b6d4);
-  position:absolute;
-  animation:load 1s infinite linear;
+  animation:load 1s linear infinite;
 }
 @keyframes load{
   from{left:-50%}
@@ -131,15 +122,15 @@ input::placeholder, textarea::placeholder{color:#555;}
   display:none;
   margin-top:18px;
   padding:18px;
-  border-radius:15px;
   background:var(--panel);
+  border-radius:15px;
   border:1px solid var(--accent);
   text-align:center;
 }
 #tripSummary div{
   font-family:'Orbitron',monospace;
   font-weight:900;
-  margin-bottom:4px;
+  margin-bottom:6px;
   text-shadow:0 0 8px var(--accent);
 }
 
@@ -149,11 +140,10 @@ button{
   width:100%;
   margin-top:20px;
   padding:14px;
-  border-radius:15px;
-  font-size:1.1em;
-  font-weight:bold;
   border:none;
+  border-radius:15px;
   background:linear-gradient(90deg,#0ff,#06b6d4);
+  font-weight:bold;
   cursor:pointer;
 }
 </style>
@@ -196,88 +186,100 @@ button{
   </div>
 </div>
 
-<!-- OPTIONS -->
-<div class="flex-row">
-  <div class="field" id="vehicleField">
-    <label>Vehicle</label>
-    <select id="vehicle">
-      <option value="">Select</option>
-      <option>GMC Yukon</option>
-      <option>Chevy Suburban</option>
-      <option>Cadillac Escalade</option>
-    </select>
-  </div>
-  <div class="field" id="passengersField">
-    <label>Passengers</label>
-    <select id="passengers">
-      <option value="">Select</option>
-      <option>1</option><option>2</option><option>3</option>
-      <option>4</option><option>5</option><option>6</option>
-    </select>
-  </div>
-  <div class="field" id="petsField">
-    <label>Pets</label>
-    <select id="pets">
-      <option value="">Select</option>
-      <option>Yes</option>
-      <option>No</option>
-    </select>
-  </div>
-</div>
-
-<!-- CUSTOMER -->
-<div class="flex-row">
-  <div class="field" id="nameField">
-    <label>Full Name</label>
-    <input id="name">
-  </div>
-  <div class="field" id="phoneField">
-    <label>Phone</label>
-    <input id="phone">
-  </div>
-</div>
-
-<div class="flex-row">
-  <div class="field" id="emailField">
-    <label>Email</label>
-    <input id="email">
-  </div>
-</div>
-
+<!-- SUMMARY -->
 <div id="tripSummary"></div>
 
 <button id="payBtn">Book & Pay</button>
 
 </div>
 
-<!-- SCRIPTS -->
+<!-- LIBRARIES -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
 <script>
+const f=id=>document.getElementById(id);
+
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-const f=id=>document.getElementById(id);
+let geocoder, distanceService;
 
-["pickup","dropoff"].forEach(id=>{
-  f(id).addEventListener("input",()=>f("dateField").classList.add("show"));
-});
+function initMaps(){
+  geocoder = new google.maps.Geocoder();
+  distanceService = new google.maps.DistanceMatrixService();
 
-f("pickupDate").onchange=()=>f("timeField").classList.add("show");
-f("pickupTime").onchange=()=>{
-  ["vehicleField","passengersField","petsField"].forEach(id=>f(id).classList.add("show"));
-};
-f("pets").onchange=()=>{
-  ["nameField","phoneField","emailField"].forEach(id=>f(id).classList.add("show"));
-  f("payBtn").style.display="block";
-};
-
-function initAutocomplete(){
   new google.maps.places.Autocomplete(f("pickup"));
   new google.maps.places.Autocomplete(f("dropoff"));
 }
-window.onload=initAutocomplete;
+
+window.addEventListener("load",initMaps);
+
+/* CURRENT LOCATION */
+f("pickupLocation").onclick = () => {
+  if(!navigator.geolocation){
+    alert("Geolocation not supported");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const latlng = {
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude
+    };
+
+    geocoder.geocode({ location: latlng }, (results,status)=>{
+      if(status==="OK" && results[0]){
+        f("pickup").value = results[0].formatted_address;
+        f("dateField").classList.add("show");
+        updateSummary();
+      } else {
+        alert("Unable to detect address");
+      }
+    });
+  }, ()=>{
+    alert("Location permission denied");
+  });
+};
+
+/* SUMMARY + DISTANCE */
+function updateSummary(){
+  if(!f("pickup").value || !f("dropoff").value) return;
+
+  f("loadingBar").style.display="block";
+  f("tripSummary").style.display="none";
+
+  distanceService.getDistanceMatrix({
+    origins:[f("pickup").value],
+    destinations:[f("dropoff").value],
+    travelMode:"DRIVING",
+    unitSystem:google.maps.UnitSystem.IMPERIAL
+  },(res,status)=>{
+    f("loadingBar").style.display="none";
+    if(status!=="OK") return;
+
+    const miles = res.rows[0].elements[0].distance.value / 1609.34;
+    const price = 50 + miles * 2;
+
+    f("tripSummary").innerHTML = `
+      <div>Pickup: ${f("pickup").value}</div>
+      <div>Drop-off: ${f("dropoff").value}</div>
+      <div>Distance: ${miles.toFixed(1)} mi</div>
+      <div>Estimated Price: $${price.toFixed(2)}</div>
+    `;
+
+    f("tripSummary").style.display="block";
+    f("payBtn").style.display="block";
+  });
+}
+
+/* EVENTS */
+["pickup","dropoff"].forEach(id=>{
+  f(id).addEventListener("change",()=>{
+    f("dateField").classList.add("show");
+    updateSummary();
+  });
+});
 </script>
 
 </body>
