@@ -10,81 +10,94 @@
 
 <style>
 body{
-  margin:0;
-  background:#0b0b0b;
-  color:#e6ffff;
+  background:#000;
+  color:#0ff;
   font-family:Segoe UI,Tahoma,Verdana,sans-serif;
+  margin:0;
 }
 .container{
   max-width:900px;
-  margin:auto;
-  padding:24px;
+  margin:20px auto;
+  padding:20px;
 }
 h1,h2{
   text-align:center;
   font-family:'Orbitron',sans-serif;
 }
-h1{font-size:2.6em;}
-h2{font-size:1em;opacity:.85;margin-bottom:30px;}
+h1{font-size:2.4em;text-shadow:0 0 15px #0ff;}
+h2{font-size:1em;margin-bottom:20px;text-shadow:0 0 8px #0ff;}
 
-label{font-weight:600;margin-top:10px;display:block;}
+label{display:block;margin-top:10px;font-weight:bold;}
 
-input,select,textarea{
+input, textarea, select{
   width:100%;
   padding:14px;
-  margin-top:6px;
-  background:#151515;
+  margin-top:4px;
+  background:#111;
   border:1px solid #333;
-  border-radius:14px;
-  color:#e6ffff;
+  border-radius:12px;
+  color:#0ff;
   font-size:1em;
 }
 
-input::placeholder{color:#777;}
-
-.field{display:none;}
-.field.show{display:block;}
-
-.flex{display:flex;gap:12px;flex-wrap:wrap;}
-.flex .field{flex:1 1 100%;}
-
-@media(min-width:768px){
-  .flex .field{flex:1;}
-}
+input::placeholder{color:#555;}
 
 .input-error{
-  border:2px solid #00ffff;
-  box-shadow:0 0 14px #00ffff;
+  border:2px solid #0ff;
+  box-shadow:0 0 15px #0ff;
+  animation:pulse 1.4s infinite;
 }
+@keyframes pulse{
+  0%{box-shadow:0 0 8px #0ff;}
+  50%{box-shadow:0 0 22px #0ff;}
+  100%{box-shadow:0 0 8px #0ff;}
+}
+
+.flex{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.field{
+  flex:1;
+  display:none;
+}
+.field.show{display:block;}
 
 #tripSummary{
   display:none;
-  margin-top:24px;
-  padding:20px;
-  border-radius:18px;
-  background:#111;
+  margin-top:20px;
+  padding:16px;
+  border-radius:14px;
+  background:#050505;
+  text-align:center;
 }
-#tripSummary div{margin:6px 0;font-weight:600;}
-
-#sumPrice{
-  font-size:1.5em;
-  font-weight:900;
-  margin-top:10px;
+#tripSummary div{
+  font-family:'Orbitron',monospace;
+  font-size:1.1em;
+  margin:6px 0;
 }
 
 button{
   display:none;
-  margin-top:22px;
   width:100%;
+  margin-top:20px;
   padding:16px;
-  font-size:1.2em;
+  font-size:1.15em;
+  font-weight:bold;
   border:none;
   border-radius:16px;
-  background:linear-gradient(90deg,#00ffff,#3fd5ff);
+  background:linear-gradient(90deg,#0ff,#06b6d4);
   color:#000;
-  font-weight:800;
+}
+.loc-btn{
+  position:absolute;
+  right:12px;
+  top:38px;
   cursor:pointer;
 }
+.wrap{position:relative;}
 </style>
 </head>
 
@@ -95,9 +108,10 @@ button{
 <h2>Luxury Chauffeur Booking</h2>
 
 <div class="flex">
-  <div class="field show">
+  <div class="field show wrap">
     <label>Pickup Address</label>
     <input id="pickup" placeholder="Enter pickup location">
+    <span class="loc-btn" id="useLocation">📍</span>
   </div>
   <div class="field show">
     <label>Drop-off Address</label>
@@ -121,9 +135,9 @@ button{
     <label>Vehicle</label>
     <select id="vehicle">
       <option value="">Select</option>
-      <option data-m="1">GMC Yukon</option>
-      <option data-m="1.1">Chevy Suburban</option>
-      <option data-m="1.25">Cadillac Escalade</option>
+      <option value="1">GMC Yukon</option>
+      <option value="1.1">Chevy Suburban</option>
+      <option value="1.2">Cadillac Escalade</option>
     </select>
   </div>
   <div class="field" id="passengersField">
@@ -151,7 +165,7 @@ button{
   </div>
   <div class="field" id="phoneField">
     <label>Phone</label>
-    <input id="phone" placeholder="(555) 555-5555">
+    <input id="phone">
   </div>
 </div>
 
@@ -166,8 +180,7 @@ button{
       <option value="">—</option>
       <option>Previous Passenger</option>
       <option>Social Media</option>
-      <option>Referral</option>
-      <option>Website</option>
+      <option>Friend / Family</option>
     </select>
   </div>
 </div>
@@ -189,97 +202,102 @@ button{
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
+
 <script>
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-const f=id=>document.getElementById(id);
-const required=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map(f);
+const $=id=>document.getElementById(id);
+let pickupPlace, dropoffPlace, distanceKm=0, durationMin=0;
 
-let distanceMiles=0,durationMin=0;
+const required=["pickup","dropoff","pickupDate","pickupTime","vehicle","passengers","pets","name","phone","email"].map($);
 
-function show(id){f(id).classList.add("show");}
+function show(id){$(id).classList.add("show");}
 
-pickup.oninput=dropoff.oninput=()=>{
-  if(pickup.value && dropoff.value) show("dateField");
-};
+const pickupAuto=new google.maps.places.Autocomplete($("pickup"));
+const dropAuto=new google.maps.places.Autocomplete($("dropoff"));
 
-pickupDate.onchange=()=>show("timeField");
+pickupAuto.addListener("place_changed",()=>{
+  pickupPlace=pickupAuto.getPlace();
+  if(pickupPlace.geometry) show("dateField");
+});
 
-pickupTime.onchange=()=>{
+dropAuto.addListener("place_changed",()=>{
+  dropoffPlace=dropAuto.getPlace();
+  if(dropoffPlace.geometry) show("dateField");
+});
+
+$("pickupDate").onchange=()=>show("timeField");
+
+$("pickupTime").onchange=()=>{
   ["vehicleField","passengersField","petsField"].forEach(show);
 };
 
-pets.onchange=()=>{
+$("pets").onchange=()=>{
   ["nameField","phoneField","emailField","referenceField","notesField"].forEach(show);
 };
 
-email.onblur=validateGlow;
+$("email").oninput=calculateTrip;
 
-function validateGlow(){
-  let first=null;
-  required.forEach(el=>{
-    el.classList.remove("input-error");
-    if(!el.value && !first){el.classList.add("input-error");first=el;}
-  });
-  if(first) first.focus();
-}
+function calculateTrip(){
+  if(!pickupPlace || !dropoffPlace) return;
 
-function calculate(){
-  if(!pickup.value || !dropoff.value) return;
-
-  const service=new google.maps.DistanceMatrixService();
-  service.getDistanceMatrix({
-    origins:[pickup.value],
-    destinations:[dropoff.value],
+  new google.maps.DistanceMatrixService().getDistanceMatrix({
+    origins:[pickupPlace.geometry.location],
+    destinations:[dropoffPlace.geometry.location],
     travelMode:"DRIVING"
-  },res=>{
-    if(res.rows[0].elements[0].status!=="OK") return;
+  },(res,stat)=>{
+    if(stat!=="OK") return;
+    const el=res.rows[0].elements[0];
+    if(el.status!=="OK") return;
 
-    distanceMiles=res.rows[0].elements[0].distance.value/1609;
-    durationMin=res.rows[0].elements[0].duration.value/60;
+    distanceKm=el.distance.value/1000;
+    durationMin=Math.round(el.duration.value/60);
 
-    renderSummary();
+    updateSummary();
   });
 }
 
-function renderSummary(){
-  if(!required.every(el=>el.value)) return;
-
+function updateSummary(){
   const base=15;
-  const perMile=3.2;
-  const perMin=0.6;
-  const mult=f("vehicle").selectedOptions[0].dataset.m;
+  const perKm=2.5;
+  const perMin=0.5;
+  const mult=parseFloat($("vehicle").value||1);
+  let price=(base+(distanceKm*perKm)+(durationMin*perMin))*mult;
+  price=Math.max(price,45).toFixed(2);
 
-  let price=base+(distanceMiles*perMile)+(durationMin*perMin);
-  price*=mult;
-  if(price<45) price=45;
+  $("tripSummary").style.display="block";
+  $("payBtn").style.display="block";
 
-  f("tripSummary").style.display="block";
-  f("payBtn").style.display="block";
-
-  sumRoute.textContent=`${pickup.value} → ${dropoff.value}`;
-  sumDate.textContent=`${pickupDate.value} at ${pickupTime.value}`;
-  sumDuration.textContent=`${Math.round(durationMin)} min • ${distanceMiles.toFixed(1)} miles`;
-  sumPrice.textContent=`Estimated $${price.toFixed(2)}`;
+  $("sumRoute").textContent=`${$("pickup").value} → ${$("dropoff").value}`;
+  $("sumDate").textContent=`${$("pickupDate").value} at ${$("pickupTime").value}`;
+  $("sumDuration").textContent=`Duration: ${durationMin} min`;
+  $("sumPrice").textContent=`Estimated: $${price}`;
 }
 
-["pickup","dropoff","vehicle"].forEach(id=>{
-  f(id).addEventListener("blur",calculate);
-});
-
-payBtn.onclick=()=>{
-  validateGlow();
-  if(required.every(el=>el.value)){
-    alert("Booking submitted successfully!");
+$("payBtn").onclick=()=>{
+  let bad;
+  required.forEach(f=>{
+    f.classList.remove("input-error");
+    if(!f.value && !bad){bad=f;}
+  });
+  if(bad){
+    bad.classList.add("input-error");
+    bad.focus();
+    return;
   }
+  alert("Booking ready — next step payment");
 };
-</script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
-<script>
-new google.maps.places.Autocomplete(pickup);
-new google.maps.places.Autocomplete(dropoff);
+$("useLocation").onclick=()=>{
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const latlng={lat:pos.coords.latitude,lng:pos.coords.longitude};
+    new google.maps.Geocoder().geocode({location:latlng},(r,s)=>{
+      if(s==="OK") $("pickup").value=r[0].formatted_address;
+    });
+  });
+};
 </script>
 
 </body>
