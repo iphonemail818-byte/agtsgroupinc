@@ -20,17 +20,15 @@ body{
   margin:20px auto;
   padding:20px;
 }
-
-/* LOGO — SVG NEVER FAILS */
 .logo{
-  width:260px;
-  margin:10px auto 20px;
-  display:block;
+  text-align:center;
+  font-family:'Orbitron',sans-serif;
+  font-size:2em;
+  text-shadow:0 0 12px #0ff;
+  margin-bottom:20px;
 }
-
-/* FORM */
-label{display:block;margin-top:12px;font-weight:bold;}
-input,select{
+label{display:block;margin-top:14px;font-weight:bold;}
+input{
   width:100%;
   padding:12px;
   background:#111;
@@ -39,18 +37,9 @@ input,select{
   color:#0ff;
   margin-top:4px;
 }
-
-.field{
-  display:none;
-  animation:fadeIn .4s ease forwards;
-}
+.field{display:none;animation:fade .35s ease forwards;}
 .field.show{display:block;}
-
-@keyframes fadeIn{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:none}
-}
-
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .location{
   position:absolute;
   right:12px;
@@ -58,14 +47,13 @@ input,select{
   transform:translateY(-50%);
   cursor:pointer;
 }
-
 #loading{
   display:none;
   height:6px;
   background:#222;
   border-radius:3px;
   overflow:hidden;
-  margin:12px 0;
+  margin:14px 0;
 }
 #loading::after{
   content:"";
@@ -75,11 +63,7 @@ input,select{
   background:linear-gradient(90deg,#0ff,#06b6d4);
   animation:load 1s linear infinite;
 }
-@keyframes load{
-  from{margin-left:-50%}
-  to{margin-left:100%}
-}
-
+@keyframes load{from{margin-left:-50%}to{margin-left:100%}}
 #summary{
   display:none;
   background:#111;
@@ -90,7 +74,6 @@ input,select{
   text-align:center;
   font-family:'Orbitron',monospace;
 }
-
 button{
   display:none;
   width:100%;
@@ -106,16 +89,8 @@ button{
 
 <body>
 <div class="container">
+<div class="logo">AGTS GROUP INC</div>
 
-<!-- SVG LOGO (CANNOT BREAK) -->
-<svg class="logo" viewBox="0 0 600 160">
-  <text x="50%" y="55%" text-anchor="middle"
-    font-family="Orbitron" font-size="64" fill="#0ff">
-    AGTS GROUP INC
-  </text>
-</svg>
-
-<!-- ADDRESSES -->
 <div class="field show" style="position:relative">
   <label>Pickup Address</label>
   <input id="pickup">
@@ -129,19 +104,17 @@ button{
 
 <div class="field" id="dateField">
   <label>Pickup Date</label>
-  <input id="date" readonly>
+  <input id="pickupDate" readonly>
 </div>
 
 <div class="field" id="timeField">
   <label>Pickup Time</label>
-  <input id="time" readonly>
+  <input id="pickupTime" readonly>
 </div>
 
 <div id="loading"></div>
 <div id="summary"></div>
-
-<button id="pay">Book & Pay</button>
-
+<button id="payBtn">Book & Pay</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -149,31 +122,32 @@ button{
 
 <script>
 const $=id=>document.getElementById(id);
-let geo,dist;
-
-flatpickr("#date",{minDate:"today",onChange:()=>show("timeField")});
-flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
-
-function show(id){ $(id).classList.add("show"); }
+let geocoder,matrix;
 
 window.onload=()=>{
-  geo=new google.maps.Geocoder();
-  dist=new google.maps.DistanceMatrixService();
+  geocoder=new google.maps.Geocoder();
+  matrix=new google.maps.DistanceMatrixService();
   new google.maps.places.Autocomplete($("pickup"));
   new google.maps.places.Autocomplete($("dropoff"));
 };
 
-$("pickup").addEventListener("blur",()=>show("dateField"));
-$("dropoff").addEventListener("blur",calc);
+flatpickr("#pickupDate",{minDate:"today",onChange:()=>{$("timeField").classList.add("show");}});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K",onChange:calc});
+
+["pickup","dropoff"].forEach(id=>{
+  $(id).addEventListener("blur",()=>{
+    if($("pickup").value && $("dropoff").value){
+      $("dateField").classList.add("show");
+    }
+  });
+});
 
 $("loc").onclick=()=>{
-  navigator.geolocation.getCurrentPosition(p=>{
-    geo.geocode({
-      location:{lat:p.coords.latitude,lng:p.coords.longitude}
-    },(r,s)=>{
+  navigator.geolocation.getCurrentPosition(pos=>{
+    geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(r,s)=>{
       if(s==="OK"){
         $("pickup").value=r[0].formatted_address;
-        show("dateField");
+        $("dateField").classList.add("show");
       }
     });
   });
@@ -182,8 +156,7 @@ $("loc").onclick=()=>{
 function calc(){
   if(!$("pickup").value||!$("dropoff").value)return;
   $("loading").style.display="block";
-
-  dist.getDistanceMatrix({
+  matrix.getDistanceMatrix({
     origins:[$("pickup").value],
     destinations:[$("dropoff").value],
     travelMode:"DRIVING",
@@ -191,18 +164,13 @@ function calc(){
   },(r,s)=>{
     $("loading").style.display="none";
     if(s!=="OK")return;
-
     const mi=r.rows[0].elements[0].distance.value/1609.34;
     const price=50+mi*2;
-
-    $("summary").innerHTML=`
-      <div>${mi.toFixed(1)} miles</div>
-      <div>$${price.toFixed(2)}</div>`;
+    $("summary").innerHTML=`<div>${mi.toFixed(1)} miles</div><div>$${price.toFixed(2)}</div>`;
     $("summary").style.display="block";
-    $("pay").style.display="block";
+    $("payBtn").style.display="block";
   });
 }
 </script>
-
 </body>
 </html>
