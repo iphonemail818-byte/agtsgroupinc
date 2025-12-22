@@ -2,47 +2,40 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>AGTS Group Inc — Booking</title>
 
-<!-- Fonts & Flatpickr CSS -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 /* ===== BODY ===== */
 body {
   margin: 0;
   background: #0b0b10;
-  font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #e5e7eb;
 }
 
-/* ===== CONTAINER ===== */
+/* ===== CONTAINER (MOBILE SAFE WIDTH) ===== */
 .container {
-  max-width: 520px;
-  margin: 40px auto;
-  padding: 16px;
-}
-
-/* ===== LOGO ===== */
-.logo img {
-  max-width: 180px;
-  display: block;
-  margin: 0 auto 24px;
-  pointer-events: none; /* logo won’t block clicks */
+  max-width: 390px; /* iPhone-safe */
+  margin: 16px auto;
+  padding: 8px;
 }
 
 /* ===== BACKDROP ===== */
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
+  background: rgba(0,0,0,.55);
   opacity: 0;
   pointer-events: none;
-  transition: 0.3s;
-  z-index: 1; /* behind the card */
+  transition: .25s;
+  z-index: 1;
 }
 .backdrop.show {
   opacity: 1;
@@ -51,38 +44,51 @@ body {
 
 /* ===== ROUTE CARD ===== */
 .route-card {
+  position: relative;
   background: linear-gradient(180deg,#1b1c26,#111);
   border-radius: 22px;
-  padding: 16px;
-  box-shadow: 0 30px 70px rgba(0,0,0,.8);
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  z-index: 10; /* above backdrop */
-  position: relative;
+  padding: 14px;
+  box-shadow: 0 25px 60px rgba(0,0,0,.75);
+  z-index: 10;
+}
+
+/* ===== LOGO (INTEGRATED) ===== */
+.logo-card {
+  display: flex;
+  justify-content: center;
+  margin-bottom: -14px;
+}
+.logo-card img {
+  max-width: 96px;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.4);
+  pointer-events: none;
 }
 
 /* ===== COLLAPSED INPUT ===== */
 .collapsed {
+  margin-top: 16px;
   position: relative;
-  cursor: pointer;
 }
 .collapsed input {
   width: 100%;
-  padding: 18px 20px 18px 56px;
-  border-radius: 999px;
-  background: #1f1f25;
+  height: 44px; /* iOS ideal height */
+  padding: 0 14px 0 42px;
+  border-radius: 18px;
   border: none;
-  color: #9ca3af;
-  font-size: 1.05em;
+  background: #1f1f25;
+  color: #e5e7eb;
+  font-size: 16px; /* PREVENTS iOS ZOOM */
 }
 .search-icon {
   position: absolute;
-  left: 20px;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
 }
 
-/* ===== EXPANDED CARD ===== */
+/* ===== EXPANDED ===== */
 .expanded {
   display: none;
 }
@@ -97,86 +103,80 @@ body {
 .row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 16px 0;
+  gap: 10px;
+  margin: 14px 0;
 }
 .row input {
   flex: 1;
   background: transparent;
   border: none;
   border-bottom: 1px solid #333;
-  padding: 10px 4px;
-  color: white;
+  padding: 6px 4px;
+  font-size: 16px; /* NO ZOOM */
+  color: #fff;
 }
 
 /* ===== DOTS ===== */
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
 }
 .start { background: #c7d2fe; }
 .dest { background: #f472b6; }
 
-/* ===== LABELS ===== */
+/* ===== LABEL ===== */
 .label {
-  font-size: .7em;
+  font-size: 10px;
   opacity: .6;
-  width: 80px;
+  width: 70px;
 }
 
-/* ===== ADD STOP BUTTON ===== */
+/* ===== ADD STOP ===== */
 .add-stop {
-  margin: 8px 0 0 auto;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   border: 1px solid #444;
   background: none;
-  color: white;
-  font-size: 22px;
-  cursor: pointer;
+  color: #fff;
+  font-size: 20px;
+  margin-left: auto;
 }
 
-/* ===== DATETIME ===== */
+/* ===== DATE / TIME ===== */
 .datetime {
-  margin-top: 26px;
-  padding-top: 20px;
-  border-top: 1px solid #222;
   display: none;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #222;
 }
 .datetime.show {
   display: block;
 }
-.field-label {
-  font-size: .65em;
-  letter-spacing: .12em;
-  opacity: .6;
-  margin-bottom: 6px;
-}
 .datetime input {
   width: 100%;
-  padding: 16px;
-  border-radius: 14px;
+  height: 42px;
+  font-size: 16px;
+  padding: 0 12px;
+  border-radius: 12px;
   background: #1a1a22;
   border: 1px solid #333;
-  color: white;
-  margin-bottom: 14px;
+  color: #fff;
+  margin-bottom: 10px;
 }
 
-/* ===== ROUTE SUMMARY ===== */
+/* ===== SUMMARY ===== */
 .summary {
-  margin-top: 20px;
-  padding: 16px;
-  background: #0f1118;
-  border-radius: 16px;
-  border: 1px solid #222;
   display: none;
+  margin-top: 14px;
+  padding: 14px;
+  background: #0f1118;
+  border-radius: 14px;
+  border: 1px solid #222;
 }
 .summary div {
-  font-size: .85em;
-  margin-bottom: 6px;
-  opacity: .9;
+  font-size: 13px;
 }
 </style>
 </head>
@@ -186,52 +186,40 @@ body {
 <div class="backdrop" id="backdrop"></div>
 
 <div class="container">
-
-  <!-- LOGO -->
-  <div class="logo">
-    <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/1637F04A-E320-4025-9750-6FE8B7419DB4.png" alt="AGTS Group Inc">
-  </div>
-
-  <!-- ROUTE CARD -->
   <div class="route-card" id="routeCard">
 
-    <!-- COLLAPSED INPUT -->
+    <div class="logo-card">
+      <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/1637F04A-E320-4025-9750-6FE8B7419DB4.png">
+    </div>
+
     <div class="collapsed" id="collapsedInput">
       <span class="search-icon">🔍</span>
       <input placeholder="Where are you going?" readonly>
     </div>
 
-    <!-- EXPANDED FORM -->
     <div class="expanded">
 
-      <!-- PICKUP ROW -->
       <div class="row">
         <span class="dot start"></span>
         <div class="label">START</div>
-        <input id="pickup" placeholder="Current location">
+        <input id="pickup">
       </div>
 
-      <!-- DESTINATIONS -->
       <div id="destinations">
         <div class="row">
           <span class="dot dest"></span>
           <div class="label">DESTINATION</div>
-          <input class="destination" placeholder="Enter destination">
+          <input class="destination">
         </div>
       </div>
 
-      <!-- ADD STOP BUTTON -->
-      <button class="add-stop" id="addStop" title="Add stop">+</button>
+      <button class="add-stop" id="addStop">+</button>
 
-      <!-- DATETIME PICKERS -->
       <div class="datetime" id="dateTime">
-        <div class="field-label">PICKUP DATE</div>
-        <input id="pickupDate" readonly>
-        <div class="field-label">PICKUP TIME</div>
-        <input id="pickupTime" readonly>
+        <input id="pickupDate" placeholder="Pickup date" readonly>
+        <input id="pickupTime" placeholder="Pickup time" readonly>
       </div>
 
-      <!-- ROUTE SUMMARY -->
       <div class="summary" id="routeSummary">
         <div id="sumDistance"></div>
         <div id="sumDuration"></div>
@@ -241,7 +229,6 @@ body {
   </div>
 </div>
 
-<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
@@ -249,27 +236,22 @@ body {
 const card = document.getElementById("routeCard");
 const collapsed = document.getElementById("collapsedInput");
 const backdrop = document.getElementById("backdrop");
+const pickup = document.getElementById("pickup");
 const dateTime = document.getElementById("dateTime");
 const addStop = document.getElementById("addStop");
 const destinations = document.getElementById("destinations");
 const summary = document.getElementById("routeSummary");
-const pickup = document.getElementById("pickup");
 
-/* COLLAPSE/EXPAND LOGIC */
 collapsed.onclick = () => {
   card.classList.add("open");
   backdrop.classList.add("show");
-  navigator.geolocation.getCurrentPosition(
-    () => { pickup.value = "Current location"; },
-    () => { pickup.value = ""; } // fallback
-  );
 };
+
 backdrop.onclick = () => {
   card.classList.remove("open");
   backdrop.classList.remove("show");
 };
 
-/* GOOGLE AUTOCOMPLETE */
 function attachAutocomplete(input) {
   const ac = new google.maps.places.Autocomplete(input);
   ac.addListener("place_changed", () => {
@@ -278,55 +260,41 @@ function attachAutocomplete(input) {
   });
 }
 
-/* ADD STOP */
 addStop.onclick = () => {
   const row = document.createElement("div");
   row.className = "row";
   row.innerHTML = `
     <span class="dot dest"></span>
     <div class="label">STOP</div>
-    <input class="destination" placeholder="Add stop">
+    <input class="destination">
   `;
   destinations.appendChild(row);
-  const input = row.querySelector("input");
-  attachAutocomplete(input);
-  input.focus();
+  attachAutocomplete(row.querySelector("input"));
 };
 
-/* CALCULATE ROUTE (last leg only, can upgrade later) */
 function calculateRoute() {
-  const pickupVal = pickup.value;
-  const destInputs = document.querySelectorAll(".destination");
-  if (!pickupVal || !destInputs[0].value) return;
+  const dest = document.querySelector(".destination").value;
+  if (!pickup.value || !dest) return;
 
-  const origins = [pickupVal];
-  const destinationsArr = Array.from(destInputs).map(d => d.value);
-
-  const service = new google.maps.DistanceMatrixService();
-  service.getDistanceMatrix({
-    origins,
-    destinations: [destinationsArr[destinationsArr.length - 1]],
+  new google.maps.DistanceMatrixService().getDistanceMatrix({
+    origins: [pickup.value],
+    destinations: [dest],
     travelMode: "DRIVING",
     unitSystem: google.maps.UnitSystem.IMPERIAL
   }, (res, status) => {
     if (status === "OK") {
-      const el = res.rows[0].elements[0];
       summary.style.display = "block";
-      document.getElementById("sumDistance").textContent = "Distance: " + el.distance.text;
-      document.getElementById("sumDuration").textContent = "Duration: " + el.duration.text;
+      sumDistance.textContent = "Distance: " + res.rows[0].elements[0].distance.text;
+      sumDuration.textContent = "Duration: " + res.rows[0].elements[0].duration.text;
     }
   });
 }
 
-/* FLATPICKR DATE & TIME */
 flatpickr("#pickupDate", { minDate: "today" });
-flatpickr("#pickupTime", { enableTime: true, noCalendar: true, dateFormat: "h:i K" });
+flatpickr("#pickupTime", { enableTime: true, noCalendar: true });
 
-/* INITIAL AUTOCOMPLETE */
-window.onload = () => {
-  attachAutocomplete(pickup);
-  attachAutocomplete(document.querySelector(".destination"));
-};
+attachAutocomplete(pickup);
+attachAutocomplete(document.querySelector(".destination"));
 </script>
 
 </body>
