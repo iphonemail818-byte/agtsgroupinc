@@ -9,23 +9,87 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
+/* ----- BODY ----- */
 body{
   margin:0;
   background:#0b0b10;
   font-family:Segoe UI,Tahoma,Verdana,sans-serif;
   color:#e5e7eb;
+  overflow-x:hidden;
 }
+
+/* ----- LOADING SCREEN ----- */
+#loader{
+  position:fixed;
+  inset:0;
+  background:#0b0b10;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:50;
+  opacity:1;
+  transition:opacity .5s;
+}
+#loader.hide{opacity:0;pointer-events:none;}
+#loader .logo{
+  font-family:'Orbitron',sans-serif;
+  font-size:2.5em;
+  color:#0ff;
+  letter-spacing:3px;
+  margin-bottom:20px;
+  text-shadow:0 0 15px #0ff, 0 0 30px #0ff;
+  animation: glow 2s infinite alternate;
+}
+@keyframes glow{
+  0%{text-shadow:0 0 5px #0ff,0 0 10px #0ff;}
+  100%{text-shadow:0 0 20px #0ff,0 0 40px #0ff;}
+}
+#loader .bar{
+  width:200px;
+  height:6px;
+  background:#111;
+  border-radius:3px;
+  overflow:hidden;
+}
+#loader .bar-inner{
+  width:0%;
+  height:100%;
+  background:linear-gradient(90deg,#0ff,#00f);
+  animation: load 3s forwards;
+}
+@keyframes load{
+  0%{width:0%;}
+  100%{width:100%;}
+}
+
+/* ----- CONTAINER ----- */
 .container{
   max-width:520px;
   margin:40px auto;
   padding:16px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity 1s ease, transform 1s ease;
 }
+.container.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ----- LOGO ----- */
 .logo{
   text-align:center;
   font-family:'Orbitron',sans-serif;
   font-size:1.8em;
   margin-bottom:24px;
+  position:relative;
+  z-index:10;
+  color:#0ff;
+  text-shadow:0 0 5px #0ff;
 }
+
+/* ----- BACKDROP ----- */
 .backdrop{
   position:fixed;
   inset:0;
@@ -36,12 +100,23 @@ body{
   transition:.3s;
 }
 .backdrop.show{opacity:1;pointer-events:auto;}
+
+/* ----- ROUTE CARD ----- */
 .route-card{
   background:linear-gradient(180deg,#1b1c26,#111);
   border-radius:22px;
   padding:16px;
-  box-shadow:0 30px 70px rgba(0,0,0,.8);
+  box-shadow:0 20px 50px rgba(0,255,255,.3);
+  position:relative;
+  z-index:5;
+  transition:transform .3s,box-shadow .3s;
 }
+.route-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 30px 70px rgba(0,255,255,.5);
+}
+
+/* ----- COLLAPSED INPUT ----- */
 .collapsed{
   position:relative;
 }
@@ -53,6 +128,12 @@ body{
   border:none;
   color:#9ca3af;
   font-size:1.05em;
+  cursor:pointer;
+  box-shadow:0 0 10px rgba(0,255,255,.2);
+  transition:box-shadow .3s;
+}
+.collapsed input:hover{
+  box-shadow:0 0 15px rgba(0,255,255,.4);
 }
 .search-icon{
   position:absolute;
@@ -60,10 +141,13 @@ body{
   top:50%;
   transform:translateY(-50%);
 }
+
+/* ----- EXPANDED ----- */
 .expanded{display:none;}
 .route-card.open .expanded{display:block;}
 .route-card.open .collapsed{display:none;}
 
+/* ----- ROW ----- */
 .row{
   display:flex;
   align-items:center;
@@ -77,6 +161,12 @@ body{
   border-bottom:1px solid #333;
   padding:10px 4px;
   color:white;
+  transition:border-color .3s, box-shadow .3s;
+}
+.row input:focus{
+  outline:none;
+  border-color:#0ff;
+  box-shadow:0 0 10px #0ff;
 }
 .dot{width:10px;height:10px;border-radius:50%;}
 .start{background:#c7d2fe;}
@@ -96,16 +186,26 @@ body{
   color:white;
   font-size:22px;
   cursor:pointer;
+  transition:transform .3s,box-shadow .3s;
+}
+.add-stop:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 10px #0ff;
 }
 
-/* DATE TIME */
+/* ----- DATE TIME ----- */
 .datetime{
   margin-top:26px;
   padding-top:20px;
   border-top:1px solid #222;
   display:none;
+  opacity:0;
+  transition:opacity .3s;
 }
-.datetime.show{display:block;}
+.datetime.show{
+  display:block;
+  opacity:1;
+}
 .field-label{
   font-size:.65em;
   letter-spacing:.12em;
@@ -120,51 +220,65 @@ body{
   border:1px solid #333;
   color:white;
   margin-bottom:14px;
+  box-shadow:0 0 10px rgba(0,255,255,.2);
+  transition:box-shadow .3s, border-color .3s;
+}
+.datetime input:focus{
+  border-color:#0ff;
+  box-shadow:0 0 15px #0ff;
 }
 </style>
 </head>
 
 <body>
 
+<!-- LOADER -->
+<div id="loader">
+  <div class="logo">AGTS GROUP INC</div>
+  <div class="bar"><div class="bar-inner"></div></div>
+</div>
+
+<!-- BACKDROP -->
 <div class="backdrop" id="backdrop"></div>
 
-<div class="container">
-<div class="logo">AGTS GROUP INC</div>
+<!-- MAIN CONTAINER -->
+<div class="container" id="mainContainer">
+  <div class="logo">AGTS GROUP INC</div>
 
-<div class="route-card" id="routeCard">
+  <div class="route-card" id="routeCard">
 
-  <div class="collapsed" id="collapsedInput">
-    <span class="search-icon">🔍</span>
-    <input placeholder="Where are you going?" readonly>
-  </div>
-
-  <div class="expanded">
-
-    <div class="row">
-      <span class="dot start"></span>
-      <div class="label">START</div>
-      <input id="pickup" placeholder="Current location">
+    <div class="collapsed" id="collapsedInput">
+      <span class="search-icon">🔍</span>
+      <input placeholder="Where are you going?" readonly>
     </div>
 
-    <div id="destinations">
+    <div class="expanded">
+
       <div class="row">
-        <span class="dot dest"></span>
-        <div class="label">DESTINATION</div>
-        <input class="destination" placeholder="Enter destination">
+        <span class="dot start"></span>
+        <div class="label">START</div>
+        <input id="pickup" placeholder="Current location">
       </div>
+
+      <div id="destinations">
+        <div class="row">
+          <span class="dot dest"></span>
+          <div class="label">DESTINATION</div>
+          <input class="destination" placeholder="Enter destination">
+        </div>
+      </div>
+
+      <button class="add-stop" id="addStop">+</button>
+
+      <div class="datetime" id="dateTime">
+        <div class="field-label">PICKUP DATE</div>
+        <input id="pickupDate" readonly>
+        <div class="field-label">PICKUP TIME</div>
+        <input id="pickupTime" readonly>
+      </div>
+
     </div>
-
-    <button class="add-stop" id="addStop">+</button>
-
-    <div class="datetime" id="dateTime">
-      <div class="field-label">PICKUP DATE</div>
-      <input id="pickupDate" readonly>
-      <div class="field-label">PICKUP TIME</div>
-      <input id="pickupTime" readonly>
-    </div>
-
   </div>
-</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -177,7 +291,17 @@ const backdrop = document.getElementById("backdrop");
 const dateTime = document.getElementById("dateTime");
 const addStop = document.getElementById("addStop");
 const destinations = document.getElementById("destinations");
+const pickup = document.getElementById("pickup");
+const container = document.getElementById("mainContainer");
+const loader = document.getElementById("loader");
 
+// SHOW MAIN AFTER LOADING
+setTimeout(()=>{
+  loader.classList.add("hide");
+  container.classList.add("show");
+},3000); // 3 seconds
+
+// TOGGLE CARD
 collapsed.onclick = ()=>{
   card.classList.add("open");
   backdrop.classList.add("show");
@@ -185,15 +309,32 @@ collapsed.onclick = ()=>{
     pickup.value = "Current location";
   });
 };
+backdrop.onclick = ()=>{
+  card.classList.remove("open");
+  backdrop.classList.remove("show");
+};
 
+// GOOGLE AUTOCOMPLETE
 function attachAutocomplete(input){
   new google.maps.places.Autocomplete(input);
 }
-
-document.querySelector(".destination").addEventListener("change",()=>{
+function showDateTime(){
   dateTime.classList.add("show");
-});
+}
 
+// INITIAL SETUP
+window.onload = ()=>{
+  attachAutocomplete(pickup);
+  document.querySelectorAll(".destination").forEach(input=>{
+    attachAutocomplete(input);
+    input.addEventListener("input", showDateTime);
+  });
+
+  flatpickr("#pickupDate",{minDate:"today"});
+  flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+};
+
+// ADD STOP
 addStop.onclick = ()=>{
   const row = document.createElement("div");
   row.className="row";
@@ -203,15 +344,9 @@ addStop.onclick = ()=>{
     <input class="destination" placeholder="Add stop">
   `;
   destinations.appendChild(row);
-  attachAutocomplete(row.querySelector("input"));
-};
-
-flatpickr("#pickupDate",{minDate:"today"});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
-
-window.onload=()=>{
-  attachAutocomplete(document.getElementById("pickup"));
-  attachAutocomplete(document.querySelector(".destination"));
+  const input = row.querySelector("input");
+  attachAutocomplete(input);
+  input.addEventListener("input", showDateTime);
 };
 </script>
 
