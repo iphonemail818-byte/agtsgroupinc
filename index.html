@@ -6,6 +6,7 @@
 <title>AGTS Group Inc — Booking</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
 body{
@@ -26,9 +27,9 @@ body{
   text-align:center;
   font-family:'Orbitron',sans-serif;
   font-size:1.9em;
-  color:#0ff;
-  text-shadow:0 0 16px #0ff;
-  margin-bottom:20px;
+  color:#e5e7eb;
+  letter-spacing:1px;
+  margin-bottom:22px;
 }
 
 /* BACKDROP */
@@ -39,7 +40,7 @@ body{
   backdrop-filter:blur(4px);
   opacity:0;
   pointer-events:none;
-  transition:.3s ease;
+  transition:.35s ease;
   z-index:5;
 }
 .backdrop.show{
@@ -51,18 +52,18 @@ body{
 .route-card{
   background:linear-gradient(180deg,#1b1c26,#111);
   border-radius:22px;
-  padding:14px;
-  box-shadow:0 25px 60px rgba(0,0,0,.7);
-  overflow:hidden;
-  transition:.35s ease;
+  padding:16px;
+  box-shadow:0 30px 70px rgba(0,0,0,.8);
+  transition:.4s ease;
   position:relative;
   z-index:10;
 }
-.route-card.open{
-  transform:translateY(-6px);
+
+.route-card.locked{
+  opacity:.85;
 }
 
-/* COLLAPSED SEARCH */
+/* COLLAPSED */
 .collapsed{
   position:relative;
 }
@@ -70,37 +71,35 @@ body{
   width:100%;
   padding:18px 20px 18px 56px;
   border-radius:999px;
-  background:#222;
+  background:#1f1f25;
   border:none;
   color:#9ca3af;
-  font-size:1.1em;
+  font-size:1.05em;
 }
 .search-icon{
   position:absolute;
   left:20px;
   top:50%;
   transform:translateY(-50%);
-  font-size:20px;
-  color:#d946ef;
+  font-size:18px;
+  opacity:.8;
   pointer-events:none;
 }
 
-/* EXPANDED PANEL */
+/* EXPANDED */
 .expanded{
   max-height:0;
   opacity:0;
   overflow:hidden;
-  transition:.4s ease;
+  transition:.45s ease;
 }
 .route-card.open .expanded{
   max-height:600px;
   opacity:1;
 }
-.route-card.open .collapsed{
-  display:none;
-}
+.route-card.open .collapsed{display:none;}
 
-/* ROWS */
+/* ROUTE ROWS */
 .row{
   display:flex;
   align-items:center;
@@ -115,35 +114,66 @@ body{
   padding:10px 4px;
   color:white;
   font-size:1em;
-  outline:none;
 }
 
 /* DOTS */
 .dot{
-  width:12px;
-  height:12px;
+  width:10px;
+  height:10px;
   border-radius:50%;
 }
 .dot.start{background:#c7d2fe;}
 .dot.dest{background:#f472b6;}
 
 .label{
-  font-size:.75em;
-  opacity:.7;
+  font-size:.7em;
+  opacity:.6;
   width:70px;
 }
 
 /* ADD STOP */
 .add-stop{
   margin-left:auto;
-  width:42px;
-  height:42px;
+  width:40px;
+  height:40px;
   border-radius:50%;
   border:1px solid #444;
   background:transparent;
+  color:#e5e7eb;
+  font-size:22px;
+}
+
+/* DATE TIME CARD */
+.datetime{
+  display:none;
+  margin-top:26px;
+  padding-top:20px;
+  border-top:1px solid #222;
+  animation:fadeUp .6s ease forwards;
+}
+.datetime.show{display:block;}
+
+.datetime h3{
+  font-size:.8em;
+  letter-spacing:.12em;
+  opacity:.6;
+  margin-bottom:14px;
+}
+
+.datetime input{
+  width:100%;
+  padding:16px;
+  border-radius:14px;
+  background:#1a1a22;
+  border:1px solid #333;
   color:white;
-  font-size:24px;
-  cursor:pointer;
+  font-size:1em;
+  margin-bottom:12px;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:none}
 }
 </style>
 </head>
@@ -153,97 +183,81 @@ body{
 <div class="backdrop" id="backdrop"></div>
 
 <div class="container">
-  <div class="logo">AGTS GROUP INC</div>
 
-  <div class="route-card" id="routeCard">
+<div class="logo">AGTS GROUP INC</div>
 
-    <!-- COLLAPSED -->
-    <div class="collapsed" id="collapsedInput">
-      <span class="search-icon">🔍</span>
-      <input placeholder="Where are you going?" readonly>
+<div class="route-card" id="routeCard">
+
+  <!-- COLLAPSED -->
+  <div class="collapsed" id="collapsedInput">
+    <span class="search-icon">🔍</span>
+    <input placeholder="Where are you going?" readonly>
+  </div>
+
+  <!-- EXPANDED -->
+  <div class="expanded">
+
+    <div class="row">
+      <span class="dot start"></span>
+      <div class="label">START</div>
+      <input id="pickup" placeholder="Current location">
     </div>
 
-    <!-- EXPANDED -->
-    <div class="expanded">
-
-      <!-- START -->
+    <div id="destinations">
       <div class="row">
-        <span class="dot start"></span>
-        <div class="label">Start</div>
-        <input id="pickup" placeholder="Current location">
+        <span class="dot dest"></span>
+        <div class="label">DESTINATION</div>
+        <input class="destination" placeholder="Enter destination">
       </div>
-
-      <!-- DESTINATIONS -->
-      <div id="destinations">
-        <div class="row">
-          <span class="dot dest"></span>
-          <div class="label">Destination</div>
-          <input class="destination" placeholder="Enter destination">
-        </div>
-      </div>
-
-      <!-- ADD STOP -->
-      <button class="add-stop" id="addStop">+</button>
-
     </div>
+
+    <button class="add-stop" id="addStop">+</button>
+
+    <!-- DATE TIME -->
+    <div class="datetime" id="dateTime">
+      <h3>WHEN WOULD YOU LIKE TO TRAVEL</h3>
+      <input id="pickupDate" placeholder="Select date" readonly>
+      <input id="pickupTime" placeholder="Select time" readonly>
+    </div>
+
   </div>
 </div>
+</div>
 
-<!-- GOOGLE MAPS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
 <script>
 const card = document.getElementById("routeCard");
 const collapsed = document.getElementById("collapsedInput");
-const addStop = document.getElementById("addStop");
-const destinations = document.getElementById("destinations");
 const backdrop = document.getElementById("backdrop");
+const dateTime = document.getElementById("dateTime");
 
 collapsed.onclick = () => {
   card.classList.add("open");
   backdrop.classList.add("show");
   loadCurrentLocation();
-
-  // UX KEY: focus destination
-  setTimeout(()=>{
-    document.querySelector(".destination").focus();
-  },300);
+  setTimeout(()=>document.querySelector(".destination").focus(),300);
 };
 
-backdrop.onclick = () => {
-  card.classList.remove("open");
-  backdrop.classList.remove("show");
-};
-
-addStop.onclick = () => {
-  const row = document.createElement("div");
-  row.className = "row";
-  row.innerHTML = `
-    <span class="dot dest"></span>
-    <div class="label">Stop</div>
-    <input class="destination" placeholder="Add stop">
-  `;
-  destinations.appendChild(row);
-  attachAutocomplete(row.querySelector("input"));
-  row.querySelector("input").focus();
-};
+document.querySelector(".destination").addEventListener("change",()=>{
+  card.classList.add("locked");
+  dateTime.classList.add("show");
+});
 
 function loadCurrentLocation(){
   if(!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(()=>{
-    const pickup = document.getElementById("pickup");
-    pickup.value = "Current location";
-    pickup.style.opacity = "0.7";
+    document.getElementById("pickup").value="Current location";
   });
 }
 
-function attachAutocomplete(input){
-  new google.maps.places.Autocomplete(input);
-}
+flatpickr("#pickupDate",{minDate:"today"});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 
-window.onload = () => {
-  attachAutocomplete(document.getElementById("pickup"));
-  document.querySelectorAll(".destination").forEach(attachAutocomplete);
+window.onload=()=>{
+  new google.maps.places.Autocomplete(document.getElementById("pickup"));
+  new google.maps.places.Autocomplete(document.querySelector(".destination"));
 };
 </script>
 
