@@ -30,6 +30,7 @@ body {
   max-width: 180px;
   display: block;
   margin: 0 auto 24px;
+  pointer-events: none; /* logo won’t block clicks */
 }
 
 /* ===== BACKDROP ===== */
@@ -41,7 +42,7 @@ body {
   opacity: 0;
   pointer-events: none;
   transition: 0.3s;
-  z-index: 5;
+  z-index: 1; /* behind the card */
 }
 .backdrop.show {
   opacity: 1;
@@ -55,7 +56,7 @@ body {
   padding: 16px;
   box-shadow: 0 30px 70px rgba(0,0,0,.8);
   transition: transform 0.3s ease, opacity 0.3s ease;
-  z-index: 10;
+  z-index: 10; /* above backdrop */
   position: relative;
 }
 
@@ -188,7 +189,7 @@ body {
 
   <!-- LOGO -->
   <div class="logo">
-    <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/refs/heads/main/1637F04A-E320-4025-9750-6FE8B7419DB4.png" alt="AGTS Group Inc">
+    <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/1637F04A-E320-4025-9750-6FE8B7419DB4.png" alt="AGTS Group Inc">
   </div>
 
   <!-- ROUTE CARD -->
@@ -245,7 +246,6 @@ body {
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
 <script>
-/* ===== ELEMENTS ===== */
 const card = document.getElementById("routeCard");
 const collapsed = document.getElementById("collapsedInput");
 const backdrop = document.getElementById("backdrop");
@@ -255,13 +255,13 @@ const destinations = document.getElementById("destinations");
 const summary = document.getElementById("routeSummary");
 const pickup = document.getElementById("pickup");
 
-/* ===== COLLAPSE/EXPAND ===== */
+/* COLLAPSE/EXPAND LOGIC */
 collapsed.onclick = () => {
   card.classList.add("open");
   backdrop.classList.add("show");
   navigator.geolocation.getCurrentPosition(
-    (pos) => { pickup.value = "Current location"; },
-    () => { pickup.value = ""; } // fallback if denied
+    () => { pickup.value = "Current location"; },
+    () => { pickup.value = ""; } // fallback
   );
 };
 backdrop.onclick = () => {
@@ -269,7 +269,7 @@ backdrop.onclick = () => {
   backdrop.classList.remove("show");
 };
 
-/* ===== AUTOCOMPLETE ===== */
+/* GOOGLE AUTOCOMPLETE */
 function attachAutocomplete(input) {
   const ac = new google.maps.places.Autocomplete(input);
   ac.addListener("place_changed", () => {
@@ -278,7 +278,7 @@ function attachAutocomplete(input) {
   });
 }
 
-/* ===== ADD STOP ===== */
+/* ADD STOP */
 addStop.onclick = () => {
   const row = document.createElement("div");
   row.className = "row";
@@ -293,7 +293,7 @@ addStop.onclick = () => {
   input.focus();
 };
 
-/* ===== CALCULATE ROUTE ===== */
+/* CALCULATE ROUTE (last leg only, can upgrade later) */
 function calculateRoute() {
   const pickupVal = pickup.value;
   const destInputs = document.querySelectorAll(".destination");
@@ -303,7 +303,6 @@ function calculateRoute() {
   const destinationsArr = Array.from(destInputs).map(d => d.value);
 
   const service = new google.maps.DistanceMatrixService();
-
   service.getDistanceMatrix({
     origins,
     destinations: [destinationsArr[destinationsArr.length - 1]],
@@ -319,11 +318,11 @@ function calculateRoute() {
   });
 }
 
-/* ===== FLATPICKR ===== */
+/* FLATPICKR DATE & TIME */
 flatpickr("#pickupDate", { minDate: "today" });
 flatpickr("#pickupTime", { enableTime: true, noCalendar: true, dateFormat: "h:i K" });
 
-/* ===== INITIAL AUTOCOMPLETE ===== */
+/* INITIAL AUTOCOMPLETE */
 window.onload = () => {
   attachAutocomplete(pickup);
   attachAutocomplete(document.querySelector(".destination"));
