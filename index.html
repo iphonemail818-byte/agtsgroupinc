@@ -31,6 +31,22 @@ body{
   margin-bottom:20px;
 }
 
+/* BACKDROP */
+.backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  opacity:0;
+  pointer-events:none;
+  transition:.3s ease;
+  z-index:5;
+}
+.backdrop.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
 /* ROUTE CARD */
 .route-card{
   background:linear-gradient(180deg,#1b1c26,#111);
@@ -38,13 +54,18 @@ body{
   padding:14px;
   box-shadow:0 25px 60px rgba(0,0,0,.7);
   overflow:hidden;
+  transition:.35s ease;
+  position:relative;
+  z-index:10;
+}
+.route-card.open{
+  transform:translateY(-6px);
 }
 
 /* COLLAPSED SEARCH */
 .collapsed{
   position:relative;
 }
-
 .collapsed input{
   width:100%;
   padding:18px 20px 18px 56px;
@@ -54,7 +75,6 @@ body{
   color:#9ca3af;
   font-size:1.1em;
 }
-
 .search-icon{
   position:absolute;
   left:20px;
@@ -67,21 +87,26 @@ body{
 
 /* EXPANDED PANEL */
 .expanded{
-  display:none;
-  margin-top:10px;
+  max-height:0;
+  opacity:0;
+  overflow:hidden;
+  transition:.4s ease;
 }
-
-.route-card.open .expanded{display:block;}
-.route-card.open .collapsed{display:none;}
+.route-card.open .expanded{
+  max-height:600px;
+  opacity:1;
+}
+.route-card.open .collapsed{
+  display:none;
+}
 
 /* ROWS */
 .row{
   display:flex;
   align-items:center;
   gap:12px;
-  margin:14px 0;
+  margin:16px 0;
 }
-
 .row input{
   flex:1;
   background:transparent;
@@ -99,7 +124,6 @@ body{
   height:12px;
   border-radius:50%;
 }
-
 .dot.start{background:#c7d2fe;}
 .dot.dest{background:#f472b6;}
 
@@ -125,43 +149,44 @@ body{
 </head>
 
 <body>
+
+<div class="backdrop" id="backdrop"></div>
+
 <div class="container">
+  <div class="logo">AGTS GROUP INC</div>
 
-<div class="logo">AGTS GROUP INC</div>
+  <div class="route-card" id="routeCard">
 
-<div class="route-card" id="routeCard">
-
-  <!-- COLLAPSED -->
-  <div class="collapsed" id="collapsedInput">
-    <span class="search-icon">🔍</span>
-    <input placeholder="Where are you going?" readonly>
-  </div>
-
-  <!-- EXPANDED -->
-  <div class="expanded">
-
-    <!-- START -->
-    <div class="row">
-      <span class="dot start"></span>
-      <div class="label">Start</div>
-      <input id="pickup" placeholder="Current location">
+    <!-- COLLAPSED -->
+    <div class="collapsed" id="collapsedInput">
+      <span class="search-icon">🔍</span>
+      <input placeholder="Where are you going?" readonly>
     </div>
 
-    <!-- DESTINATIONS -->
-    <div id="destinations">
+    <!-- EXPANDED -->
+    <div class="expanded">
+
+      <!-- START -->
       <div class="row">
-        <span class="dot dest"></span>
-        <div class="label">Destination</div>
-        <input class="destination" placeholder="Enter destination">
+        <span class="dot start"></span>
+        <div class="label">Start</div>
+        <input id="pickup" placeholder="Current location">
       </div>
+
+      <!-- DESTINATIONS -->
+      <div id="destinations">
+        <div class="row">
+          <span class="dot dest"></span>
+          <div class="label">Destination</div>
+          <input class="destination" placeholder="Enter destination">
+        </div>
+      </div>
+
+      <!-- ADD STOP -->
+      <button class="add-stop" id="addStop">+</button>
+
     </div>
-
-    <!-- ADD STOP -->
-    <button class="add-stop" id="addStop">+</button>
-
   </div>
-</div>
-
 </div>
 
 <!-- GOOGLE MAPS -->
@@ -172,11 +197,22 @@ const card = document.getElementById("routeCard");
 const collapsed = document.getElementById("collapsedInput");
 const addStop = document.getElementById("addStop");
 const destinations = document.getElementById("destinations");
-let pickupAutocomplete;
+const backdrop = document.getElementById("backdrop");
 
 collapsed.onclick = () => {
   card.classList.add("open");
+  backdrop.classList.add("show");
   loadCurrentLocation();
+
+  // UX KEY: focus destination
+  setTimeout(()=>{
+    document.querySelector(".destination").focus();
+  },300);
+};
+
+backdrop.onclick = () => {
+  card.classList.remove("open");
+  backdrop.classList.remove("show");
 };
 
 addStop.onclick = () => {
@@ -189,12 +225,15 @@ addStop.onclick = () => {
   `;
   destinations.appendChild(row);
   attachAutocomplete(row.querySelector("input"));
+  row.querySelector("input").focus();
 };
 
 function loadCurrentLocation(){
   if(!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(()=>{
-    document.getElementById("pickup").value = "Current location";
+    const pickup = document.getElementById("pickup");
+    pickup.value = "Current location";
+    pickup.style.opacity = "0.7";
   });
 }
 
@@ -203,9 +242,7 @@ function attachAutocomplete(input){
 }
 
 window.onload = () => {
-  pickupAutocomplete = new google.maps.places.Autocomplete(
-    document.getElementById("pickup")
-  );
+  attachAutocomplete(document.getElementById("pickup"));
   document.querySelectorAll(".destination").forEach(attachAutocomplete);
 };
 </script>
