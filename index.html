@@ -8,7 +8,7 @@
 
 <style>
 *{box-sizing:border-box;}
-html, body{height:100%; margin:0; overflow:hidden; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:#fff;}
+html, body{height:100%; margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:#fff; overflow:hidden;}
 body{
   background-image:url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png");
   background-repeat:no-repeat;
@@ -17,37 +17,21 @@ body{
   touch-action:none;
 }
 
-/* Hamburger Menu */
+/* Hamburger */
 .menu-btn{
-  position:fixed;
-  top:18px;
-  left:16px;
-  width:42px;
-  height:42px;
+  position:fixed; top:18px; left:16px;
+  width:42px; height:42px;
   background:rgba(0,0,0,.35);
-  border:none;
-  border-radius:12px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  gap:5px;
+  border:none; border-radius:12px;
+  display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px;
   z-index:40;
 }
-.menu-btn span{
-  width:20px;
-  height:2px;
-  background:#fff;
-  border-radius:2px;
-}
+.menu-btn span{width:20px; height:2px; background:#fff; border-radius:2px;}
 
 /* Side Menu */
 .side-menu{
-  position:fixed;
-  top:0;
-  left:-260px;
-  width:260px;
-  height:100%;
+  position:fixed; top:0; left:-260px;
+  width:260px; height:100%;
   background:#020617;
   box-shadow:20px 0 40px rgba(0,0,0,.6);
   padding:80px 20px 20px;
@@ -56,75 +40,51 @@ body{
 }
 .side-menu.open{left:0;}
 .side-menu a{
-  display:block;
-  padding:14px 0;
-  color:#fff;
-  text-decoration:none;
-  font-size:17px;
-  border-bottom:1px solid #1e293b;
+  display:block; padding:14px 0; color:#fff; text-decoration:none; font-size:17px; border-bottom:1px solid #1e293b;
 }
 
 /* Backdrop */
 .backdrop{
-  position:fixed;
-  inset:0;
+  position:fixed; inset:0;
   background:rgba(0,0,0,.35);
-  opacity:0;
-  pointer-events:none;
+  opacity:0; pointer-events:none;
   transition:.2s;
   z-index:30;
 }
-.backdrop.show{
-  opacity:1;
-  pointer-events:auto;
-}
+.backdrop.show{opacity:1; pointer-events:auto;}
 
 /* Route Card */
-.container{
-  max-width:390px;
-  margin:96px auto 24px;
-  padding:8px;
-}
+.container{max-width:390px; margin:96px auto 24px; padding:8px;}
 .route-card{
   background:rgba(17,24,39,.92);
   border-radius:22px;
   padding:16px;
   box-shadow:0 20px 50px rgba(0,0,0,.6);
+  transition:all .3s ease;
 }
 
 /* Collapsed Field */
-.collapsed{position:relative;}
+.collapsed{position:relative; cursor:pointer;}
 .collapsed input{
-  width:100%;
-  height:44px;
+  width:100%; height:44px;
   padding:0 16px 0 42px;
-  border-radius:16px;
-  border:none;
+  border-radius:16px; border:none;
   background:rgba(31,41,55,.85);
-  color:#fff;
-  font-size:16px;
+  color:#fff; font-size:16px;
 }
 .search-icon{position:absolute; left:14px; top:50%; transform:translateY(-50%);}
 
 /* Expanded Fields */
-.expanded{display:none;}
-.route-card.open .expanded{display:block;}
-.route-card.open .collapsed{display:none;}
-
+.expanded{display:none; flex-direction:column; opacity:0; transition:opacity .3s ease;}
+.route-card.open .expanded{display:flex; opacity:1;}
 .row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:14px 0;
+  display:flex; align-items:center; gap:10px; margin:14px 0;
+  opacity:0; transform:translateY(20px); transition:all .3s ease;
 }
+.row.visible{opacity:1; transform:translateY(0);}
 .row input{
-  flex:1;
-  background:transparent;
-  border:none;
-  border-bottom:1px solid #4b5563;
-  padding:6px 4px;
-  font-size:16px;
-  color:#fff;
+  flex:1; background:transparent; border:none; border-bottom:1px solid #4b5563;
+  padding:6px 4px; font-size:16px; color:#fff;
 }
 .dot{width:8px;height:8px;border-radius:50%;}
 .start{background:#93c5fd;}
@@ -132,59 +92,37 @@ body{
 .label{width:70px; font-size:10px; opacity:.6;}
 
 /* Date/Time */
-.datetime{
-  display:none;
-  margin-top:16px;
-  padding-top:14px;
-  border-top:1px solid #374151;
-}
+.datetime{display:none; margin-top:16px; padding-top:14px; border-top:1px solid #374151;}
 .datetime.show{display:block;}
 .datetime input{
-  width:100%;
-  height:40px;
-  font-size:16px;
-  padding:0 12px;
-  border-radius:12px;
-  background:#020617;
-  border:1px solid #334155;
-  color:#fff;
+  width:100%; height:40px; font-size:16px; padding:0 12px;
+  border-radius:12px; background:#020617; border:1px solid #334155; color:#fff;
   margin-bottom:10px;
 }
 
 /* Add Stop Button */
 .add-stop{
-  margin:8px 0 0 auto;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:1px solid #444;
-  background:none;
-  color:white;
-  font-size:22px;
-  cursor:pointer;
+  margin:8px 0 0 auto; width:36px; height:36px;
+  border-radius:50%; border:1px solid #444; background:none;
+  color:white; font-size:22px; cursor:pointer; opacity:0; transform:translateY(20px); transition:.3s ease;
 }
+.add-stop.visible{opacity:1; transform:translateY(0);}
 
 /* Route Summary */
 .summary{
-  margin-top:16px;
-  padding:12px;
-  background:#111827;
-  border-radius:12px;
-  border:1px solid #222;
+  margin-top:16px; padding:12px; background:#111827;
+  border-radius:12px; border:1px solid #222;
   display:none;
 }
-.summary div{
-  font-size:14px;
-  margin-bottom:4px;
-  opacity:.9;
-}
+.summary.show{display:block;}
+.summary div{font-size:14px; margin-bottom:4px; opacity:.9;}
 </style>
 </head>
 
 <body>
 
 <!-- Hamburger -->
-<button class="menu-btn" id="menuBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+<button class="menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
 
 <!-- Side Menu -->
 <nav class="side-menu" id="sideMenu">
@@ -206,15 +144,15 @@ body{
 
     <div class="expanded">
       <!-- START -->
-      <div class="row">
+      <div class="row" id="pickupRow">
         <span class="dot start"></span>
         <div class="label">START</div>
         <input id="pickup" placeholder="Current location" readonly>
       </div>
 
-      <!-- DESTINATIONS -->
+      <!-- DESTINATION -->
       <div id="destinations">
-        <div class="row">
+        <div class="row" id="firstDestination">
           <span class="dot dest"></span>
           <div class="label">DESTINATION</div>
           <input class="destination" placeholder="Enter destination">
@@ -243,8 +181,8 @@ body{
 <script>
 const card = document.getElementById("routeCard");
 const backdrop = document.getElementById("backdrop");
-const pickup = document.getElementById("pickup");
 const openSearch = document.getElementById("openSearch");
+const pickup = document.getElementById("pickup");
 const sideMenu = document.getElementById("sideMenu");
 const menuBtn = document.getElementById("menuBtn");
 const dateTime = document.getElementById("dateTime");
@@ -252,63 +190,58 @@ const destinations = document.getElementById("destinations");
 const addStopBtn = document.getElementById("addStop");
 const routeSummary = document.getElementById("routeSummary");
 
+// STEP ANIMATION FUNCTION
+function showStep(el){ setTimeout(()=>{el.classList.add("visible");},100); }
+
 // OPEN CARD
-openSearch.addEventListener("click", (e)=>{
+openSearch.addEventListener("click", e=>{
   e.stopPropagation();
   card.classList.add("open");
   backdrop.classList.add("show");
-  destinations.querySelector(".destination").focus();
+  showStep(document.getElementById("pickupRow"));
 });
 
-// Prevent card clicks from closing
-card.addEventListener("click", (e)=>{ e.stopPropagation(); });
+// PREVENT CLOSING WHEN CLICK INSIDE CARD
+card.addEventListener("click", e=>{e.stopPropagation();});
 
-// MENU TOGGLE
-menuBtn.addEventListener("click", (e)=>{
+// MENU
+menuBtn.addEventListener("click", e=>{
   e.stopPropagation();
   sideMenu.classList.add("open");
   backdrop.classList.add("show");
 });
 
-// CLOSE MENU OR CARD ON BACKDROP
+// CLOSE CARD OR MENU
 backdrop.addEventListener("click", ()=>{
   if(sideMenu.classList.contains("open")) sideMenu.classList.remove("open");
   if(card.classList.contains("open")) card.classList.remove("open");
   backdrop.classList.remove("show");
 });
 
-// DATE / TIME
+// DATE / TIME PICKERS
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true});
 
 // CURRENT LOCATION
 pickup.addEventListener("click", ()=>{
   pickup.value="Getting current location…";
-  navigator.geolocation.getCurrentPosition(
-    pos=>{
-      new google.maps.Geocoder().geocode(
-        {location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},
-        (res,status)=>{
-          if(status==="OK" && res[0]){
-            pickup.value=res[0].formatted_address;
-            destinations.querySelector(".destination").focus();
-            dateTime.classList.add("show");
-            calculateRoute();
-          }else{
-            pickup.value="Unable to detect address";
-          }
-        }
-      );
-    },
-    ()=>pickup.value="Location permission denied",
-    {enableHighAccuracy:true,timeout:10000}
-  );
+  navigator.geolocation.getCurrentPosition(pos=>{
+    new google.maps.Geocoder().geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}}, (res,status)=>{
+      if(status==="OK" && res[0]){
+        pickup.value=res[0].formatted_address;
+        document.getElementById("firstDestination").classList.add("visible");
+        attachAutocomplete(document.querySelector(".destination"));
+        document.querySelector(".destination").focus();
+        dateTime.classList.add("show");
+      }else pickup.value="Unable to detect address";
+    });
+  }, ()=>pickup.value="Location permission denied", {enableHighAccuracy:true,timeout:10000});
 });
 
 // ADD STOP
 addStopBtn.addEventListener("click", ()=>{
   const row = document.createElement("div");
-  row.className="row";
+  row.className="row visible";
   row.innerHTML=`<span class="dot dest"></span><div class="label">STOP</div><input class="destination" placeholder="Add stop">`;
   destinations.appendChild(row);
   attachAutocomplete(row.querySelector("input"));
@@ -318,12 +251,11 @@ addStopBtn.addEventListener("click", ()=>{
 // GOOGLE AUTOCOMPLETE
 function attachAutocomplete(input){
   const ac = new google.maps.places.Autocomplete(input);
-  ac.addListener("place_changed", ()=>{
-    dateTime.classList.add("show");
-    calculateRoute();
-  });
+  ac.addListener("place_changed", ()=>{ calculateRoute(); });
 }
-attachAutocomplete(destinations.querySelector(".destination"));
+
+// INITIAL AUTOCOMPLETE
+attachAutocomplete(document.querySelector(".destination"));
 
 // CALCULATE ROUTE DISTANCE
 function calculateRoute(){
@@ -341,7 +273,7 @@ function calculateRoute(){
   },(res,status)=>{
     if(status==="OK"){
       const el = res.rows[0].elements[0];
-      routeSummary.style.display="block";
+      routeSummary.classList.add("show");
       document.getElementById("sumDistance").textContent = "Distance: "+el.distance.text;
       document.getElementById("sumDuration").textContent = "Duration: "+el.duration.text;
     }
