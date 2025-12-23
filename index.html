@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1"
+/>
 <title>AGTS Group Inc — Booking</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -12,32 +15,57 @@
 
 html, body{
   height:100%;
+  background:#000; /* prevents white overscroll */
+  overscroll-behavior:none;
 }
 
-/* 🔥 LOGO IS THE ONLY BACKGROUND */
+/* LOGO IS THE ONLY BACKGROUND */
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:#ffffff;
-
+  color:#fff;
   background-image:url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png");
   background-repeat:no-repeat;
   background-position:center center;
-  background-size:cover; /* fills entire screen */
+  background-size:cover;
 }
 
-/* Layout container */
+/* Hamburger menu */
+.menu-btn{
+  position:fixed;
+  top:18px;
+  left:16px;
+  width:42px;
+  height:42px;
+  background:rgba(0,0,0,.35);
+  border:none;
+  border-radius:12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:5px;
+  z-index:30;
+}
+.menu-btn span{
+  width:20px;
+  height:2px;
+  background:#fff;
+  border-radius:2px;
+}
+
+/* Layout */
 .container{
   max-width:390px;
-  margin:24px auto;
+  margin:96px auto 24px; /* ~3/4 inch drop */
   padding:8px;
 }
 
-/* Backdrop (ONLY for focus, transparent) */
+/* Backdrop */
 .backdrop{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.15); /* very light, no glow */
+  background:rgba(0,0,0,.15);
   opacity:0;
   pointer-events:none;
   transition:.2s;
@@ -48,9 +76,9 @@ body{
   pointer-events:auto;
 }
 
-/* Booking card */
+/* Card */
 .route-card{
-  background:rgba(17,24,39,0.92); /* card only */
+  background:rgba(17,24,39,.92);
   border-radius:22px;
   padding:16px;
   box-shadow:0 20px 50px rgba(0,0,0,.6);
@@ -58,7 +86,7 @@ body{
   z-index:10;
 }
 
-/* Collapsed search */
+/* Collapsed */
 .collapsed{
   position:relative;
 }
@@ -79,7 +107,7 @@ body{
   transform:translateY(-50%);
 }
 
-/* Expanded state */
+/* Expanded */
 .expanded{display:none;}
 .route-card.open .expanded{display:block;}
 .route-card.open .collapsed{display:none;}
@@ -138,6 +166,11 @@ body{
 
 <body>
 
+<!-- Hamburger -->
+<button class="menu-btn" aria-label="Menu">
+  <span></span><span></span><span></span>
+</button>
+
 <div class="backdrop" id="backdrop"></div>
 
 <div class="container">
@@ -155,13 +188,13 @@ body{
       <div class="row">
         <span class="dot start"></span>
         <div class="label">START</div>
-        <input id="pickup" placeholder="Current location">
+        <input id="pickup" placeholder="Current location" readonly>
       </div>
 
       <div class="row">
         <span class="dot dest"></span>
         <div class="label">DESTINATION</div>
-        <input class="destination">
+        <input class="destination" placeholder="Enter destination">
       </div>
 
       <div class="datetime" id="dateTime">
@@ -174,10 +207,14 @@ body{
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+
 <script>
 const card = document.getElementById("routeCard");
 const backdrop = document.getElementById("backdrop");
+const pickup = document.getElementById("pickup");
 
+/* Open / close */
 document.getElementById("openSearch").onclick = () => {
   card.classList.add("open");
   backdrop.classList.add("show");
@@ -188,8 +225,40 @@ backdrop.onclick = () => {
   backdrop.classList.remove("show");
 };
 
+/* Date / time */
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true});
+
+/* CURRENT LOCATION (REAL GPS) */
+pickup.onclick = () => {
+  if(!navigator.geolocation){
+    pickup.value="Location not supported";
+    return;
+  }
+
+  pickup.value="Getting current location…";
+
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const geocoder=new google.maps.Geocoder();
+      geocoder.geocode(
+        {location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},
+        (res,status)=>{
+          if(status==="OK" && res[0]){
+            pickup.value=res[0].formatted_address;
+            document.getElementById("dateTime").classList.add("show");
+          }else{
+            pickup.value="Unable to detect address";
+          }
+        }
+      );
+    },
+    ()=>{
+      pickup.value="Location permission denied";
+    },
+    {enableHighAccuracy:true,timeout:10000}
+  );
+};
 </script>
 
 </body>
