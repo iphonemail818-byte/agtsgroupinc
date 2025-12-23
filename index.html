@@ -8,53 +8,49 @@
 
 <style>
 *{box-sizing:border-box;}
-html, body{height:100%; margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:#fff; overflow:hidden;}
+html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff;overflow:hidden;}
 body{
   background-image:url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png");
-  background-repeat:no-repeat;
-  background-position:center center;
   background-size:cover;
-  touch-action:none;
+  background-position:center;
+  background-repeat:no-repeat;
 }
 
 /* Hamburger */
 .menu-btn{
   position:fixed; top:18px; left:16px;
-  width:42px; height:42px;
-  background:rgba(0,0,0,.35);
+  width:42px; height:42px; background:rgba(0,0,0,.35);
   border:none; border-radius:12px;
   display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px;
   z-index:40;
+  cursor:pointer;
 }
 .menu-btn span{width:20px; height:2px; background:#fff; border-radius:2px;}
 
 /* Side Menu */
 .side-menu{
   position:fixed; top:0; left:-260px;
-  width:260px; height:100%;
-  background:#020617;
+  width:260px; height:100%; background:#020617;
   box-shadow:20px 0 40px rgba(0,0,0,.6);
-  padding:80px 20px 20px;
-  transition:.3s ease;
-  z-index:35;
+  padding:80px 20px 20px; transition:.3s ease; z-index:35;
 }
 .side-menu.open{left:0;}
 .side-menu a{
   display:block; padding:14px 0; color:#fff; text-decoration:none; font-size:17px; border-bottom:1px solid #1e293b;
 }
 
-/* Backdrop */
-.backdrop{
+/* Side Menu Backdrop */
+.side-backdrop{
   position:fixed; inset:0;
   background:rgba(0,0,0,.35);
   opacity:0; pointer-events:none;
   transition:.2s;
   z-index:30;
 }
-.backdrop.show{opacity:1; pointer-events:auto;}
+.side-backdrop.show{opacity:1; pointer-events:auto;}
 
 /* Route Card */
-.container{max-width:390px; margin:96px auto 24px; padding:8px;}
+.container{max-width:390px;margin:96px auto 24px;padding:8px;}
 .route-card{
   background:rgba(17,24,39,.92);
   border-radius:22px;
@@ -66,10 +62,8 @@ body{
 /* Collapsed Field */
 .collapsed{position:relative; cursor:pointer;}
 .collapsed input{
-  width:100%; height:44px;
-  padding:0 16px 0 42px;
-  border-radius:16px; border:none;
-  background:rgba(31,41,55,.85);
+  width:100%; height:44px; padding:0 16px 0 42px;
+  border-radius:16px; border:none; background:rgba(31,41,55,.85);
   color:#fff; font-size:16px;
 }
 .search-icon{position:absolute; left:14px; top:50%; transform:translateY(-50%);}
@@ -131,8 +125,7 @@ body{
   <a href="#">Drivers</a>
   <a href="#">Set up</a>
 </nav>
-
-<div class="backdrop" id="backdrop"></div>
+<div class="side-backdrop" id="sideBackdrop"></div>
 
 <div class="container">
   <div class="route-card" id="routeCard">
@@ -180,49 +173,46 @@ body{
 
 <script>
 const card = document.getElementById("routeCard");
-const backdrop = document.getElementById("backdrop");
 const openSearch = document.getElementById("openSearch");
 const pickup = document.getElementById("pickup");
-const sideMenu = document.getElementById("sideMenu");
-const menuBtn = document.getElementById("menuBtn");
-const dateTime = document.getElementById("dateTime");
 const destinations = document.getElementById("destinations");
 const addStopBtn = document.getElementById("addStop");
+const dateTime = document.getElementById("dateTime");
 const routeSummary = document.getElementById("routeSummary");
 
-// STEP ANIMATION FUNCTION
-function showStep(el){ setTimeout(()=>{el.classList.add("visible");},100); }
+// Hamburger menu
+const menuBtn = document.getElementById("menuBtn");
+const sideMenu = document.getElementById("sideMenu");
+const sideBackdrop = document.getElementById("sideBackdrop");
 
-// OPEN CARD
+// Open card
 openSearch.addEventListener("click", e=>{
   e.stopPropagation();
   card.classList.add("open");
-  backdrop.classList.add("show");
-  showStep(document.getElementById("pickupRow"));
+  document.getElementById("pickupRow").classList.add("visible");
 });
 
-// PREVENT CLOSING WHEN CLICK INSIDE CARD
-card.addEventListener("click", e=>{e.stopPropagation();});
+// Prevent collapse by taps or focus
+card.addEventListener("click", e=>e.stopPropagation());
 
-// MENU
+// Menu
 menuBtn.addEventListener("click", e=>{
   e.stopPropagation();
   sideMenu.classList.add("open");
-  backdrop.classList.add("show");
+  sideBackdrop.classList.add("show");
 });
 
-// CLOSE CARD OR MENU
-backdrop.addEventListener("click", ()=>{
-  if(sideMenu.classList.contains("open")) sideMenu.classList.remove("open");
-  if(card.classList.contains("open")) card.classList.remove("open");
-  backdrop.classList.remove("show");
+// Close menu
+sideBackdrop.addEventListener("click", ()=>{
+  sideMenu.classList.remove("open");
+  sideBackdrop.classList.remove("show");
 });
 
-// DATE / TIME PICKERS
+// Date/time pickers
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true});
 
-// CURRENT LOCATION
+// Current location
 pickup.addEventListener("click", ()=>{
   pickup.value="Getting current location…";
   navigator.geolocation.getCurrentPosition(pos=>{
@@ -233,12 +223,13 @@ pickup.addEventListener("click", ()=>{
         attachAutocomplete(document.querySelector(".destination"));
         document.querySelector(".destination").focus();
         dateTime.classList.add("show");
+        calculateRoute();
       }else pickup.value="Unable to detect address";
     });
   }, ()=>pickup.value="Location permission denied", {enableHighAccuracy:true,timeout:10000});
 });
 
-// ADD STOP
+// Add Stop
 addStopBtn.addEventListener("click", ()=>{
   const row = document.createElement("div");
   row.className="row visible";
@@ -248,22 +239,21 @@ addStopBtn.addEventListener("click", ()=>{
   row.querySelector("input").focus();
 });
 
-// GOOGLE AUTOCOMPLETE
+// Autocomplete
 function attachAutocomplete(input){
   const ac = new google.maps.places.Autocomplete(input);
   ac.addListener("place_changed", ()=>{ calculateRoute(); });
 }
 
-// INITIAL AUTOCOMPLETE
+// Initial autocomplete
 attachAutocomplete(document.querySelector(".destination"));
 
-// CALCULATE ROUTE DISTANCE
+// Calculate route
 function calculateRoute(){
   const origins = [pickup.value];
   const destInputs = document.querySelectorAll(".destination");
   if(!pickup.value || !destInputs[0].value) return;
   const destinationsArr = Array.from(destInputs).map(d=>d.value);
-
   const service = new google.maps.DistanceMatrixService();
   service.getDistanceMatrix({
     origins,
@@ -280,6 +270,5 @@ function calculateRoute(){
   });
 }
 </script>
-
 </body>
 </html>
