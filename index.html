@@ -22,8 +22,7 @@ body{
   width:42px; height:42px; background:rgba(0,0,0,.35);
   border:none; border-radius:12px;
   display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px;
-  z-index:40;
-  cursor:pointer;
+  z-index:40; cursor:pointer;
 }
 .menu-btn span{width:20px; height:2px; background:#fff; border-radius:2px;}
 
@@ -140,7 +139,7 @@ body{
       <div class="row" id="pickupRow">
         <span class="dot start"></span>
         <div class="label">START</div>
-        <input id="pickup" placeholder="Current location" readonly>
+        <input id="pickup" placeholder="Current location">
       </div>
 
       <!-- DESTINATION -->
@@ -201,8 +200,6 @@ menuBtn.addEventListener("click", e=>{
   sideMenu.classList.add("open");
   sideBackdrop.classList.add("show");
 });
-
-// Close menu
 sideBackdrop.addEventListener("click", ()=>{
   sideMenu.classList.remove("open");
   sideBackdrop.classList.remove("show");
@@ -212,21 +209,22 @@ sideBackdrop.addEventListener("click", ()=>{
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true});
 
-// Current location
-pickup.addEventListener("click", ()=>{
-  pickup.value="Getting current location…";
-  navigator.geolocation.getCurrentPosition(pos=>{
-    new google.maps.Geocoder().geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}}, (res,status)=>{
-      if(status==="OK" && res[0]){
-        pickup.value=res[0].formatted_address;
-        document.getElementById("firstDestination").classList.add("visible");
-        attachAutocomplete(document.querySelector(".destination"));
-        document.querySelector(".destination").focus();
-        dateTime.classList.add("show");
-        calculateRoute();
-      }else pickup.value="Unable to detect address";
-    });
-  }, ()=>pickup.value="Location permission denied", {enableHighAccuracy:true,timeout:10000});
+// Current location button logic
+pickup.addEventListener("focus", ()=>{
+  if(!pickup.dataset.manual){
+    pickup.value="Getting current location…";
+    navigator.geolocation.getCurrentPosition(pos=>{
+      new google.maps.Geocoder().geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}}, (res,status)=>{
+        if(status==="OK" && res[0]){
+          pickup.value = res[0].formatted_address;
+        } else pickup.value="";
+        pickup.dataset.manual="true"; // allow typing
+      });
+    }, ()=>{
+      pickup.value="";
+      pickup.dataset.manual="true";
+    }, {enableHighAccuracy:true,timeout:10000});
+  }
 });
 
 // Add Stop
@@ -244,8 +242,6 @@ function attachAutocomplete(input){
   const ac = new google.maps.places.Autocomplete(input);
   ac.addListener("place_changed", ()=>{ calculateRoute(); });
 }
-
-// Initial autocomplete
 attachAutocomplete(document.querySelector(".destination"));
 
 // Calculate route
