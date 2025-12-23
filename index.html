@@ -8,7 +8,6 @@
 
 <title>AGTS Group Inc — Booking</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
@@ -24,14 +23,15 @@ html,body{
   -webkit-text-size-adjust:100%;
 }
 
-/* ───── HEADER ───── */
+/* ───────── HEADER ───────── */
 .header{
   position:fixed;
   top:14px;
-  left:14px;
+  left:0;
+  width:100%;
+  padding:0 16px;
   display:flex;
   align-items:center;
-  gap:12px;
   z-index:100;
 }
 
@@ -51,24 +51,20 @@ html,body{
   border-radius:2px;
 }
 
-/* slogan next to burger */
-.slogan{
-  font-family:'Orbitron',sans-serif;
-  font-size:0.95em;
-  white-space:nowrap;
+/* slogan image centered */
+.slogan-img-wrap{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  pointer-events:none;
 }
-.slogan .vip,
-.slogan .excellence{
-  color:#00ffff;
-  font-weight:900;
-}
-.slogan .meets{
-  font-style:italic;
-  opacity:.85;
-  padding:0 4px;
+.slogan-img-wrap img{
+  height:32px;
+  max-width:260px;
+  object-fit:contain;
 }
 
-/* ───── SIDE MENU ───── */
+/* ───────── SIDE MENU ───────── */
 .side-menu{
   position:fixed;
   top:0;
@@ -105,7 +101,7 @@ html,body{
   pointer-events:auto;
 }
 
-/* ───── MAIN ───── */
+/* ───────── MAIN ───────── */
 .container{
   max-width:520px;
   margin:96px auto 0;
@@ -124,7 +120,7 @@ html,body{
   position:relative;
 }
 .collapsed input{
-  width:calc(100% - 48px); /* ~3/4 inch smaller */
+  width:calc(100% - 48px); /* ~¾ inch smaller */
   padding:16px 20px 16px 52px;
   border-radius:999px;
   background:#1f1f25;
@@ -211,10 +207,8 @@ html,body{
     <span></span><span></span><span></span>
   </div>
 
-  <div class="slogan">
-    <span class="vip">VIP</span>
-    <span class="meets">meets</span>
-    <span class="excellence">Excellence</span>
+  <div class="slogan-img-wrap">
+    <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/refs/heads/main/E7C53822-D82E-4E8E-8488-3D03379590FC.png" alt="When VIP Meets Excellence">
   </div>
 </div>
 
@@ -225,9 +219,9 @@ html,body{
   <a href="#">Drivers</a>
   <a href="#">Set up</a>
 </nav>
-
 <div class="side-backdrop" id="sideBackdrop"></div>
 
+<!-- MAIN -->
 <div class="container">
   <div class="route-card" id="routeCard">
     <div class="collapsed" id="collapsedInput">
@@ -266,30 +260,34 @@ html,body{
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
 <script>
-const card=document.getElementById("routeCard");
+/* open booking */
 document.getElementById("collapsedInput").onclick=()=>{
-  card.classList.add("open");
+  document.getElementById("routeCard").classList.add("open");
 };
 
-function attachAutocomplete(i){
-  new google.maps.places.Autocomplete(i);
-}
+/* autocomplete */
+function attachAC(i){ new google.maps.places.Autocomplete(i); }
 window.onload=()=>{
-  attachAutocomplete(document.getElementById("pickup"));
-  attachAutocomplete(document.querySelector(".destination"));
+  attachAC(document.getElementById("pickup"));
+  attachAC(document.querySelector(".destination"));
 };
 
+/* show datetime */
 document.querySelector(".destination").oninput=()=>{
   document.getElementById("dateTime").classList.add("show");
 };
 
-/* MENU */
-const m=document.getElementById("menuBtn");
-const s=document.getElementById("sideMenu");
-const b=document.getElementById("sideBackdrop");
+/* menu */
+const btn=document.getElementById("menuBtn");
+const menu=document.getElementById("sideMenu");
+const back=document.getElementById("sideBackdrop");
 
-m.onclick=()=>{ s.classList.add("open"); b.classList.add("show"); };
-b.onclick=()=>{ s.classList.remove("open"); b.classList.remove("show"); };
+btn.onclick=()=>{ menu.classList.add("open"); back.classList.add("show"); };
+back.onclick=()=>{ menu.classList.remove("open"); back.classList.remove("show"); };
+
+/* date/time */
+flatpickr("#pickupDate",{minDate:"today"});
+flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
 </script>
 
 </body>
