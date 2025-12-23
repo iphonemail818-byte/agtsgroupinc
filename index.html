@@ -14,14 +14,13 @@ html, body{
   height:100%;
   margin:0;
   overflow:hidden;
-  background:#000;
   overscroll-behavior:none;
-}
-
-/* LOGO BACKGROUND */
-body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   color:#fff;
+}
+
+/* BACKGROUND LOGO */
+body{
   background-image:url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png");
   background-repeat:no-repeat;
   background-position:center center;
@@ -29,7 +28,7 @@ body{
   touch-action:none;
 }
 
-/* HAMBURGER */
+/* HAMBURGER MENU */
 .menu-btn{
   position:fixed;
   top:18px;
@@ -91,13 +90,12 @@ body{
   pointer-events:auto;
 }
 
-/* CARD */
+/* ROUTE CARD */
 .container{
   max-width:390px;
   margin:96px auto 24px;
   padding:8px;
 }
-
 .route-card{
   background:rgba(17,24,39,.92);
   border-radius:22px;
@@ -105,7 +103,7 @@ body{
   box-shadow:0 20px 50px rgba(0,0,0,.6);
 }
 
-/* COLLAPSED */
+/* COLLAPSED FIELD */
 .collapsed{position:relative;}
 .collapsed input{
   width:100%;
@@ -119,7 +117,7 @@ body{
 }
 .search-icon{position:absolute; left:14px; top:50%; transform:translateY(-50%);}
 
-/* EXPANDED */
+/* EXPANDED FIELDS */
 .expanded{display:none;}
 .route-card.open .expanded{display:block;}
 .route-card.open .collapsed{display:none;}
@@ -139,11 +137,19 @@ body{
   font-size:16px;
   color:#fff;
 }
-
 .dot{width:8px;height:8px;border-radius:50%;}
 .start{background:#93c5fd;}
 .dest{background:#f9a8d4;}
 .label{width:70px; font-size:10px; opacity:.6;}
+
+/* FILLED BLACK LANE EFFECT */
+input.filled{
+  background:#000;
+  border:1px solid #444;
+  border-radius:12px;
+  color:#fff;
+  transition: background .2s, border .2s;
+}
 
 /* DATE / TIME */
 .datetime{
@@ -300,6 +306,9 @@ pickup.addEventListener("click", ()=>{
         (res,status)=>{
           if(status==="OK" && res[0]){
             pickup.value=res[0].formatted_address;
+            pickup.classList.add("filled"); // Black lane effect
+            const firstDest = document.querySelector(".destination");
+            if(firstDest) firstDest.focus();
             dateTime.classList.add("show");
             calculateRoute();
           }else{
@@ -327,7 +336,16 @@ addStopBtn.addEventListener("click", ()=>{
 // GOOGLE AUTOCOMPLETE
 function attachAutocomplete(input){
   const ac = new google.maps.places.Autocomplete(input);
-  ac.addListener("place_changed", ()=>{dateTime.classList.add("show"); calculateRoute();});
+  ac.addListener("place_changed", ()=>{
+    input.classList.add("filled"); // black lane
+    dateTime.classList.add("show");
+    calculateRoute();
+  });
+
+  input.addEventListener("input", ()=>{
+    if(input.value.trim()!=="") input.classList.add("filled");
+    else input.classList.remove("filled");
+  });
 }
 attachAutocomplete(destinations.querySelector(".destination"));
 
