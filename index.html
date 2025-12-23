@@ -14,35 +14,33 @@ html, body{
   height:100%;
 }
 
+/* 🔥 LOGO IS THE ONLY BACKGROUND */
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:#e5e7eb;
+  color:#ffffff;
 
-  /* ✅ NEW LOGO AS FULL-PAGE BACKGROUND */
-  background:
-    linear-gradient(rgba(17,24,39,0.9), rgba(17,24,39,0.9)),
-    url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png");
+  background-image:url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png");
   background-repeat:no-repeat;
-  background-position:center;
-  background-size:420px;
+  background-position:center center;
+  background-size:cover; /* fills entire screen */
 }
 
-/* Layout */
+/* Layout container */
 .container{
   max-width:390px;
   margin:24px auto;
   padding:8px;
 }
 
-/* Backdrop */
+/* Backdrop (ONLY for focus, transparent) */
 .backdrop{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.35);
+  background:rgba(0,0,0,0.15); /* very light, no glow */
   opacity:0;
   pointer-events:none;
-  transition:.25s;
+  transition:.2s;
   z-index:5;
 }
 .backdrop.show{
@@ -50,25 +48,25 @@ body{
   pointer-events:auto;
 }
 
-/* Card */
+/* Booking card */
 .route-card{
-  background:linear-gradient(180deg,#1f2937,#111827);
+  background:rgba(17,24,39,0.92); /* card only */
   border-radius:22px;
   padding:16px;
-  box-shadow:0 25px 60px rgba(0,0,0,.75);
+  box-shadow:0 20px 50px rgba(0,0,0,.6);
   position:relative;
   z-index:10;
 }
 
-/* Collapsed */
+/* Collapsed search */
 .collapsed{
   position:relative;
 }
 .collapsed input{
   width:100%;
-  height:46px;
-  padding:0 16px 0 44px;
-  border-radius:18px;
+  height:44px;
+  padding:0 16px 0 42px;
+  border-radius:16px;
   border:none;
   background:#1f2937;
   color:#fff;
@@ -81,7 +79,7 @@ body{
   transform:translateY(-50%);
 }
 
-/* Expanded */
+/* Expanded state */
 .expanded{display:none;}
 .route-card.open .expanded{display:block;}
 .route-card.open .collapsed{display:none;}
@@ -96,7 +94,7 @@ body{
   flex:1;
   background:transparent;
   border:none;
-  border-bottom:1px solid #374151;
+  border-bottom:1px solid #4b5563;
   padding:6px 4px;
   font-size:16px;
   color:#fff;
@@ -116,29 +114,17 @@ body{
   opacity:.6;
 }
 
-/* Add stop */
-.add-stop{
-  width:34px;
-  height:34px;
-  border-radius:50%;
-  border:1px solid #4b5563;
-  background:none;
-  color:#fff;
-  font-size:20px;
-  margin-left:auto;
-}
-
-/* Date & Time */
+/* Date & time */
 .datetime{
   display:none;
   margin-top:16px;
   padding-top:14px;
-  border-top:1px solid #1f2937;
+  border-top:1px solid #374151;
 }
 .datetime.show{display:block;}
 .datetime input{
   width:100%;
-  height:42px;
+  height:40px;
   font-size:16px;
   padding:0 12px;
   border-radius:12px;
@@ -146,20 +132,6 @@ body{
   border:1px solid #334155;
   color:#fff;
   margin-bottom:10px;
-}
-
-/* Summary */
-.summary{
-  display:none;
-  margin-top:14px;
-  padding:14px;
-  background:#020617;
-  border-radius:14px;
-  border:1px solid #1e293b;
-}
-.summary div{
-  font-size:13px;
-  margin-bottom:6px;
 }
 </style>
 </head>
@@ -171,11 +143,13 @@ body{
 <div class="container">
   <div class="route-card" id="routeCard">
 
+    <!-- Collapsed -->
     <div class="collapsed">
       <span class="search-icon">🔍</span>
       <input id="openSearch" placeholder="Where are you going?" readonly>
     </div>
 
+    <!-- Expanded -->
     <div class="expanded">
 
       <div class="row">
@@ -190,16 +164,9 @@ body{
         <input class="destination">
       </div>
 
-      <button class="add-stop">+</button>
-
       <div class="datetime" id="dateTime">
         <input id="pickupDate" placeholder="Pickup date" readonly>
         <input id="pickupTime" placeholder="Pickup time" readonly>
-      </div>
-
-      <div class="summary" id="routeSummary">
-        <div id="sumDistance"></div>
-        <div id="sumDuration"></div>
       </div>
 
     </div>
