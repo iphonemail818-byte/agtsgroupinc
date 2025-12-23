@@ -2,135 +2,137 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <title>AGTS Group Inc — Booking</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-html, body {
+html,body{
   margin:0;
   padding:0;
-  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
-  color:#e5e7eb;
   height:100%;
-  overflow:hidden; /* scroll locked */
-  background: url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png") center/cover no-repeat;
+  overflow:hidden; /* LOCK SCROLL */
+  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
+  color:#fff;
+  background:
+    url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png")
+    center/cover no-repeat
+    #000;
 }
 
-/* Hamburger menu */
-.menu-btn {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  width: 36px;
-  height: 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-  z-index: 50;
+/* ───── HAMBURGER ───── */
+.menu-btn{
+  position:fixed;
+  top:16px;
+  left:16px;
+  width:26px;
+  height:20px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  z-index:100;
+  cursor:pointer;
 }
-.menu-btn span {
-  display: block;
-  height: 4px;
-  width: 100%;
-  background: #fff;
-  border-radius: 2px;
+.menu-btn span{
+  height:2.5px;
+  width:100%;
+  background:#fff;
+  border-radius:2px;
 }
 
-/* Side menu */
-.side-menu {
-  position: fixed;
-  top: 0;
-  left: -240px;
-  width: 240px;
-  height: 100%;
-  background:#111;
-  padding: 60px 20px;
-  box-shadow: 20px 0 40px rgba(0,0,0,.6);
-  transition: 0.3s;
-  z-index: 45;
+/* ───── SIDE MENU ───── */
+.side-menu{
+  position:fixed;
+  top:0;
+  left:-240px;
+  width:240px;
+  height:100%;
+  background:#0b0b10;
+  padding:70px 20px;
+  transition:.3s;
+  z-index:90;
 }
-.side-menu.open { left: 0; }
-.side-menu a {
+.side-menu.open{ left:0; }
+.side-menu a{
   display:block;
   color:#fff;
-  padding: 12px 0;
+  padding:14px 0;
   text-decoration:none;
   border-bottom:1px solid #222;
 }
 
-/* Side backdrop */
-.side-backdrop {
+.side-backdrop{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.35);
+  background:rgba(0,0,0,.45);
   opacity:0;
   pointer-events:none;
   transition:.2s;
-  z-index:40;
+  z-index:80;
 }
-.side-backdrop.show{opacity:1; pointer-events:auto;}
+.side-backdrop.show{
+  opacity:1;
+  pointer-events:auto;
+}
 
-/* Container and logo */
+/* ───── MAIN CONTAINER ───── */
 .container{
   max-width:520px;
-  margin:40px auto;
+  margin:72px auto 0;
   padding:16px;
 }
+
+/* ───── SLOGAN ───── */
 .logo{
   text-align:center;
   font-family:'Orbitron',sans-serif;
-  font-size:1.6em;
-  margin-bottom:24px;
-  color:#fff;
+  font-size:1.55em;
+  margin-bottom:22px;
 }
 .logo span{
-  color:#00FFFF; /* cyan for VIP and Excellence */
+  color:#00ffff;
   font-weight:900;
 }
 
-.backdrop{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  backdrop-filter:blur(4px);
-  opacity:0;
-  pointer-events:none;
-  transition:.3s;
-}
-.backdrop.show{opacity:1;pointer-events:auto;}
-
+/* ───── ROUTE CARD ───── */
 .route-card{
-  background:linear-gradient(180deg,#1b1c26,#111);
+  background:linear-gradient(180deg,#1b1c26,#0f0f15);
   border-radius:22px;
   padding:16px;
-  box-shadow:0 30px 70px rgba(0,0,0,.6);
+  box-shadow:0 22px 45px rgba(0,0,0,.6);
 }
+
+/* ───── COLLAPSED SEARCH ───── */
 .collapsed{
   position:relative;
 }
 .collapsed input{
-  width: calc(100% - 12px); /* slightly smaller */
-  padding:18px 20px 18px 56px;
+  width:calc(100% - 18px); /* REAL 3/4 inch reduction */
+  margin-right:18px;
+  padding:16px 20px 16px 52px;
   border-radius:999px;
   background:#1f1f25;
   border:none;
   color:#9ca3af;
-  font-size:1.05em;
-  box-shadow:0 10px 20px rgba(0,0,0,0.5); /* smaller shadow */
+  font-size:1.02em;
+  box-shadow:0 6px 14px rgba(0,0,0,.45);
 }
 .search-icon{
   position:absolute;
-  left:20px;
+  left:18px;
   top:50%;
   transform:translateY(-50%);
 }
-.expanded{display:none;}
-.route-card.open .expanded{display:flex; flex-direction:column; display:block;}
-.route-card.open .collapsed{display:none;}
+
+/* ───── EXPANDED FORM ───── */
+.expanded{ display:none; }
+.route-card.open .expanded{ display:block; }
+.route-card.open .collapsed{ display:none; }
 
 .row{
   display:flex;
@@ -144,36 +146,41 @@ html, body {
   border:none;
   border-bottom:1px solid #333;
   padding:10px 4px;
-  color:white;
+  color:#fff;
 }
-.dot{width:10px;height:10px;border-radius:50%;}
-.start{background:#c7d2fe;}
-.dest{background:#f472b6;}
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+}
+.start{ background:#c7d2fe; }
+.dest{ background:#f472b6; }
 .label{
+  width:80px;
   font-size:.7em;
   opacity:.6;
-  width:80px;
 }
+
 .add-stop{
-  margin:8px 0 0 auto;
-  width:40px;
-  height:40px;
+  margin-left:auto;
+  width:38px;
+  height:38px;
   border-radius:50%;
   border:1px solid #444;
   background:none;
-  color:white;
+  color:#fff;
   font-size:22px;
   cursor:pointer;
 }
 
-/* DATE TIME */
+/* ───── DATE / TIME ───── */
 .datetime{
-  margin-top:26px;
-  padding-top:20px;
-  border-top:1px solid #222;
   display:none;
+  margin-top:24px;
+  padding-top:18px;
+  border-top:1px solid #222;
 }
-.datetime.show{display:block;}
+.datetime.show{ display:block; }
 .field-label{
   font-size:.65em;
   letter-spacing:.12em;
@@ -182,23 +189,21 @@ html, body {
 }
 .datetime input{
   width:100%;
-  padding:16px;
+  padding:15px;
   border-radius:14px;
   background:#1a1a22;
   border:1px solid #333;
-  color:white;
-  margin-bottom:14px;
+  color:#fff;
+  margin-bottom:12px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Hamburger menu -->
+<!-- HAMBURGER -->
 <div class="menu-btn" id="menuBtn">
-  <span></span>
-  <span></span>
-  <span></span>
+  <span></span><span></span><span></span>
 </div>
 
 <nav class="side-menu" id="sideMenu">
@@ -209,47 +214,42 @@ html, body {
 </nav>
 <div class="side-backdrop" id="sideBackdrop"></div>
 
-<div class="backdrop" id="backdrop"></div>
-
 <div class="container">
-<div class="logo">
-  When <span>VIP</span> Meets <span>Excellence</span>
-</div>
-
-<div class="route-card" id="routeCard">
-
-  <div class="collapsed" id="collapsedInput">
-    <span class="search-icon">🔍</span>
-    <input placeholder="Where are you going?" readonly>
+  <div class="logo">
+    When <span>VIP</span> Meets <span>Excellence</span>
   </div>
 
-  <div class="expanded">
-
-    <div class="row">
-      <span class="dot start"></span>
-      <div class="label">START</div>
-      <input id="pickup" placeholder="Current location">
+  <div class="route-card" id="routeCard">
+    <div class="collapsed" id="collapsedInput">
+      <span class="search-icon">🔍</span>
+      <input placeholder="Where are you going?" readonly>
     </div>
 
-    <div id="destinations">
+    <div class="expanded">
       <div class="row">
-        <span class="dot dest"></span>
-        <div class="label">DESTINATION</div>
-        <input class="destination" placeholder="Enter destination">
+        <span class="dot start"></span>
+        <div class="label">START</div>
+        <input id="pickup" placeholder="Enter pickup location">
+      </div>
+
+      <div id="destinations">
+        <div class="row">
+          <span class="dot dest"></span>
+          <div class="label">DESTINATION</div>
+          <input class="destination" placeholder="Enter destination">
+        </div>
+      </div>
+
+      <button class="add-stop" id="addStop">+</button>
+
+      <div class="datetime" id="dateTime">
+        <div class="field-label">PICKUP DATE</div>
+        <input id="pickupDate" readonly>
+        <div class="field-label">PICKUP TIME</div>
+        <input id="pickupTime" readonly>
       </div>
     </div>
-
-    <button class="add-stop" id="addStop">+</button>
-
-    <div class="datetime" id="dateTime">
-      <div class="field-label">PICKUP DATE</div>
-      <input id="pickupDate" readonly>
-      <div class="field-label">PICKUP TIME</div>
-      <input id="pickupTime" readonly>
-    </div>
-
   </div>
-</div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -258,41 +258,25 @@ html, body {
 <script>
 const card = document.getElementById("routeCard");
 const collapsed = document.getElementById("collapsedInput");
-const backdrop = document.getElementById("backdrop");
 const dateTime = document.getElementById("dateTime");
-const addStop = document.getElementById("addStop");
 const destinations = document.getElementById("destinations");
 
-// Collapsed input click
+/* OPEN CARD — NO BLACKOUT */
 collapsed.onclick = ()=>{
   card.classList.add("open");
-  backdrop.classList.add("show");
-  const input = collapsed.querySelector("input");
-  input.removeAttribute("readonly");
-  input.focus();
-
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(
-      (pos)=>{
-        document.getElementById("pickup").value = "Current location";
-      },
-      (err)=>{
-        console.warn("Geolocation permission denied or failed");
-      }
-    );
-  }
 };
 
+/* AUTOCOMPLETE */
 function attachAutocomplete(input){
   new google.maps.places.Autocomplete(input);
 }
 
-document.querySelector(".destination").addEventListener("change",()=>{
+document.querySelector(".destination").addEventListener("input",()=>{
   dateTime.classList.add("show");
 });
 
-addStop.onclick = ()=>{
-  const row = document.createElement("div");
+document.getElementById("addStop").onclick = ()=>{
+  const row=document.createElement("div");
   row.className="row";
   row.innerHTML=`
     <span class="dot dest"></span>
@@ -311,19 +295,19 @@ window.onload=()=>{
   attachAutocomplete(document.querySelector(".destination"));
 };
 
-// Hamburger menu
-const menuBtn = document.getElementById("menuBtn");
-const sideMenu = document.getElementById("sideMenu");
-const sideBackdrop = document.getElementById("sideBackdrop");
+/* MENU */
+const menuBtn=document.getElementById("menuBtn");
+const sideMenu=document.getElementById("sideMenu");
+const sideBackdrop=document.getElementById("sideBackdrop");
 
-menuBtn.addEventListener("click", ()=>{
+menuBtn.onclick=()=>{
   sideMenu.classList.add("open");
   sideBackdrop.classList.add("show");
-});
-sideBackdrop.addEventListener("click", ()=>{
+};
+sideBackdrop.onclick=()=>{
   sideMenu.classList.remove("open");
   sideBackdrop.classList.remove("show");
-});
+};
 </script>
 
 </body>
