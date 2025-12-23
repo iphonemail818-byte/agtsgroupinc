@@ -84,6 +84,12 @@ body{
 .dest{background:#f9a8d4;}
 .label{width:70px; font-size:10px; opacity:.6;}
 
+/* Current location button inside input */
+.current-btn{
+  position:absolute; right:4px; top:50%; transform:translateY(-50%);
+  border:none; background:none; color:#fff; font-size:16px; cursor:pointer;
+}
+
 /* Date/Time */
 .datetime{display:none; margin-top:16px; padding-top:14px; border-top:1px solid #374151;}
 .datetime.show{display:block;}
@@ -136,10 +142,11 @@ body{
 
     <div class="expanded">
       <!-- START -->
-      <div class="row" id="pickupRow">
+      <div class="row" id="pickupRow" style="position:relative;">
         <span class="dot start"></span>
         <div class="label">START</div>
-        <input id="pickup" placeholder="Current location">
+        <input id="pickup" placeholder="Enter pickup address manually">
+        <button class="current-btn" id="currentBtn">📍</button>
       </div>
 
       <!-- DESTINATION -->
@@ -174,6 +181,7 @@ body{
 const card = document.getElementById("routeCard");
 const openSearch = document.getElementById("openSearch");
 const pickup = document.getElementById("pickup");
+const currentBtn = document.getElementById("currentBtn");
 const destinations = document.getElementById("destinations");
 const addStopBtn = document.getElementById("addStop");
 const dateTime = document.getElementById("dateTime");
@@ -210,21 +218,27 @@ flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true});
 
 // Current location button logic
-pickup.addEventListener("focus", ()=>{
-  if(!pickup.dataset.manual){
-    pickup.value="Getting current location…";
-    navigator.geolocation.getCurrentPosition(pos=>{
-      new google.maps.Geocoder().geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}}, (res,status)=>{
-        if(status==="OK" && res[0]){
-          pickup.value = res[0].formatted_address;
-        } else pickup.value="";
-        pickup.dataset.manual="true"; // allow typing
+currentBtn.addEventListener("click", ()=>{
+  pickup.value = "Getting current location…";
+  navigator.geolocation.getCurrentPosition(pos=>{
+    new google.maps.Geocoder().geocode(
+      { location:{lat:pos.coords.latitude,lng:pos.coords.longitude} },
+      (results,status)=>{
+        if(status==="OK" && results[0]){
+          pickup.value = results[0].formatted_address;
+          attachAutocomplete(pickup);
+          document.querySelector(".destination").focus();
+          dateTime.classList.add("show");
+          calculateRoute();
+        } else {
+          pickup.value = "";
+          pickup.placeholder = "Unable to detect location, enter manually";
+        }
       });
-    }, ()=>{
-      pickup.value="";
-      pickup.dataset.manual="true";
-    }, {enableHighAccuracy:true,timeout:10000});
-  }
+  }, ()=>{
+    pickup.value = "";
+    pickup.placeholder = "Location permission denied, enter manually";
+  }, {enableHighAccuracy:true,timeout:10000});
 });
 
 // Add Stop
