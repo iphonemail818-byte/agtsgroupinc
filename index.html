@@ -10,63 +10,70 @@
 <style>
 *{box-sizing:border-box}
 
-body{
-  margin:0;
-  background:#0b0b10;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  color:#e5e7eb;
+html, body{
+  height:100%;
 }
 
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:#e5e7eb;
+
+  /* 🔥 LOGO IS THE BACKGROUND */
+  background:
+    linear-gradient(rgba(17,24,39,0.92), rgba(17,24,39,0.92)),
+    url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/1637F04A-E320-4025-9750-6FE8B7419DB4.png");
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:420px;
+}
+
+/* Container */
 .container{
   max-width:390px;
-  margin:16px auto;
+  margin:24px auto;
   padding:8px;
 }
 
+/* Overlay when expanded */
 .backdrop{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.55);
+  background:rgba(0,0,0,.35);
   opacity:0;
   pointer-events:none;
   transition:.25s;
-  z-index:1;
+  z-index:5;
 }
-.backdrop.show{opacity:1;pointer-events:auto;}
+.backdrop.show{
+  opacity:1;
+  pointer-events:auto;
+}
 
+/* Card */
 .route-card{
-  background:linear-gradient(180deg,#1b1c26,#111);
+  background:linear-gradient(180deg,#1f2937,#111827);
   border-radius:22px;
-  padding:14px;
+  padding:16px;
   box-shadow:0 25px 60px rgba(0,0,0,.75);
   position:relative;
   z-index:10;
 }
 
-.logo-card{
-  display:flex;
-  justify-content:center;
-  margin-bottom:-12px;
-}
-.logo-card img{
-  max-width:96px;
-  border-radius:10px;
-  box-shadow:0 8px 25px rgba(0,0,0,.4);
-}
-
+/* Collapsed input */
 .collapsed{
-  margin-top:16px;
   position:relative;
 }
 .collapsed input{
   width:100%;
-  height:44px;
-  padding:0 14px 0 42px;
+  height:46px;
+  padding:0 16px 0 44px;
   border-radius:18px;
   border:none;
   background:#1f1f25;
   color:#fff;
   font-size:16px;
+  cursor:pointer;
 }
 .search-icon{
   position:absolute;
@@ -75,6 +82,7 @@ body{
   transform:translateY(-50%);
 }
 
+/* Expanded state */
 .expanded{display:none;}
 .route-card.open .expanded{display:block;}
 .route-card.open .collapsed{display:none;}
@@ -89,38 +97,44 @@ body{
   flex:1;
   background:transparent;
   border:none;
-  border-bottom:1px solid #333;
+  border-bottom:1px solid #374151;
   padding:6px 4px;
   font-size:16px;
   color:#fff;
 }
 
-.dot{width:8px;height:8px;border-radius:50%;}
-.start{background:#c7d2fe;}
-.dest{background:#f472b6;}
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+}
+.start{background:#93c5fd;}
+.dest{background:#f9a8d4;}
 
 .label{
+  width:70px;
   font-size:10px;
   opacity:.6;
-  width:70px;
 }
 
+/* Add stop */
 .add-stop{
   width:34px;
   height:34px;
   border-radius:50%;
-  border:1px solid #444;
+  border:1px solid #4b5563;
   background:none;
   color:#fff;
   font-size:20px;
   margin-left:auto;
 }
 
+/* Date / Time */
 .datetime{
   display:none;
   margin-top:16px;
   padding-top:14px;
-  border-top:1px solid #222;
+  border-top:1px solid #1f2937;
 }
 .datetime.show{display:block;}
 .datetime input{
@@ -129,22 +143,27 @@ body{
   font-size:16px;
   padding:0 12px;
   border-radius:12px;
-  background:#1a1a22;
-  border:1px solid #333;
+  background:#020617;
+  border:1px solid #334155;
   color:#fff;
   margin-bottom:10px;
 }
 
+/* Summary */
 .summary{
   display:none;
   margin-top:14px;
   padding:14px;
-  background:#0f1118;
+  background:#020617;
   border-radius:14px;
-  border:1px solid #222;
+  border:1px solid #1e293b;
 }
-.summary div{font-size:13px;margin-bottom:6px;}
+.summary div{
+  font-size:13px;
+  margin-bottom:6px;
+}
 
+/* Button */
 .book-btn{
   margin-top:12px;
   width:100%;
@@ -157,7 +176,9 @@ body{
   font-weight:600;
   opacity:.4;
 }
-.book-btn.enabled{opacity:1;}
+.book-btn.enabled{
+  opacity:1;
+}
 </style>
 </head>
 
@@ -168,15 +189,13 @@ body{
 <div class="container">
   <div class="route-card" id="routeCard">
 
-    <div class="logo-card">
-      <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/1637F04A-E320-4025-9750-6FE8B7419DB4.png">
-    </div>
-
-    <div class="collapsed" id="collapsedInput">
+    <!-- Collapsed -->
+    <div class="collapsed">
       <span class="search-icon">🔍</span>
-      <input placeholder="Where are you going?" readonly>
+      <input id="openSearch" placeholder="Where are you going?" readonly>
     </div>
 
+    <!-- Expanded -->
     <div class="expanded">
 
       <div class="row">
@@ -216,109 +235,18 @@ body{
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
 <script>
-const BASE_FEE = 25;
-const PER_MILE = 3.5;
-const PER_MINUTE = 0.75;
-
-let userLatLng = null;
-
-const card = routeCard;
-const collapsed = collapsedInput;
-const backdrop = document.getElementById("backdrop");
-const summary = routeSummary;
-const bookBtn = bookBtn;
-
-collapsed.onclick = () => {
-  card.classList.add("open");
+document.getElementById("openSearch").onclick = () => {
+  routeCard.classList.add("open");
   backdrop.classList.add("show");
-  setCurrentLocation();
 };
 
 backdrop.onclick = () => {
-  card.classList.remove("open");
+  routeCard.classList.remove("open");
   backdrop.classList.remove("show");
-};
-
-function setCurrentLocation(){
-  if(!navigator.geolocation) return;
-
-  navigator.geolocation.getCurrentPosition(
-    pos=>{
-      userLatLng = {
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude
-      };
-      new google.maps.Geocoder().geocode(
-        {location:userLatLng},
-        (res,stat)=>{
-          if(stat==="OK" && res[0]){
-            pickup.value = res[0].formatted_address;
-            calculateRoute();
-          }
-        }
-      );
-    },
-    ()=>{ pickup.value="Location denied"; },
-    {enableHighAccuracy:true,timeout:10000}
-  );
-}
-
-function attachAutocomplete(input){
-  const ac = new google.maps.places.Autocomplete(input);
-  ac.addListener("place_changed", calculateRoute);
-}
-
-function calculateRoute(){
-  const dests = [...document.querySelectorAll(".destination")];
-  if((!pickup.value && !userLatLng) || !dests[0].value) return;
-
-  const points = [
-    userLatLng || pickup.value,
-    ...dests.map(d=>d.value)
-  ];
-
-  let totalMiles=0,totalMinutes=0;
-  let calls=[];
-
-  for(let i=0;i<points.length-1;i++){
-    calls.push(new Promise(res=>{
-      new google.maps.DistanceMatrixService().getDistanceMatrix({
-        origins:[points[i]],
-        destinations:[points[i+1]],
-        travelMode:"DRIVING",
-        unitSystem:google.maps.UnitSystem.IMPERIAL
-      },r=>{
-        totalMiles+=r.rows[0].elements[0].distance.value/1609;
-        totalMinutes+=r.rows[0].elements[0].duration.value/60;
-        res();
-      });
-    }));
-  }
-
-  Promise.all(calls).then(()=>{
-    const price=BASE_FEE+(totalMiles*PER_MILE)+(totalMinutes*PER_MINUTE);
-    summary.style.display="block";
-    sumDistance.textContent=`Distance: ${totalMiles.toFixed(1)} mi`;
-    sumDuration.textContent=`Duration: ${Math.round(totalMinutes)} min`;
-    sumPrice.textContent=`Estimated Price: $${price.toFixed(2)}`;
-    bookBtn.classList.add("enabled");
-    document.getElementById("dateTime").classList.add("show");
-  });
-}
-
-addStop.onclick=()=>{
-  const row=document.createElement("div");
-  row.className="row";
-  row.innerHTML=`<span class="dot dest"></span><div class="label">STOP</div><input class="destination">`;
-  destinations.appendChild(row);
-  attachAutocomplete(row.querySelector("input"));
 };
 
 flatpickr("#pickupDate",{minDate:"today"});
 flatpickr("#pickupTime",{enableTime:true,noCalendar:true});
-
-attachAutocomplete(pickup);
-attachAutocomplete(document.querySelector(".destination"));
 </script>
 
 </body>
