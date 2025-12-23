@@ -14,54 +14,79 @@
 <style>
 html,body{
   margin:0;
-  padding:0;
   height:100%;
-  overflow:hidden; /* LOCK SCROLL */
+  overflow:hidden;
   font-family:Segoe UI,Tahoma,Verdana,sans-serif;
-  color:#fff;
   background:
     url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png")
-    center/cover no-repeat
-    #000;
+    center/cover no-repeat #000;
+  color:#fff;
+  -webkit-text-size-adjust:100%;
 }
 
-/* ───── HAMBURGER ───── */
-.menu-btn{
+/* ───── HEADER ───── */
+.header{
   position:fixed;
-  top:16px;
-  left:16px;
-  width:26px;
-  height:20px;
+  top:14px;
+  left:14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  z-index:100;
+}
+
+/* burger */
+.menu-btn{
+  width:24px;
+  height:18px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  z-index:100;
   cursor:pointer;
 }
 .menu-btn span{
-  height:2.5px;
+  height:2px;
   width:100%;
   background:#fff;
   border-radius:2px;
+}
+
+/* slogan next to burger */
+.slogan{
+  font-family:'Orbitron',sans-serif;
+  font-size:0.95em;
+  white-space:nowrap;
+}
+.slogan .vip,
+.slogan .excellence{
+  color:#00ffff;
+  font-weight:900;
+}
+.slogan .meets{
+  font-style:italic;
+  opacity:.85;
+  padding:0 4px;
 }
 
 /* ───── SIDE MENU ───── */
 .side-menu{
   position:fixed;
   top:0;
-  left:-240px;
-  width:240px;
+  left:0;
+  width:260px;
   height:100%;
   background:#0b0b10;
-  padding:70px 20px;
-  transition:.3s;
+  padding:80px 20px;
+  transform:translateX(-100%);
+  transition:.35s ease;
   z-index:90;
 }
-.side-menu.open{ left:0; }
+.side-menu.open{transform:translateX(0);}
+
 .side-menu a{
   display:block;
-  color:#fff;
   padding:14px 0;
+  color:#fff;
   text-decoration:none;
   border-bottom:1px solid #222;
 }
@@ -72,7 +97,7 @@ html,body{
   background:rgba(0,0,0,.45);
   opacity:0;
   pointer-events:none;
-  transition:.2s;
+  transition:.25s;
   z-index:80;
 }
 .side-backdrop.show{
@@ -80,26 +105,13 @@ html,body{
   pointer-events:auto;
 }
 
-/* ───── MAIN CONTAINER ───── */
+/* ───── MAIN ───── */
 .container{
   max-width:520px;
-  margin:72px auto 0;
+  margin:96px auto 0;
   padding:16px;
 }
 
-/* ───── SLOGAN ───── */
-.logo{
-  text-align:center;
-  font-family:'Orbitron',sans-serif;
-  font-size:1.55em;
-  margin-bottom:22px;
-}
-.logo span{
-  color:#00ffff;
-  font-weight:900;
-}
-
-/* ───── ROUTE CARD ───── */
 .route-card{
   background:linear-gradient(180deg,#1b1c26,#0f0f15);
   border-radius:22px;
@@ -107,20 +119,19 @@ html,body{
   box-shadow:0 22px 45px rgba(0,0,0,.6);
 }
 
-/* ───── COLLAPSED SEARCH ───── */
+/* collapsed field */
 .collapsed{
   position:relative;
 }
 .collapsed input{
-  width:calc(100% - 18px); /* REAL 3/4 inch reduction */
-  margin-right:18px;
+  width:calc(100% - 48px); /* ~3/4 inch smaller */
   padding:16px 20px 16px 52px;
   border-radius:999px;
   background:#1f1f25;
   border:none;
+  font-size:16px;
   color:#9ca3af;
-  font-size:1.02em;
-  box-shadow:0 6px 14px rgba(0,0,0,.45);
+  box-shadow:0 5px 12px rgba(0,0,0,.45);
 }
 .search-icon{
   position:absolute;
@@ -129,10 +140,9 @@ html,body{
   transform:translateY(-50%);
 }
 
-/* ───── EXPANDED FORM ───── */
-.expanded{ display:none; }
-.route-card.open .expanded{ display:block; }
-.route-card.open .collapsed{ display:none; }
+.expanded{display:none;}
+.route-card.open .expanded{display:block;}
+.route-card.open .collapsed{display:none;}
 
 .row{
   display:flex;
@@ -146,20 +156,14 @@ html,body{
   border:none;
   border-bottom:1px solid #333;
   padding:10px 4px;
+  font-size:16px;
   color:#fff;
 }
-.dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-}
-.start{ background:#c7d2fe; }
-.dest{ background:#f472b6; }
-.label{
-  width:80px;
-  font-size:.7em;
-  opacity:.6;
-}
+
+.dot{width:10px;height:10px;border-radius:50%;}
+.start{background:#c7d2fe;}
+.dest{background:#f472b6;}
+.label{width:80px;font-size:.7em;opacity:.6;}
 
 .add-stop{
   margin-left:auto;
@@ -170,17 +174,16 @@ html,body{
   background:none;
   color:#fff;
   font-size:22px;
-  cursor:pointer;
 }
 
-/* ───── DATE / TIME ───── */
+/* date time */
 .datetime{
   display:none;
   margin-top:24px;
   padding-top:18px;
   border-top:1px solid #222;
 }
-.datetime.show{ display:block; }
+.datetime.show{display:block;}
 .field-label{
   font-size:.65em;
   letter-spacing:.12em;
@@ -193,6 +196,7 @@ html,body{
   border-radius:14px;
   background:#1a1a22;
   border:1px solid #333;
+  font-size:16px;
   color:#fff;
   margin-bottom:12px;
 }
@@ -201,24 +205,30 @@ html,body{
 
 <body>
 
-<!-- HAMBURGER -->
-<div class="menu-btn" id="menuBtn">
-  <span></span><span></span><span></span>
+<!-- HEADER -->
+<div class="header">
+  <div class="menu-btn" id="menuBtn">
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="slogan">
+    <span class="vip">VIP</span>
+    <span class="meets">meets</span>
+    <span class="excellence">Excellence</span>
+  </div>
 </div>
 
+<!-- MENU -->
 <nav class="side-menu" id="sideMenu">
   <a href="#">About</a>
   <a href="#">Log in</a>
   <a href="#">Drivers</a>
   <a href="#">Set up</a>
 </nav>
+
 <div class="side-backdrop" id="sideBackdrop"></div>
 
 <div class="container">
-  <div class="logo">
-    When <span>VIP</span> Meets <span>Excellence</span>
-  </div>
-
   <div class="route-card" id="routeCard">
     <div class="collapsed" id="collapsedInput">
       <span class="search-icon">🔍</span>
@@ -256,58 +266,30 @@ html,body{
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
 <script>
-const card = document.getElementById("routeCard");
-const collapsed = document.getElementById("collapsedInput");
-const dateTime = document.getElementById("dateTime");
-const destinations = document.getElementById("destinations");
-
-/* OPEN CARD — NO BLACKOUT */
-collapsed.onclick = ()=>{
+const card=document.getElementById("routeCard");
+document.getElementById("collapsedInput").onclick=()=>{
   card.classList.add("open");
 };
 
-/* AUTOCOMPLETE */
-function attachAutocomplete(input){
-  new google.maps.places.Autocomplete(input);
+function attachAutocomplete(i){
+  new google.maps.places.Autocomplete(i);
 }
-
-document.querySelector(".destination").addEventListener("input",()=>{
-  dateTime.classList.add("show");
-});
-
-document.getElementById("addStop").onclick = ()=>{
-  const row=document.createElement("div");
-  row.className="row";
-  row.innerHTML=`
-    <span class="dot dest"></span>
-    <div class="label">STOP</div>
-    <input class="destination" placeholder="Add stop">
-  `;
-  destinations.appendChild(row);
-  attachAutocomplete(row.querySelector("input"));
-};
-
-flatpickr("#pickupDate",{minDate:"today"});
-flatpickr("#pickupTime",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
-
 window.onload=()=>{
   attachAutocomplete(document.getElementById("pickup"));
   attachAutocomplete(document.querySelector(".destination"));
 };
 
-/* MENU */
-const menuBtn=document.getElementById("menuBtn");
-const sideMenu=document.getElementById("sideMenu");
-const sideBackdrop=document.getElementById("sideBackdrop");
+document.querySelector(".destination").oninput=()=>{
+  document.getElementById("dateTime").classList.add("show");
+};
 
-menuBtn.onclick=()=>{
-  sideMenu.classList.add("open");
-  sideBackdrop.classList.add("show");
-};
-sideBackdrop.onclick=()=>{
-  sideMenu.classList.remove("open");
-  sideBackdrop.classList.remove("show");
-};
+/* MENU */
+const m=document.getElementById("menuBtn");
+const s=document.getElementById("sideMenu");
+const b=document.getElementById("sideBackdrop");
+
+m.onclick=()=>{ s.classList.add("open"); b.classList.add("show"); };
+b.onclick=()=>{ s.classList.remove("open"); b.classList.remove("show"); };
 </script>
 
 </body>
