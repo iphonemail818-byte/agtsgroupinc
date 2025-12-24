@@ -10,8 +10,7 @@
 <style>
 * { box-sizing: border-box; }
 html, body {
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   height: 100%;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
   overflow: hidden;
@@ -27,16 +26,14 @@ html, body {
   z-index: 50;
 }
 .burger {
-  width: 22px;
-  height: 16px;
+  width: 22px; height: 16px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
 }
 .burger span {
-  height: 2px;
-  width: 100%;
+  height: 2px; width: 100%;
   background: #fff;
   border-radius: 2px;
 }
@@ -44,10 +41,8 @@ html, body {
 /* MENU */
 .menu {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 260px;
-  height: 100%;
+  top: 0; left: 0;
+  width: 260px; height: 100%;
   background: rgba(11,11,16,0.95);
   transform: translateX(-100%);
   transition: 0.3s;
@@ -63,8 +58,7 @@ html, body {
   border-bottom: 1px solid #222;
 }
 .menu-backdrop {
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background: rgba(0,0,0,.45);
   opacity: 0;
   pointer-events: none;
@@ -84,118 +78,63 @@ html, body {
   border-radius: 22px;
   padding: 20px;
   box-shadow: 0 25px 50px rgba(0,0,0,.7);
-  margin-bottom: 16px;
 }
 
-/* FIELDS */
-.field {
-  margin-bottom: 18px;
-  position: relative;
-}
-.field label {
-  display: block;
-  font-size: .7em;
-  letter-spacing: .12em;
-  opacity: .6;
-  margin-bottom: 6px;
-}
+/* FIELD */
+.field { margin-bottom: 18px; position: relative; }
+.field label { display: block; font-size: .7em; letter-spacing: .12em; opacity: .6; margin-bottom: 6px; }
 .field input {
-  width: 100%;
-  padding: 14px 16px;
-  font-size: 16px;
-  border-radius: 14px;
-  border: 1px solid #333;
-  background: #111;
-  color: #fff;
+  width: 100%; padding: 14px 16px; font-size: 16px;
+  border-radius: 14px; border: 1px solid #333;
+  background: #111; color: #fff;
 }
 
-/* CURRENT LOCATION BUTTON */
+/* CURRENT LOCATION */
 .loc-btn {
   position: absolute;
-  right: 10px;
-  top: 34px;
-  background: #222;
-  border: none;
-  color: #9ca3af;
-  font-size: 13px;
-  padding: 6px 10px;
-  border-radius: 10px;
+  right: 10px; top: 34px;
+  background: #222; border: none; color: #9ca3af;
+  font-size: 13px; padding: 6px 10px; border-radius: 10px;
   cursor: pointer;
 }
 
-/* CONFIRMED FIELDS / TRIP REVIEW */
+/* CONFIRMED FIELDS */
+.confirmed-container { position: relative; }
 .confirmed {
-  margin-top: 2in; /* 2 inches below shadow */
-  font-size: 1em;
-  color: #0ff; /* cyan */
-  cursor: pointer;
-  border-bottom: 1px dashed #0ff;
-  padding-bottom: 4px;
+  position: absolute; left: 0;
+  font-size: 1em; color: #0ff; cursor: pointer;
+  border-bottom: 1px dashed #0ff; padding-bottom: 4px;
 }
-.distance-duration {
-  margin-top: 12px;
-  font-size: 0.9em;
-  color: #fff;
-}
+.distance-duration { margin-top: 12px; font-size: 0.9em; color: #fff; }
 </style>
 </head>
 <body>
 
 <!-- HEADER / BURGER -->
 <div class="header">
-  <div class="burger" id="burger">
-    <span></span><span></span><span></span>
-  </div>
+  <div class="burger" id="burger"><span></span><span></span><span></span></div>
 </div>
-
 <div class="menu" id="menu">
-  <a href="#">About</a>
-  <a href="#">Log in</a>
-  <a href="#">Drivers</a>
-  <a href="#">Set up</a>
+  <a href="#">About</a><a href="#">Log in</a><a href="#">Drivers</a><a href="#">Set up</a>
 </div>
 <div class="menu-backdrop" id="menuBackdrop"></div>
 
-<!-- STEP-BY-STEP BOOKING -->
+<!-- BOOKING -->
 <div class="container">
-  <!-- Pickup -->
-  <div class="card">
+  <div class="card confirmed-container">
     <div class="field">
-      <label>PICKUP LOCATION</label>
-      <input id="pickup" placeholder="Enter pickup location">
+      <label id="inputLabel">PICKUP LOCATION</label>
+      <input id="mainInput" placeholder="Enter pickup location">
       <button class="loc-btn" id="locBtn">Current</button>
     </div>
-    <div id="pickupConfirmed" class="confirmed"></div>
-  </div>
-
-  <!-- Destination -->
-  <div class="card">
-    <div class="field">
-      <label>DESTINATION</label>
-      <input id="destination" placeholder="Enter destination">
-    </div>
-    <div id="destConfirmed" class="confirmed"></div>
+    <div id="confirmedFields"></div>
     <div id="distanceDuration" class="distance-duration"></div>
-  </div>
-
-  <!-- Date & Time -->
-  <div class="card">
-    <div class="field">
-      <label>DATE</label>
-      <input id="date" readonly>
-    </div>
-    <div id="dateConfirmed" class="confirmed"></div>
-
-    <div class="field">
-      <label>TIME</label>
-      <input id="time" readonly>
-    </div>
-    <div id="timeConfirmed" class="confirmed"></div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
+
 <script>
 /* BURGER MENU */
 const burger=document.getElementById("burger");
@@ -204,85 +143,85 @@ const menuBack=document.getElementById("menuBackdrop");
 burger.onclick=()=>{menu.classList.add("open"); menuBack.classList.add("show");};
 menuBack.onclick=()=>{menu.classList.remove("open"); menuBack.classList.remove("show");};
 
-/* GOOGLE PLACES AUTOCOMPLETE */
-const pickupInput=document.getElementById("pickup");
-const destInput=document.getElementById("destination");
-const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
-const destAutocomplete = new google.maps.places.Autocomplete(destInput);
-
-/* CONFIRMED FIELDS */
-const pickupConfirmed=document.getElementById("pickupConfirmed");
-const destConfirmed=document.getElementById("destConfirmed");
-const dateConfirmed=document.getElementById("dateConfirmed");
-const timeConfirmed=document.getElementById("timeConfirmed");
+/* GOOGLE PLACES */
+const input=document.getElementById("mainInput");
+const label=document.getElementById("inputLabel");
+const confirmedFieldsDiv=document.getElementById("confirmedFields");
 const distanceDuration=document.getElementById("distanceDuration");
 
-/* CURRENT LOCATION BUTTON */
-document.getElementById("locBtn").onclick = () => {
+const steps=['PICKUP LOCATION','DESTINATION','DATE','TIME'];
+let stepIndex=0;
+let stepValues=[];
+
+const pickupAutocomplete=new google.maps.places.Autocomplete(input);
+const destAutocomplete=new google.maps.places.Autocomplete(input);
+
+/* CURRENT LOCATION */
+document.getElementById("locBtn").onclick=()=>{
+  if(stepIndex!==0) return;
   if(!navigator.geolocation){ alert("Location not supported"); return; }
-
-  navigator.geolocation.getCurrentPosition(pos => {
-    const latlng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-    const geocoder = new google.maps.Geocoder();
-
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        pickupInput.value = results[0].formatted_address;
-        updateConfirmed('pickup');
-      } else { alert("Unable to determine address from location."); }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const geocoder=new google.maps.Geocoder();
+    geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{
+      if(status==='OK' && results[0]){
+        input.value=results[0].formatted_address;
+        confirmStep();
+      }else alert("Unable to get address");
     });
-  }, ()=>{ alert("Location permission denied"); });
+  },()=>{ alert("Location permission denied"); });
 };
 
-/* DATE & TIME PICKER */
-flatpickr("#date",{minDate:"today", onChange:()=>{updateConfirmed('date');}});
-flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChange:()=>{updateConfirmed('time');}});
+/* FLATPICKR */
+flatpickr(input, { minDate:"today", enableTime:false, onChange:()=>{ if(stepIndex>1) confirmStep(); }});
+flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChange:()=>{ confirmStep(); }});
 
-/* UPDATE CONFIRMED FIELDS FUNCTION */
-function updateConfirmed(type){
-  if(type==='pickup'){
-    pickupConfirmed.textContent = pickupInput.value;
-    updateDistance();
-  } else if(type==='destination'){
-    destConfirmed.textContent = destInput.value;
-    updateDistance();
-  } else if(type==='date'){
-    dateConfirmed.textContent = document.getElementById("date").value;
-  } else if(type==='time'){
-    timeConfirmed.textContent = document.getElementById("time").value;
+/* CONFIRM STEP */
+function confirmStep(){
+  if(!input.value) return;
+  stepValues.push(input.value);
+
+  const confirmedDiv=document.createElement("div");
+  confirmedDiv.className="confirmed";
+  confirmedDiv.style.top=(stepValues.length*192)+"px"; // ~2 inches below
+  confirmedDiv.textContent=input.value;
+  confirmedDiv.onclick=()=>{ input.value=confirmedDiv.textContent; stepIndex=confirmedDiv.dataset.step; input.focus(); };
+  confirmedDiv.dataset.step=stepIndex;
+  confirmedFieldsDiv.appendChild(confirmedDiv);
+
+  if(stepIndex===0){ updateDistance(); }
+
+  stepIndex++;
+  if(stepIndex<steps.length){
+    label.textContent=steps[stepIndex];
+    input.value='';
+    if(stepIndex===1){ input.placeholder="Enter destination"; }
+    if(stepIndex===2){ input.type='text'; input._flatpickr.open(); }
+    if(stepIndex===3){ input.type='text'; input._flatpickr.open(); }
+  }else{
+    input.style.display='none';
   }
 }
 
-/* CONFIRMED FIELDS TAPPABLE TO EDIT */
-pickupConfirmed.onclick = ()=>{ pickupInput.focus(); };
-destConfirmed.onclick = ()=>{ destInput.focus(); };
-dateConfirmed.onclick = ()=>{ document.getElementById("date")._flatpickr.open(); };
-timeConfirmed.onclick = ()=>{ document.getElementById("time")._flatpickr.open(); };
-
-/* GOOGLE DISTANCE CALCULATION */
+/* DISTANCE CALCULATION */
 function updateDistance(){
-  if(pickupInput.value && destInput.value){
-    const service = new google.maps.DistanceMatrixService();
-    service.getDistanceMatrix({
-      origins:[pickupInput.value],
-      destinations:[destInput.value],
-      travelMode:"DRIVING",
-      unitSystem: google.maps.UnitSystem.IMPERIAL
-    }, (response, status)=>{
-      if(status==="OK"){
-        const el=response.rows[0].elements[0];
-        distanceDuration.textContent=`Distance: ${el.distance.text}, Duration: ${el.duration.text}`;
-      } else {
-        distanceDuration.textContent="Distance: Error, Duration: Error";
-      }
-    });
-  }
+  if(!stepValues[0]||!stepValues[1]) return;
+  const service=new google.maps.DistanceMatrixService();
+  service.getDistanceMatrix({
+    origins:[stepValues[0]],
+    destinations:[stepValues[1]],
+    travelMode:"DRIVING",
+    unitSystem: google.maps.UnitSystem.IMPERIAL
+  },(res,status)=>{
+    if(status==="OK"){
+      const el=res.rows[0].elements[0];
+      distanceDuration.textContent=`Distance: ${el.distance.text}, Duration: ${el.duration.text}`;
+    } else distanceDuration.textContent="Distance/Duration Error";
+  });
 }
 
 /* AUTOCOMPLETE LISTENERS */
-pickupAutocomplete.addListener('place_changed',()=>{ updateConfirmed('pickup'); });
-destAutocomplete.addListener('place_changed',()=>{ updateConfirmed('destination'); });
+pickupAutocomplete.addListener('place_changed',()=>{ if(stepIndex===0) confirmStep(); });
+destAutocomplete.addListener('place_changed',()=>{ if(stepIndex===1) confirmStep(); });
 </script>
-
 </body>
 </html>
