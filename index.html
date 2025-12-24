@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <title>AGTS Booking</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -12,88 +13,154 @@
 *{box-sizing:border-box}
 html,body{
   margin:0;
+  padding:0;
   height:100%;
   overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  color:#fff;
   background:url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png")
-             center/cover no-repeat fixed;
+    center/cover no-repeat fixed;
+  color:#fff;
 }
 
-/* BURGER */
+/* HEADER */
 .header{
-  position:fixed;top:16px;left:16px;z-index:50
+  position:fixed;
+  top:16px;
+  left:16px;
+  z-index:50;
 }
 .burger{
-  width:22px;height:16px;display:flex;
-  flex-direction:column;justify-content:space-between;cursor:pointer
+  width:22px;
+  height:16px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:pointer;
 }
-.burger span{height:2px;background:#fff;border-radius:2px}
+.burger span{
+  height:2px;
+  background:#fff;
+  border-radius:2px;
+}
 
 /* MENU */
 .menu{
-  position:fixed;inset:0 auto 0 0;width:260px;
-  background:rgba(10,10,14,.97);
+  position:fixed;
+  top:0; left:0;
+  width:260px;
+  height:100%;
+  background:rgba(11,11,16,.95);
   transform:translateX(-100%);
-  transition:.3s;z-index:60;padding:80px 20px
+  transition:.3s;
+  z-index:60;
+  padding:80px 20px;
 }
 .menu.open{transform:translateX(0)}
-.menu a{display:block;color:#fff;text-decoration:none;padding:14px 0;border-bottom:1px solid #222}
-.menu-backdrop{
-  position:fixed;inset:0;background:rgba(0,0,0,.45);
-  opacity:0;pointer-events:none;transition:.25s;z-index:55
+.menu a{
+  display:block;
+  padding:14px 0;
+  color:#fff;
+  text-decoration:none;
+  border-bottom:1px solid #222;
 }
-.menu-backdrop.show{opacity:1;pointer-events:auto}
+.menu-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  z-index:55;
+}
+.menu-backdrop.show{
+  opacity:1;
+  pointer-events:auto;
+}
 
 /* CONTAINER */
 .container{
-  max-width:520px;margin:120px auto 0;padding:16px
+  max-width:520px;
+  margin:120px auto 0;
+  padding:16px;
 }
 .card{
   background:rgba(15,15,20,.95);
-  border-radius:22px;padding:20px;
+  border-radius:22px;
+  padding:20px;
   box-shadow:0 25px 50px rgba(0,0,0,.7);
-  margin-bottom:18px
 }
 
 /* FIELDS */
-.field{margin-bottom:18px;position:relative}
+.field{
+  margin-bottom:18px;
+  position:relative;
+}
 .field label{
-  font-size:.7em;letter-spacing:.12em;opacity:.6;display:block;margin-bottom:6px
+  font-size:.7em;
+  letter-spacing:.12em;
+  opacity:.6;
+  display:block;
+  margin-bottom:6px;
 }
 .field input{
-  width:100%;padding:14px 16px;font-size:16px;
-  border-radius:14px;border:1px solid #333;
-  background:#111;color:#fff
-}
-.loc-btn{
-  position:absolute;right:10px;top:34px;
-  background:#222;color:#9ca3af;border:none;
-  font-size:13px;padding:6px 10px;border-radius:10px
+  width:100%;
+  padding:14px 16px;
+  font-size:16px;
+  border-radius:14px;
+  border:1px solid #333;
+  background:#111;
+  color:#fff;
 }
 
-/* SUMMARY */
-.summary{
-  margin-top:24px;
-  padding:16px 18px;
-  background:rgba(18,18,22,.95);
-  border-radius:16px;border:1px solid #2a2a2a;
-  display:flex;justify-content:space-between;align-items:center;
-  cursor:pointer
+/* CURRENT LOCATION */
+.loc-btn{
+  position:absolute;
+  right:10px;
+  top:34px;
+  background:#222;
+  border:none;
+  color:#9ca3af;
+  font-size:13px;
+  padding:6px 10px;
+  border-radius:10px;
 }
-.summary:active{background:rgba(28,28,32,.95)}
-.summary span{font-size:15px;opacity:.9}
-.summary i{opacity:.5;font-style:normal;font-size:18px}
+
+/* SUMMARY TEXT (PLAIN) */
+.summary{
+  margin:20px 0;
+  padding:6px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.summary span{
+  font-size:15px;
+  opacity:.92;
+}
+.summary::after{
+  content:"›";
+  font-size:18px;
+  opacity:.35;
+}
 
 /* REVIEW */
-.review{background:#111;padding:16px;border-radius:14px}
+.review{
+  background:#111;
+  padding:16px;
+  border-radius:14px;
+}
 </style>
 </head>
 
 <body>
 
+<!-- BURGER -->
 <div class="header">
-  <div class="burger" id="burger"><span></span><span></span><span></span></div>
+  <div class="burger" id="burger">
+    <span></span><span></span><span></span>
+  </div>
 </div>
 
 <div class="menu" id="menu">
@@ -104,6 +171,7 @@ html,body{
 </div>
 <div class="menu-backdrop" id="menuBackdrop"></div>
 
+<!-- BOOKING -->
 <div class="container">
 
   <!-- STEP 1 -->
@@ -115,7 +183,7 @@ html,body{
     </div>
   </div>
   <div class="summary" id="pickupSummary" style="display:none">
-    <span></span><i>›</i>
+    <span id="sumPickup"></span>
   </div>
 
   <!-- STEP 2 -->
@@ -126,7 +194,7 @@ html,body{
     </div>
   </div>
   <div class="summary" id="destSummary" style="display:none">
-    <span></span><i>›</i>
+    <span id="sumDest"></span>
   </div>
 
   <!-- STEP 3 -->
@@ -141,15 +209,19 @@ html,body{
     </div>
   </div>
   <div class="summary" id="dateSummary" style="display:none">
-    <span></span><i>›</i>
+    <span id="sumDate"></span>
   </div>
 
   <!-- STEP 4 -->
   <div class="card" id="step4" style="display:none">
     <h3>Review Trip</h3>
     <div class="review">
-      <div>Distance: <span id="revDistance"></span></div>
-      <div>Duration: <span id="revDuration"></span></div>
+      <div>Pickup: <span id="revPickup"></span></div>
+      <div>Destination: <span id="revDest"></span></div>
+      <div>Date: <span id="revDate"></span></div>
+      <div>Time: <span id="revTime"></span></div>
+      <div>Distance: <span id="revDistance">Calculating…</span></div>
+      <div>Duration: <span id="revDuration">Calculating…</span></div>
     </div>
   </div>
 
@@ -160,90 +232,91 @@ html,body{
 
 <script>
 /* MENU */
-const burger=document.getElementById("burger");
-const menu=document.getElementById("menu");
-const back=document.getElementById("menuBackdrop");
-burger.onclick=()=>{menu.classList.add("open");back.classList.add("show")};
-back.onclick=()=>{menu.classList.remove("open");back.classList.remove("show")};
+burger.onclick=()=>{menu.classList.add("open");menuBackdrop.classList.add("show")}
+menuBackdrop.onclick=()=>{menu.classList.remove("open");menuBackdrop.classList.remove("show")}
 
 /* STEPS */
-const step1=pickup=document.getElementById("step1");
-const step2=document.getElementById("step2");
-const step3=document.getElementById("step3");
-const step4=document.getElementById("step4");
-const pickupInput=document.getElementById("pickup");
-const destInput=document.getElementById("destination");
+const step1=step1El=document.getElementById("step1")
+const step2=document.getElementById("step2")
+const step3=document.getElementById("step3")
+const step4=document.getElementById("step4")
 
-const pickupSummary=document.getElementById("pickupSummary");
-const destSummary=document.getElementById("destSummary");
-const dateSummary=document.getElementById("dateSummary");
-
-function showOnly(step){
-  [step1,step2,step3,step4].forEach(s=>s.style.display="none");
-  step.style.display="block";
+function showStep(s){
+  step1.style.display=step2.style.display=step3.style.display=step4.style.display="none"
+  s.style.display="block"
 }
 
 /* AUTOCOMPLETE */
-const pAuto=new google.maps.places.Autocomplete(pickupInput);
-const dAuto=new google.maps.places.Autocomplete(destInput);
+const pickup=document.getElementById("pickup")
+const dest=document.getElementById("destination")
+const acPickup=new google.maps.places.Autocomplete(pickup)
+const acDest=new google.maps.places.Autocomplete(dest)
 
-pAuto.addListener("place_changed",()=>{
-  pickupSummary.querySelector("span").textContent="📍 "+pickupInput.value;
-  pickupSummary.style.display="flex";
-  showOnly(step2);
-});
+acPickup.addListener("place_changed",()=>{
+  sumPickup.textContent=pickup.value
+  pickupSummary.style.display="flex"
+  showStep(step2)
+})
 
-dAuto.addListener("place_changed",()=>{
-  destSummary.querySelector("span").textContent="📍 "+destInput.value;
-  destSummary.style.display="flex";
-  showOnly(step3);
-});
+acDest.addListener("place_changed",()=>{
+  sumDest.textContent=dest.value
+  destSummary.style.display="flex"
+  showStep(step3)
+})
 
 /* CURRENT LOCATION */
-document.getElementById("locBtn").onclick=()=>{
+locBtn.onclick=()=>{
   navigator.geolocation.getCurrentPosition(pos=>{
-    new google.maps.Geocoder().geocode(
-      {location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},
-      (res,status)=>{
-        if(status==="OK"){
-          pickupInput.value=res[0].formatted_address;
-        }
+    const geocoder=new google.maps.Geocoder()
+    geocoder.geocode({
+      location:{lat:pos.coords.latitude,lng:pos.coords.longitude}
+    },(res)=>{
+      if(res[0]){
+        pickup.value=res[0].formatted_address
+        sumPickup.textContent=pickup.value
+        pickupSummary.style.display="flex"
+        showStep(step2)
       }
-    );
-  });
-};
+    })
+  })
+}
 
 /* DATE TIME */
-flatpickr("#date",{minDate:"today",onChange:checkDT});
-flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K",onChange:checkDT});
+flatpickr("#date",{minDate:"today",onChange:checkDateTime})
+flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K",onChange:checkDateTime})
 
-function checkDT(){
+function checkDateTime(){
   if(date.value && time.value){
-    dateSummary.querySelector("span").textContent="📅 "+date.value+" · "+time.value;
-    dateSummary.style.display="flex";
-    showOnly(step4);
-    calc();
+    sumDate.textContent=date.value+" · "+time.value
+    dateSummary.style.display="flex"
+    showStep(step4)
+    fillReview()
   }
 }
 
-/* EDIT */
-pickupSummary.onclick=()=>showOnly(step1);
-destSummary.onclick=()=>showOnly(step2);
-dateSummary.onclick=()=>showOnly(step3);
+/* SUMMARY TAP → EDIT */
+pickupSummary.onclick=()=>{showStep(step1);setTimeout(()=>pickup.focus(),200)}
+destSummary.onclick=()=>{showStep(step2);setTimeout(()=>dest.focus(),200)}
+dateSummary.onclick=()=>showStep(step3)
 
-/* DISTANCE */
-function calc(){
+/* REVIEW */
+function fillReview(){
+  revPickup.textContent=pickup.value
+  revDest.textContent=dest.value
+  revDate.textContent=date.value
+  revTime.textContent=time.value
+
   new google.maps.DistanceMatrixService().getDistanceMatrix({
-    origins:[pickupInput.value],
-    destinations:[destInput.value],
+    origins:[pickup.value],
+    destinations:[dest.value],
     travelMode:"DRIVING",
     unitSystem:google.maps.UnitSystem.IMPERIAL
   },(r,s)=>{
     if(s==="OK"){
-      revDistance.textContent=r.rows[0].elements[0].distance.text;
-      revDuration.textContent=r.rows[0].elements[0].duration.text;
+      revDistance.textContent=r.rows[0].elements[0].distance.text
+      revDuration.textContent=r.rows[0].elements[0].duration.text
     }
-  });
+  })
 }
 </script>
 
