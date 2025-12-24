@@ -1,227 +1,206 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>AGTS Booking</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AGTS Group Inc — Booking</title>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 
 <style>
-* { box-sizing: border-box; }
-html, body {
-  margin: 0; padding: 0;
-  height: 100%;
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  overflow: hidden;
-  background: url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png") center/cover no-repeat fixed;
-  color: #fff;
+body{
+  margin:0;
+  background:#0b0b10;
+  font-family:Segoe UI,Tahoma,Verdana,sans-serif;
+  color:#e5e7eb;
 }
 
-/* HEADER / BURGER */
-.header {
-  position: fixed;
-  top: 16px;
-  left: 16px;
-  z-index: 50;
-}
-.burger {
-  width: 22px; height: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-}
-.burger span {
-  height: 2px; width: 100%;
-  background: #fff;
-  border-radius: 2px;
+.container{
+  max-width:520px;
+  margin:40px auto;
+  padding:16px;
 }
 
-/* MENU */
-.menu {
-  position: fixed;
-  top: 0; left: 0;
-  width: 260px; height: 100%;
-  background: rgba(11,11,16,0.95);
-  transform: translateX(-100%);
-  transition: 0.3s;
-  z-index: 60;
-  padding: 80px 20px;
-}
-.menu.open { transform: translateX(0); }
-.menu a {
-  display: block;
-  color: #fff;
-  text-decoration: none;
-  padding: 14px 0;
-  border-bottom: 1px solid #222;
-}
-.menu-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.45);
-  opacity: 0;
-  pointer-events: none;
-  transition: .25s;
-  z-index: 55;
-}
-.menu-backdrop.show { opacity:1; pointer-events:auto; }
-
-/* STEP CONTAINER */
-.container {
-  max-width: 520px;
-  margin: 120px auto 0;
-  padding: 16px;
-}
-.card {
-  background: rgba(15,15,20,.95);
-  border-radius: 22px;
-  padding: 20px;
-  box-shadow: 0 25px 50px rgba(0,0,0,.7);
+/* LOGO */
+.logo{
+  text-align:center;
+  font-family:'Orbitron',sans-serif;
+  font-size:1.9em;
+  color:#0ff;
+  text-shadow:0 0 16px #0ff;
+  margin-bottom:20px;
 }
 
-/* FIELD */
-.field { margin-bottom: 18px; position: relative; }
-.field label { display: block; font-size: .7em; letter-spacing: .12em; opacity: .6; margin-bottom: 6px; }
-.field input {
-  width: 100%; padding: 14px 16px; font-size: 16px;
-  border-radius: 14px; border: 1px solid #333;
-  background: #111; color: #fff;
+/* ROUTE CARD */
+.route-card{
+  background:linear-gradient(180deg,#1b1c26,#111);
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 25px 60px rgba(0,0,0,.7);
 }
 
-/* CURRENT LOCATION */
-.loc-btn {
-  position: absolute;
-  right: 10px; top: 34px;
-  background: #222; border: none; color: #9ca3af;
-  font-size: 13px; padding: 6px 10px; border-radius: 10px;
-  cursor: pointer;
+/* COLLAPSED */
+.collapsed{
+  position:relative;
 }
 
-/* CONFIRMED FIELDS */
-.confirmed-container { position: relative; }
-.confirmed {
-  position: absolute; left: 0;
-  font-size: 1em; color: #0ff; cursor: pointer;
-  border-bottom: 1px dashed #0ff; padding-bottom: 4px;
+.collapsed input{
+  width:100%;
+  padding:18px 20px 18px 56px;
+  border-radius:999px;
+  background:#222;
+  border:none;
+  color:#9ca3af;
+  font-size:1.1em;
 }
-.distance-duration { margin-top: 12px; font-size: 0.9em; color: #fff; }
+
+.search-icon{
+  position:absolute;
+  left:20px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:20px;
+  color:#d946ef;
+  pointer-events:none;
+}
+
+/* EXPANDED */
+.expanded{
+  display:none;
+  margin-top:12px;
+}
+
+.route-card.open .expanded{display:block;}
+.route-card.open .collapsed{display:none;}
+
+/* ROWS */
+.row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:14px 0;
+}
+
+.row input{
+  flex:1;
+  background:transparent;
+  border:none;
+  border-bottom:1px solid #333;
+  padding:10px 4px;
+  color:white;
+  font-size:1em;
+  outline:none;
+}
+
+/* DOTS */
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+}
+
+.dot.start{background:#c7d2fe;}
+.dot.dest{background:#f472b6;}
+
+.label{
+  font-size:.75em;
+  opacity:.7;
+  width:80px;
+}
+
+/* ADD STOP */
+.add-stop{
+  margin-left:auto;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:1px solid #444;
+  background:transparent;
+  color:white;
+  font-size:24px;
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
-
-<!-- HEADER / BURGER -->
-<div class="header">
-  <div class="burger" id="burger"><span></span><span></span><span></span></div>
-</div>
-<div class="menu" id="menu">
-  <a href="#">About</a><a href="#">Log in</a><a href="#">Drivers</a><a href="#">Set up</a>
-</div>
-<div class="menu-backdrop" id="menuBackdrop"></div>
-
-<!-- BOOKING -->
 <div class="container">
-  <div class="card confirmed-container">
-    <div class="field">
-      <label id="inputLabel">PICKUP LOCATION</label>
-      <input id="mainInput" placeholder="Enter pickup location">
-      <button class="loc-btn" id="locBtn">Current</button>
+
+<div class="logo">AGTS GROUP INC</div>
+
+<div class="route-card" id="routeCard">
+
+  <!-- COLLAPSED -->
+  <div class="collapsed" id="collapsedInput">
+    <span class="search-icon">🔍</span>
+    <input placeholder="Where are you going?" readonly>
+  </div>
+
+  <!-- EXPANDED -->
+  <div class="expanded">
+
+    <!-- PICKUP -->
+    <div class="row">
+      <span class="dot start"></span>
+      <div class="label">Pickup</div>
+      <input id="pickup" placeholder="Current location">
     </div>
-    <div id="confirmedFields"></div>
-    <div id="distanceDuration" class="distance-duration"></div>
+
+    <!-- DESTINATIONS -->
+    <div id="destinations">
+      <div class="row">
+        <span class="dot dest"></span>
+        <div class="label">Destination</div>
+        <input class="destination" placeholder="Enter destination">
+      </div>
+    </div>
+
+    <!-- ADD STOP -->
+    <button class="add-stop" id="addStop">+</button>
+
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</div>
+
+<!-- GOOGLE MAPS -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
 <script>
-/* BURGER MENU */
-const burger=document.getElementById("burger");
-const menu=document.getElementById("menu");
-const menuBack=document.getElementById("menuBackdrop");
-burger.onclick=()=>{menu.classList.add("open"); menuBack.classList.add("show");};
-menuBack.onclick=()=>{menu.classList.remove("open"); menuBack.classList.remove("show");};
+const card = document.getElementById("routeCard");
+const collapsed = document.getElementById("collapsedInput");
+const addStop = document.getElementById("addStop");
+const destinations = document.getElementById("destinations");
 
-/* GOOGLE PLACES */
-const input=document.getElementById("mainInput");
-const label=document.getElementById("inputLabel");
-const confirmedFieldsDiv=document.getElementById("confirmedFields");
-const distanceDuration=document.getElementById("distanceDuration");
-
-const steps=['PICKUP LOCATION','DESTINATION','DATE','TIME'];
-let stepIndex=0;
-let stepValues=[];
-
-const pickupAutocomplete=new google.maps.places.Autocomplete(input);
-const destAutocomplete=new google.maps.places.Autocomplete(input);
-
-/* CURRENT LOCATION */
-document.getElementById("locBtn").onclick=()=>{
-  if(stepIndex!==0) return;
-  if(!navigator.geolocation){ alert("Location not supported"); return; }
-  navigator.geolocation.getCurrentPosition(pos=>{
-    const geocoder=new google.maps.Geocoder();
-    geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},(results,status)=>{
-      if(status==='OK' && results[0]){
-        input.value=results[0].formatted_address;
-        confirmStep();
-      }else alert("Unable to get address");
-    });
-  },()=>{ alert("Location permission denied"); });
+/* OPEN CARD */
+collapsed.onclick = () => {
+  card.classList.add("open");
 };
 
-/* FLATPICKR */
-flatpickr(input, { minDate:"today", enableTime:false, onChange:()=>{ if(stepIndex>1) confirmStep(); }});
-flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChange:()=>{ confirmStep(); }});
-
-/* CONFIRM STEP */
-function confirmStep(){
-  if(!input.value) return;
-  stepValues.push(input.value);
-
-  const confirmedDiv=document.createElement("div");
-  confirmedDiv.className="confirmed";
-  confirmedDiv.style.top=(stepValues.length*192)+"px"; // ~2 inches below
-  confirmedDiv.textContent=input.value;
-  confirmedDiv.onclick=()=>{ input.value=confirmedDiv.textContent; stepIndex=confirmedDiv.dataset.step; input.focus(); };
-  confirmedDiv.dataset.step=stepIndex;
-  confirmedFieldsDiv.appendChild(confirmedDiv);
-
-  if(stepIndex===0){ updateDistance(); }
-
-  stepIndex++;
-  if(stepIndex<steps.length){
-    label.textContent=steps[stepIndex];
-    input.value='';
-    if(stepIndex===1){ input.placeholder="Enter destination"; }
-    if(stepIndex===2){ input.type='text'; input._flatpickr.open(); }
-    if(stepIndex===3){ input.type='text'; input._flatpickr.open(); }
-  }else{
-    input.style.display='none';
-  }
+/* AUTOCOMPLETE */
+function attachAutocomplete(input){
+  new google.maps.places.Autocomplete(input);
 }
 
-/* DISTANCE CALCULATION */
-function updateDistance(){
-  if(!stepValues[0]||!stepValues[1]) return;
-  const service=new google.maps.DistanceMatrixService();
-  service.getDistanceMatrix({
-    origins:[stepValues[0]],
-    destinations:[stepValues[1]],
-    travelMode:"DRIVING",
-    unitSystem: google.maps.UnitSystem.IMPERIAL
-  },(res,status)=>{
-    if(status==="OK"){
-      const el=res.rows[0].elements[0];
-      distanceDuration.textContent=`Distance: ${el.distance.text}, Duration: ${el.duration.text}`;
-    } else distanceDuration.textContent="Distance/Duration Error";
-  });
-}
+/* ADD STOP */
+addStop.onclick = () => {
+  const row = document.createElement("div");
+  row.className = "row";
+  row.innerHTML = `
+    <span class="dot dest"></span>
+    <div class="label">Stop</div>
+    <input class="destination" placeholder="Add stop">
+  `;
+  destinations.appendChild(row);
+  attachAutocomplete(row.querySelector("input"));
+};
 
-/* AUTOCOMPLETE LISTENERS */
-pickupAutocomplete.addListener('place_changed',()=>{ if(stepIndex===0) confirmStep(); });
-destAutocomplete.addListener('place_changed',()=>{ if(stepIndex===1) confirmStep(); });
+/* INIT */
+window.onload = () => {
+  attachAutocomplete(document.getElementById("pickup"));
+  document.querySelectorAll(".destination").forEach(attachAutocomplete);
+};
 </script>
+
 </body>
 </html>
