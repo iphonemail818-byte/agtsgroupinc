@@ -84,6 +84,7 @@ html, body {
   border-radius: 22px;
   padding: 20px;
   box-shadow: 0 25px 50px rgba(0,0,0,.7);
+  margin-bottom: 16px;
 }
 
 /* FIELDS */
@@ -122,34 +123,6 @@ html, body {
   cursor: pointer;
 }
 
-/* DATE & TIME ROW */
-.row {
-  display: flex;
-  gap: 12px;
-}
-.row .field { flex: 1; }
-
-/* STEP NAV */
-.step-nav {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-.step-nav button {
-  padding: 10px 18px;
-  font-size: 14px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  background: #0b0b16;
-  color: #fff;
-}
-.step-nav button:disabled {
-  background: #222;
-  opacity: .6;
-  cursor: default;
-}
-
 /* REVIEW */
 .review {
   background: #111;
@@ -184,9 +157,6 @@ html, body {
       <input id="pickup" placeholder="Enter pickup location">
       <button class="loc-btn" id="locBtn">Current</button>
     </div>
-    <div class="step-nav">
-      <button id="next1">Next →</button>
-    </div>
   </div>
 
   <div class="card" id="step2" style="display:none;">
@@ -194,26 +164,16 @@ html, body {
       <label>DESTINATION</label>
       <input id="destination" placeholder="Enter destination">
     </div>
-    <div class="step-nav">
-      <button id="prev2">← Back</button>
-      <button id="next2">Next →</button>
-    </div>
   </div>
 
   <div class="card" id="step3" style="display:none;">
-    <div class="row">
-      <div class="field">
-        <label>DATE</label>
-        <input id="date" readonly>
-      </div>
-      <div class="field">
-        <label>TIME</label>
-        <input id="time" readonly>
-      </div>
+    <div class="field">
+      <label>DATE</label>
+      <input id="date" readonly>
     </div>
-    <div class="step-nav">
-      <button id="prev3">← Back</button>
-      <button id="next3">Next →</button>
+    <div class="field">
+      <label>TIME</label>
+      <input id="time" readonly>
     </div>
   </div>
 
@@ -226,10 +186,6 @@ html, body {
       <div>Time: <span id="revTime"></span></div>
       <div>Distance: <span id="revDistance">Calculating...</span></div>
       <div>Duration: <span id="revDuration">Calculating...</span></div>
-    </div>
-    <div class="step-nav">
-      <button id="prev4">← Back</button>
-      <button id="finish">Finish</button>
     </div>
   </div>
 </div>
@@ -248,52 +204,56 @@ menuBack.onclick=()=>{menu.classList.remove("open"); menuBack.classList.remove("
 /* GOOGLE PLACES */
 const pickupInput=document.getElementById("pickup");
 const destInput=document.getElementById("destination");
-new google.maps.places.Autocomplete(pickupInput);
-new google.maps.places.Autocomplete(destInput);
+const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
+const destAutocomplete = new google.maps.places.Autocomplete(destInput);
 
 /* CURRENT LOCATION */
 document.getElementById("locBtn").onclick=()=>{
   if(!navigator.geolocation){alert("Location not supported"); return;}
   navigator.geolocation.getCurrentPosition(pos=>{
     pickupInput.value = pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5);
+    showStep(2);
   }, ()=>{alert("Location permission denied");});
 };
 
 /* DATE & TIME PICKER */
-flatpickr("#date",{minDate:"today"});
-flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K"});
+flatpickr("#date",{minDate:"today", onChange:()=>{checkDateTime();}});
+flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChange:()=>{checkDateTime();}});
 
-/* STEP NAVIGATION */
+/* STEP CONTROL */
 const step1=document.getElementById("step1");
 const step2=document.getElementById("step2");
 const step3=document.getElementById("step3");
 const step4=document.getElementById("step4");
 
-document.getElementById("next1").onclick=()=>{
-  if(!pickupInput.value){alert("Enter pickup"); return;}
-  step1.style.display="none"; step2.style.display="block";
-};
-document.getElementById("prev2").onclick=()=>{step2.style.display="none"; step1.style.display="block";};
-document.getElementById("next2").onclick=()=>{
-  if(!destInput.value){alert("Enter destination"); return;}
-  step2.style.display="none"; step3.style.display="block";
-};
-document.getElementById("prev3").onclick=()=>{step3.style.display="none"; step2.style.display="block";};
-document.getElementById("next3").onclick=()=>{
-  if(!document.getElementById("date").value || !document.getElementById("time").value){alert("Select date/time"); return;}
-  step3.style.display="none"; step4.style.display="block";
-  // Fill review
+function showStep(step){
+  step1.style.display="none";
+  step2.style.display="none";
+  step3.style.display="none";
+  step4.style.display="none";
+  step.style.display="block";
+}
+
+/* AUTOMATIC FLOW */
+pickupAutocomplete.addListener('place_changed',()=>{ showStep(step2); });
+destAutocomplete.addListener('place_changed',()=>{ showStep(step3); });
+
+function checkDateTime(){
+  const dateVal=document.getElementById("date").value;
+  const timeVal=document.getElementById("time").value;
+  if(dateVal && timeVal){
+    showStep(step4);
+    fillReview();
+  }
+}
+
+/* FILL REVIEW AND DISTANCE */
+function fillReview(){
   document.getElementById("revPickup").textContent=pickupInput.value;
   document.getElementById("revDest").textContent=destInput.value;
   document.getElementById("revDate").textContent=document.getElementById("date").value;
   document.getElementById("revTime").textContent=document.getElementById("time").value;
-  calculateDistance();
-};
-document.getElementById("prev4").onclick=()=>{step4.style.display="none"; step3.style.display="block";};
-document.getElementById("finish").onclick=()=>{alert("Booking Complete!");};
 
-/* DISTANCE & DURATION */
-function calculateDistance(){
   const service = new google.maps.DistanceMatrixService();
   service.getDistanceMatrix({
     origins:[pickupInput.value],
@@ -302,12 +262,12 @@ function calculateDistance(){
     unitSystem: google.maps.UnitSystem.IMPERIAL
   }, (response, status)=>{
     if(status==="OK"){
-      const el = response.rows[0].elements[0];
-      document.getElementById("revDistance").textContent = el.distance.text;
-      document.getElementById("revDuration").textContent = el.duration.text;
+      const el=response.rows[0].elements[0];
+      document.getElementById("revDistance").textContent=el.distance.text;
+      document.getElementById("revDuration").textContent=el.duration.text;
     } else {
-      document.getElementById("revDistance").textContent = "Error";
-      document.getElementById("revDuration").textContent = "Error";
+      document.getElementById("revDistance").textContent="Error";
+      document.getElementById("revDuration").textContent="Error";
     }
   });
 }
