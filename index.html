@@ -208,12 +208,25 @@ const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
 const destAutocomplete = new google.maps.places.Autocomplete(destInput);
 
 /* CURRENT LOCATION */
-document.getElementById("locBtn").onclick=()=>{
-  if(!navigator.geolocation){alert("Location not supported"); return;}
-  navigator.geolocation.getCurrentPosition(pos=>{
-    pickupInput.value = pos.coords.latitude.toFixed(5)+", "+pos.coords.longitude.toFixed(5);
-    showStep(2);
-  }, ()=>{alert("Location permission denied");});
+document.getElementById("locBtn").onclick = () => {
+  if(!navigator.geolocation){
+    alert("Location not supported"); 
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    const latlng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    const geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode({ location: latlng }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        pickupInput.value = results[0].formatted_address;
+        // do NOT jump steps automatically
+      } else {
+        alert("Unable to determine address from location.");
+      }
+    });
+  }, () => { alert("Location permission denied"); });
 };
 
 /* DATE & TIME PICKER */
