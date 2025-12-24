@@ -48,7 +48,8 @@ html, body {
 
 /* CONFIRMED ROWS */
 .confirmed-row{
-  margin:18px 0; padding-bottom:6px;
+  margin-top:96px; /* ~1 inch below input field shadow */
+  padding-bottom:6px;
   border-bottom:1px solid rgba(255,255,255,.08);
   cursor:pointer; display:flex; justify-content:space-between;
 }
@@ -71,7 +72,6 @@ html, body {
 
 <!-- BOOKING FLOW -->
 <div class="container">
-
   <div class="card">
     <div class="field">
       <label id="fieldLabel">PICKUP LOCATION</label>
@@ -103,28 +103,25 @@ const confirmed=document.getElementById("confirmed");
 /* GOOGLE PLACES AUTOCOMPLETE */
 let autocomplete=new google.maps.places.Autocomplete(input);
 
-/* CURRENT LOCATION */
-document.getElementById("locBtn").onclick=()=>{
-  if(!navigator.geolocation){alert("Location not supported"); return;}
+/* CURRENT LOCATION - ONLY PICKUP */
+document.getElementById("locBtn").onclick = () => {
+  if(step !== "pickup") return; // only pickup
+  if(!navigator.geolocation){ alert("Location not supported"); return; }
   navigator.geolocation.getCurrentPosition(pos=>{
     const geocoder=new google.maps.Geocoder();
     geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},
       (results,status)=>{
         if(status==="OK" && results[0]){
+          input.value = results[0].formatted_address;
           nextStep(results[0].formatted_address);
         } else alert("Cannot determine location");
-      }
-    );
+      });
   }, ()=>alert("Location permission denied"));
 }
 
-/* FLATPICKR */
-function openDatePicker(){ flatpickr(input,{minDate:"today", onChange:(d)=>nextStep(d[0].toLocaleDateString())}); }
-function openTimePicker(){ flatpickr(input,{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChange:(t)=>nextStep(t[0].toLocaleTimeString())}); }
-
-/* NEXT STEP FUNCTION */
+/* STEP FUNCTION */
 function nextStep(value){
-  // add confirmed row
+  // create confirmed row
   const row=document.createElement("div");
   row.className="confirmed-row";
   row.textContent=value;
@@ -138,18 +135,35 @@ function nextStep(value){
   confirmed.appendChild(row);
 
   input.value="";
+  input.readOnly = false;
 
   // advance step
-  if(step==="pickup"){ step="destination"; fieldLabel.textContent="DESTINATION"; input.placeholder="Enter destination";
-    autocomplete=new google.maps.places.Autocomplete(input);}
-  else if(step==="destination"){ step="date"; fieldLabel.textContent="DATE"; input.placeholder="Select date"; input.readOnly=true; openDatePicker();}
-  else if(step==="date"){ step="time"; fieldLabel.textContent="TIME"; input.placeholder="Select time"; input.readOnly=true; openTimePicker();}
-  else if(step==="time"){ input.style.display="none"; fieldLabel.style.display="none"; }
+  if(step==="pickup"){
+    step="destination";
+    fieldLabel.textContent="DESTINATION";
+    input.placeholder="Enter destination";
+    autocomplete=new google.maps.places.Autocomplete(input);
+  } else if(step==="destination"){
+    step="date";
+    fieldLabel.textContent="DATE";
+    input.placeholder="Select date";
+    input.readOnly=true;
+    flatpickr(input,{minDate:"today", onChange:(d)=>nextStep(d[0].toLocaleDateString())});
+  } else if(step==="date"){
+    step="time";
+    fieldLabel.textContent="TIME";
+    input.placeholder="Select time";
+    input.readOnly=true;
+    flatpickr(input,{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChange:(t)=>nextStep(t[0].toLocaleTimeString())});
+  } else if(step==="time"){
+    input.style.display="none";
+    fieldLabel.style.display="none";
+  }
 }
 
-/* CONFIRM ENTER */
+/* ENTER KEY CONFIRM */
 input.addEventListener("keydown", e=>{ if(e.key==="Enter") nextStep(input.value); });
-
 </script>
+
 </body>
 </html>
