@@ -2,167 +2,65 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>AGTS Booking</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
-*{box-sizing:border-box}
-html,body{
-  margin:0;
-  padding:0;
-  height:100%;
+* { box-sizing: border-box; }
+html, body {
+  margin:0; padding:0; height:100%;
   overflow:hidden;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png")
-    center/cover no-repeat fixed;
-  color:#fff;
+  background: url("https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png") center/cover no-repeat fixed;
+  color: #fff;
 }
 
-/* HEADER */
-.header{
-  position:fixed;
-  top:16px;
-  left:16px;
-  z-index:50;
+/* HEADER / BURGER */
+.header {
+  position: fixed; top:16px; left:16px; z-index:50;
 }
-.burger{
-  width:22px;
-  height:16px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  cursor:pointer;
+.burger {
+  width:22px; height:16px; display:flex; flex-direction:column; justify-content:space-between; cursor:pointer;
 }
-.burger span{
-  height:2px;
-  background:#fff;
-  border-radius:2px;
-}
+.burger span { height:2px; width:100%; background:#fff; border-radius:2px; }
 
 /* MENU */
-.menu{
-  position:fixed;
-  top:0; left:0;
-  width:260px;
-  height:100%;
-  background:rgba(11,11,16,.95);
-  transform:translateX(-100%);
-  transition:.3s;
-  z-index:60;
-  padding:80px 20px;
-}
-.menu.open{transform:translateX(0)}
-.menu a{
-  display:block;
-  padding:14px 0;
-  color:#fff;
-  text-decoration:none;
-  border-bottom:1px solid #222;
-}
-.menu-backdrop{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-  z-index:55;
-}
-.menu-backdrop.show{
-  opacity:1;
-  pointer-events:auto;
-}
+.menu { position:fixed; top:0; left:0; width:260px; height:100%; background:rgba(11,11,16,.95);
+       transform:translateX(-100%); transition:.3s; z-index:60; padding:80px 20px; }
+.menu.open{ transform:translateX(0); }
+.menu a{ display:block; padding:14px 0; color:#fff; text-decoration:none; border-bottom:1px solid #222; }
+.menu-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:.25s; z-index:55; }
+.menu-backdrop.show { opacity:1; pointer-events:auto; }
 
 /* CONTAINER */
-.container{
-  max-width:520px;
-  margin:120px auto 0;
-  padding:16px;
-}
-.card{
-  background:rgba(15,15,20,.95);
-  border-radius:22px;
-  padding:20px;
-  box-shadow:0 25px 50px rgba(0,0,0,.7);
-}
+.container { max-width:520px; margin:120px auto 0; padding:16px; }
+.card { background:rgba(15,15,20,.95); border-radius:22px; padding:20px; box-shadow:0 25px 50px rgba(0,0,0,.7); }
 
-/* FIELDS */
-.field{
-  margin-bottom:18px;
-  position:relative;
-}
-.field label{
-  font-size:.7em;
-  letter-spacing:.12em;
-  opacity:.6;
-  display:block;
-  margin-bottom:6px;
-}
-.field input{
-  width:100%;
-  padding:14px 16px;
-  font-size:16px;
-  border-radius:14px;
-  border:1px solid #333;
-  background:#111;
-  color:#fff;
-}
+/* FIELD */
+.field { margin-bottom:18px; position:relative; }
+.field label { display:block; font-size:.7em; letter-spacing:.12em; opacity:.6; margin-bottom:6px; }
+.field input { width:100%; padding:14px 16px; font-size:16px; border-radius:14px; border:1px solid #333; background:#111; color:#fff; }
 
-/* CURRENT LOCATION */
-.loc-btn{
-  position:absolute;
-  right:10px;
-  top:34px;
-  background:#222;
-  border:none;
-  color:#9ca3af;
-  font-size:13px;
-  padding:6px 10px;
-  border-radius:10px;
-}
+/* CURRENT LOCATION BUTTON */
+.loc-btn { position:absolute; right:10px; top:34px; background:#222; border:none; color:#9ca3af; font-size:13px; padding:6px 10px; border-radius:10px; cursor:pointer; }
 
-/* SUMMARY TEXT (PLAIN) */
-.summary{
-  margin:20px 0;
-  padding:6px 0;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  cursor:pointer;
+/* CONFIRMED ROWS */
+.confirmed-row{
+  margin:18px 0; padding-bottom:6px;
   border-bottom:1px solid rgba(255,255,255,.08);
+  cursor:pointer; display:flex; justify-content:space-between;
 }
-.summary span{
-  font-size:15px;
-  opacity:.92;
-}
-.summary::after{
-  content:"›";
-  font-size:18px;
-  opacity:.35;
-}
-
-/* REVIEW */
-.review{
-  background:#111;
-  padding:16px;
-  border-radius:14px;
-}
+.confirmed-row::after{ content:"›"; font-size:18px; opacity:.35; }
 </style>
 </head>
-
 <body>
 
-<!-- BURGER -->
+<!-- BURGER MENU -->
 <div class="header">
-  <div class="burger" id="burger">
-    <span></span><span></span><span></span>
-  </div>
+  <div class="burger" id="burger"><span></span><span></span><span></span></div>
 </div>
-
 <div class="menu" id="menu">
   <a href="#">About</a>
   <a href="#">Log in</a>
@@ -171,154 +69,87 @@ html,body{
 </div>
 <div class="menu-backdrop" id="menuBackdrop"></div>
 
-<!-- BOOKING -->
+<!-- BOOKING FLOW -->
 <div class="container">
 
-  <!-- STEP 1 -->
-  <div class="card" id="step1">
+  <div class="card">
     <div class="field">
-      <label>PICKUP LOCATION</label>
-      <input id="pickup" placeholder="Enter pickup location">
+      <label id="fieldLabel">PICKUP LOCATION</label>
+      <input id="mainInput" placeholder="Enter pickup location">
       <button class="loc-btn" id="locBtn">Current</button>
     </div>
   </div>
-  <div class="summary" id="pickupSummary" style="display:none">
-    <span id="sumPickup"></span>
-  </div>
 
-  <!-- STEP 2 -->
-  <div class="card" id="step2" style="display:none">
-    <div class="field">
-      <label>DESTINATION</label>
-      <input id="destination" placeholder="Enter destination">
-    </div>
-  </div>
-  <div class="summary" id="destSummary" style="display:none">
-    <span id="sumDest"></span>
-  </div>
-
-  <!-- STEP 3 -->
-  <div class="card" id="step3" style="display:none">
-    <div class="field">
-      <label>DATE</label>
-      <input id="date" readonly>
-    </div>
-    <div class="field">
-      <label>TIME</label>
-      <input id="time" readonly>
-    </div>
-  </div>
-  <div class="summary" id="dateSummary" style="display:none">
-    <span id="sumDate"></span>
-  </div>
-
-  <!-- STEP 4 -->
-  <div class="card" id="step4" style="display:none">
-    <h3>Review Trip</h3>
-    <div class="review">
-      <div>Pickup: <span id="revPickup"></span></div>
-      <div>Destination: <span id="revDest"></span></div>
-      <div>Date: <span id="revDate"></span></div>
-      <div>Time: <span id="revTime"></span></div>
-      <div>Distance: <span id="revDistance">Calculating…</span></div>
-      <div>Duration: <span id="revDuration">Calculating…</span></div>
-    </div>
-  </div>
-
+  <div id="confirmed"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places"></script>
 
 <script>
-/* MENU */
-burger.onclick=()=>{menu.classList.add("open");menuBackdrop.classList.add("show")}
-menuBackdrop.onclick=()=>{menu.classList.remove("open");menuBackdrop.classList.remove("show")}
+/* BURGER MENU */
+const burger=document.getElementById("burger");
+const menu=document.getElementById("menu");
+const menuBackdrop=document.getElementById("menuBackdrop");
+burger.onclick=()=>{menu.classList.add("open");menuBackdrop.classList.add("show");}
+menuBackdrop.onclick=()=>{menu.classList.remove("open");menuBackdrop.classList.remove("show");}
 
-/* STEPS */
-const step1=step1El=document.getElementById("step1")
-const step2=document.getElementById("step2")
-const step3=document.getElementById("step3")
-const step4=document.getElementById("step4")
+/* FLOW STATE */
+let step="pickup"; // pickup → destination → date → time
+const fieldLabel=document.getElementById("fieldLabel");
+const input=document.getElementById("mainInput");
+const confirmed=document.getElementById("confirmed");
 
-function showStep(s){
-  step1.style.display=step2.style.display=step3.style.display=step4.style.display="none"
-  s.style.display="block"
-}
-
-/* AUTOCOMPLETE */
-const pickup=document.getElementById("pickup")
-const dest=document.getElementById("destination")
-const acPickup=new google.maps.places.Autocomplete(pickup)
-const acDest=new google.maps.places.Autocomplete(dest)
-
-acPickup.addListener("place_changed",()=>{
-  sumPickup.textContent=pickup.value
-  pickupSummary.style.display="flex"
-  showStep(step2)
-})
-
-acDest.addListener("place_changed",()=>{
-  sumDest.textContent=dest.value
-  destSummary.style.display="flex"
-  showStep(step3)
-})
+/* GOOGLE PLACES AUTOCOMPLETE */
+let autocomplete=new google.maps.places.Autocomplete(input);
 
 /* CURRENT LOCATION */
-locBtn.onclick=()=>{
+document.getElementById("locBtn").onclick=()=>{
+  if(!navigator.geolocation){alert("Location not supported"); return;}
   navigator.geolocation.getCurrentPosition(pos=>{
-    const geocoder=new google.maps.Geocoder()
-    geocoder.geocode({
-      location:{lat:pos.coords.latitude,lng:pos.coords.longitude}
-    },(res)=>{
-      if(res[0]){
-        pickup.value=res[0].formatted_address
-        sumPickup.textContent=pickup.value
-        pickupSummary.style.display="flex"
-        showStep(step2)
+    const geocoder=new google.maps.Geocoder();
+    geocoder.geocode({location:{lat:pos.coords.latitude,lng:pos.coords.longitude}},
+      (results,status)=>{
+        if(status==="OK" && results[0]){
+          nextStep(results[0].formatted_address);
+        } else alert("Cannot determine location");
       }
-    })
-  })
+    );
+  }, ()=>alert("Location permission denied"));
 }
 
-/* DATE TIME */
-flatpickr("#date",{minDate:"today",onChange:checkDateTime})
-flatpickr("#time",{enableTime:true,noCalendar:true,dateFormat:"h:i K",onChange:checkDateTime})
+/* FLATPICKR */
+function openDatePicker(){ flatpickr(input,{minDate:"today", onChange:(d)=>nextStep(d[0].toLocaleDateString())}); }
+function openTimePicker(){ flatpickr(input,{enableTime:true,noCalendar:true,dateFormat:"h:i K", onChange:(t)=>nextStep(t[0].toLocaleTimeString())}); }
 
-function checkDateTime(){
-  if(date.value && time.value){
-    sumDate.textContent=date.value+" · "+time.value
-    dateSummary.style.display="flex"
-    showStep(step4)
-    fillReview()
-  }
+/* NEXT STEP FUNCTION */
+function nextStep(value){
+  // add confirmed row
+  const row=document.createElement("div");
+  row.className="confirmed-row";
+  row.textContent=value;
+  row.dataset.step=step;
+  row.onclick=()=>{
+    step=row.dataset.step;
+    fieldLabel.textContent=step.toUpperCase();
+    input.value=row.textContent;
+    input.focus();
+  };
+  confirmed.appendChild(row);
+
+  input.value="";
+
+  // advance step
+  if(step==="pickup"){ step="destination"; fieldLabel.textContent="DESTINATION"; input.placeholder="Enter destination";
+    autocomplete=new google.maps.places.Autocomplete(input);}
+  else if(step==="destination"){ step="date"; fieldLabel.textContent="DATE"; input.placeholder="Select date"; input.readOnly=true; openDatePicker();}
+  else if(step==="date"){ step="time"; fieldLabel.textContent="TIME"; input.placeholder="Select time"; input.readOnly=true; openTimePicker();}
+  else if(step==="time"){ input.style.display="none"; fieldLabel.style.display="none"; }
 }
 
-/* SUMMARY TAP → EDIT */
-pickupSummary.onclick=()=>{showStep(step1);setTimeout(()=>pickup.focus(),200)}
-destSummary.onclick=()=>{showStep(step2);setTimeout(()=>dest.focus(),200)}
-dateSummary.onclick=()=>showStep(step3)
+/* CONFIRM ENTER */
+input.addEventListener("keydown", e=>{ if(e.key==="Enter") nextStep(input.value); });
 
-/* REVIEW */
-function fillReview(){
-  revPickup.textContent=pickup.value
-  revDest.textContent=dest.value
-  revDate.textContent=date.value
-  revTime.textContent=time.value
-
-  new google.maps.DistanceMatrixService().getDistanceMatrix({
-    origins:[pickup.value],
-    destinations:[dest.value],
-    travelMode:"DRIVING",
-    unitSystem:google.maps.UnitSystem.IMPERIAL
-  },(r,s)=>{
-    if(s==="OK"){
-      revDistance.textContent=r.rows[0].elements[0].distance.text
-      revDuration.textContent=r.rows[0].elements[0].duration.text
-    }
-  })
-}
 </script>
-
 </body>
 </html>
