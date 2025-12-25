@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AGTS Group | Premium SUV Service</title>
+    <title>Premium SUV Service</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap">
     <style>
         * {
@@ -22,7 +22,7 @@
             position: relative;
         }
 
-        /* Full-screen background */
+        /* Full-screen background - MORE VISIBLE */
         .background-container {
             position: fixed;
             top: 0;
@@ -36,7 +36,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.4);
+            filter: brightness(0.7); /* Brighter background */
         }
 
         /* Main container */
@@ -49,38 +49,20 @@
             flex-direction: column;
         }
 
-        /* Header */
-        .header {
-            padding: 20px 0 40px;
-            text-align: center;
-        }
+        /* REMOVED HEADER SECTION */
 
-        .logo {
-            font-size: 28px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            color: #ffffff;
-            margin-bottom: 8px;
-        }
-
-        .tagline {
-            font-size: 15px;
-            font-weight: 400;
-            color: #cccccc;
-            opacity: 0.9;
-        }
-
-        /* Booking container */
+        /* Booking container - MORE TRANSPARENT */
         .booking-container {
-            background: rgba(10, 10, 10, 0.7);
-            backdrop-filter: blur(15px);
+            background: rgba(15, 15, 15, 0.5); /* More transparent */
+            backdrop-filter: blur(10px); /* Less blur */
             border-radius: 20px;
             padding: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             flex-grow: 1;
             display: flex;
             flex-direction: column;
+            margin-top: 40px; /* Add some space from top */
         }
 
         /* Form elements */
@@ -94,7 +76,7 @@
             font-size: 15px;
             font-weight: 500;
             margin-bottom: 10px;
-            color: #e0e0e0;
+            color: #ffffff;
         }
 
         .input-wrapper {
@@ -105,7 +87,7 @@
             width: 100%;
             padding: 18px 60px 18px 20px;
             font-size: 17px;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.1);
             border: 1.5px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             color: #ffffff;
@@ -117,12 +99,12 @@
         .input-field:focus {
             outline: none;
             border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.15);
             box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
         }
 
         .input-field::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         /* Location icon for pickup */
@@ -150,7 +132,7 @@
         .location-icon {
             width: 22px;
             height: 22px;
-            fill: rgba(255, 255, 255, 0.7);
+            fill: rgba(255, 255, 255, 0.8);
             transition: all 0.2s ease;
         }
 
@@ -179,20 +161,8 @@
         .plus-icon {
             width: 22px;
             height: 22px;
-            fill: rgba(255, 255, 255, 0.7);
+            fill: rgba(255, 255, 255, 0.8);
             transition: all 0.2s ease;
-        }
-
-        /* Destination icon */
-        .destination-icon {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 22px;
-            height: 22px;
-            pointer-events: none;
-            opacity: 0.6;
         }
 
         /* Stop fields container */
@@ -210,7 +180,7 @@
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             border-radius: 50%;
             width: 24px;
@@ -226,7 +196,7 @@
         }
 
         .remove-stop-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         /* Summary items */
@@ -237,21 +207,21 @@
         .summary-item {
             padding: 14px 20px;
             margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 10px;
-            border-left: 3px solid rgba(255, 255, 255, 0.15);
+            border-left: 3px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .summary-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-left-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            border-left-color: rgba(255, 255, 255, 0.4);
         }
 
         .summary-label {
             font-size: 13px;
-            color: #aaaaaa;
+            color: #cccccc;
             margin-bottom: 4px;
         }
 
@@ -299,39 +269,40 @@
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             color: #ffffff;
             margin-top: 15px;
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Autocomplete dropdown */
         .pac-container {
-            background: #1a1a1a;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             margin-top: 8px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
             font-family: 'Inter', sans-serif;
+            backdrop-filter: blur(10px);
         }
 
         .pac-item {
             padding: 12px 20px;
             color: #e0e0e0;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 15px;
             cursor: pointer;
         }
 
         .pac-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .pac-item-selected {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .pac-icon {
@@ -351,9 +322,10 @@
         .step-indicator {
             text-align: center;
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.6);
             margin-bottom: 25px;
             letter-spacing: 1px;
+            margin-top: 20px;
         }
 
         /* Responsive adjustments */
@@ -364,7 +336,8 @@
             
             .booking-container {
                 padding: 24px;
-                background: rgba(10, 10, 10, 0.75);
+                background: rgba(15, 15, 15, 0.45);
+                margin-top: 30px;
             }
             
             .input-field {
@@ -377,9 +350,23 @@
                 gap: 12px;
             }
             
-            .location-icon, .plus-icon, .destination-icon {
+            .location-icon, .plus-icon {
                 width: 20px;
                 height: 20px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .container {
+                padding-top: 15px;
+            }
+            
+            .booking-container {
+                margin-top: 20px;
+            }
+            
+            .form-group {
+                margin-bottom: 22px;
             }
         }
 
@@ -387,14 +374,6 @@
         .loading {
             opacity: 0.7;
             pointer-events: none;
-        }
-
-        /* Icons */
-        .icon {
-            width: 22px;
-            height: 22px;
-            fill: currentColor;
-            opacity: 0.7;
         }
         
         /* Modal styling */
@@ -404,7 +383,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
             z-index: 1000;
             display: flex;
@@ -414,7 +393,7 @@
         }
         
         .modal-content {
-            background: rgba(20, 20, 20, 0.95);
+            background: rgba(20, 20, 20, 0.9);
             border-radius: 20px;
             padding: 30px;
             max-width: 500px;
@@ -431,7 +410,7 @@
         }
         
         .modal-details {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 30px;
@@ -459,17 +438,14 @@
     </style>
 </head>
 <body>
-    <!-- Background Image -->
+    <!-- Background Image - MORE VISIBLE -->
     <div class="background-container">
-        <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png" alt="AGTS Group Premium SUV Background">
+        <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png" alt="Premium SUV Background">
     </div>
 
     <!-- Main Content -->
     <div class="container">
-        <div class="header">
-            <div class="logo">AGTS GROUP</div>
-            <div class="tagline">Premium SUV Service</div>
-        </div>
+        <!-- REMOVED HEADER -->
 
         <div class="step-indicator">BOOK YOUR JOURNEY</div>
 
@@ -876,6 +852,8 @@
 
             // Change icon to loading state
             const locationIcon = elements.currentLocationBtn.querySelector('.location-icon');
+            const originalFill = locationIcon.style.fill;
+            const originalOpacity = locationIcon.style.opacity;
             locationIcon.style.fill = '#4dabf7';
             locationIcon.style.opacity = '1';
 
@@ -897,8 +875,8 @@
                             updateSummary('pickup');
                             
                             // Reset icon
-                            locationIcon.style.fill = '';
-                            locationIcon.style.opacity = '';
+                            locationIcon.style.fill = originalFill;
+                            locationIcon.style.opacity = originalOpacity;
                             
                             elements.destinationInput.focus();
                         })
@@ -909,8 +887,8 @@
                             updateSummary('pickup');
                             
                             // Reset icon
-                            locationIcon.style.fill = '';
-                            locationIcon.style.opacity = '';
+                            locationIcon.style.fill = originalFill;
+                            locationIcon.style.opacity = originalOpacity;
                             
                             elements.destinationInput.focus();
                         });
@@ -918,8 +896,8 @@
                 (error) => {
                     alert('Unable to retrieve your location. Please enter manually.');
                     // Reset icon
-                    locationIcon.style.fill = '';
-                    locationIcon.style.opacity = '';
+                    locationIcon.style.fill = originalFill;
+                    locationIcon.style.opacity = originalOpacity;
                 }
             );
         });
