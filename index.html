@@ -2,936 +2,386 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AGTS Premium SUV | Design Options</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium SUV Service - Floating Text Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* RESET & BASE */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
-
+        
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background: #000000;
-            color: #ffffff;
             min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Background always 100% visible */
-        .background-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-        }
-
-        .background-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* Design Switcher */
-        .design-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
+            background: linear-gradient(135deg, #1a2a3a 0%, #0d1b2a 100%);
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        .design-btn {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            padding: 8px 16px;
-            color: white;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-
-        .design-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .design-btn.active {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* ===== DESIGN 1: FLOATING TEXT ===== */
-        .design-1 {
-            position: relative;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-
-        .design-1 .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .design-1 .logo {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 4px;
-            color: #ffffff;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .design-1 .tagline {
-            font-size: 12px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .design-1 .form-group {
-            margin-bottom: 30px;
-        }
-
-        .design-1 .input-label {
-            display: block;
-            font-size: 12px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.9);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .design-1 .input-wrapper {
-            position: relative;
-        }
-
-        .design-1 .input-field {
-            width: 100%;
-            padding: 18px 50px 18px 0;
-            font-size: 16px;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .design-1 .input-field:focus {
-            outline: none;
-            border-bottom-color: #ffffff;
-        }
-
-        .design-1 .input-field::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .design-1 .action-button {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            width: 36px;
-            height: 36px;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .design-1 .action-icon {
-            width: 20px;
-            height: 20px;
-            fill: rgba(255, 255, 255, 0.7);
-            transition: all 0.2s ease;
-        }
-
-        .design-1 .action-button:hover .action-icon {
-            fill: #ffffff;
-        }
-
-        .design-1 .datetime-row {
-            display: flex;
-            gap: 20px;
-        }
-
-        .design-1 .datetime-group {
-            flex: 1;
-        }
-
-        .design-1 .cta-button {
-            width: 100%;
-            padding: 20px;
-            font-size: 16px;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            margin-top: 40px;
-            backdrop-filter: blur(10px);
-        }
-
-        .design-1 .cta-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* ===== DESIGN 2: BOTTOM SHEET ===== */
-        .design-2 {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 24px 24px 0 0;
-            padding: 30px 20px;
-            transform: translateY(0);
-            transition: transform 0.4s ease;
-            z-index: 100;
-        }
-
-        .design-2 .drag-handle {
-            width: 40px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
-            margin: 0 auto 20px auto;
-            cursor: grab;
-        }
-
-        .design-2 .form-container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .design-2 .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .design-2 .logo {
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 3px;
-            color: #ffffff;
-            text-transform: uppercase;
-        }
-
-        .design-2 .form-group {
-            margin-bottom: 25px;
-        }
-
-        .design-2 .input-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 0.5px;
-        }
-
-        .design-2 .input-wrapper {
-            position: relative;
-            display: flex;
+            justify-content: center;
             align-items: center;
+            padding: 20px;
+            color: #333;
         }
-
-        .design-2 .input-field {
-            flex: 1;
-            padding: 15px 45px 15px 15px;
-            font-size: 15px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .design-2 .input-field:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .design-2 .action-button {
-            position: absolute;
-            right: 12px;
-            background: transparent;
-            border: none;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .design-2 .cta-button {
+        
+        /* Background image simulation */
+        .background-container {
+            position: relative;
             width: 100%;
-            padding: 18px;
+            max-width: 1200px;
+            height: 700px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .background-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        /* Floating Card */
+        .floating-card {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 380px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+        }
+        
+        .company-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a3a5f;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .service-type {
             font-size: 16px;
             font-weight: 600;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            margin-top: 20px;
+            color: #2a5298;
+            letter-spacing: 1px;
         }
-
-        .design-2 .cta-button:hover {
-            background: #f0f0f0;
+        
+        .divider {
+            height: 4px;
+            width: 60px;
+            background: linear-gradient(to right, #2a5298, #1e3c72);
+            margin: 12px auto;
+            border-radius: 2px;
         }
-
-        /* ===== DESIGN 3: SIDE PANEL ===== */
-        .design-3 {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            max-width: 400px;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 40px 30px;
-            transform: translateX(100%);
-            transition: transform 0.4s ease;
-            z-index: 100;
-            overflow-y: auto;
+        
+        /* Info Sections */
+        .info-section {
+            display: flex;
+            margin-bottom: 22px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
-
-        .design-3.active {
-            transform: translateX(0);
+        
+        .info-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 10px;
         }
-
-        .design-3 .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            color: #ffffff;
-            font-size: 24px;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
+        
+        .icon-container {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-right: 16px;
+            flex-shrink: 0;
         }
-
-        .design-3 .header {
-            margin-bottom: 40px;
-        }
-
-        .design-3 .logo {
+        
+        .info-icon {
             font-size: 20px;
+            color: white;
+        }
+        
+        .info-content {
+            flex: 1;
+        }
+        
+        .info-label {
+            font-size: 13px;
             font-weight: 600;
-            letter-spacing: 2px;
-            color: #ffffff;
+            color: #666;
             text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .design-3 .tagline {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.6);
-            letter-spacing: 1px;
-        }
-
-        .design-3 .form-group {
-            margin-bottom: 25px;
-        }
-
-        .design-3 .input-label {
-            display: block;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.8);
             letter-spacing: 0.5px;
+            margin-bottom: 5px;
         }
-
-        .design-3 .input-wrapper {
-            position: relative;
+        
+        .info-value {
+            font-size: 17px;
+            font-weight: 600;
+            color: #222;
+            line-height: 1.4;
         }
-
-        .design-3 .input-field {
-            width: 100%;
-            padding: 15px 45px 15px 15px;
+        
+        .info-subtext {
+            font-size: 14px;
+            color: #555;
+            margin-top: 3px;
+        }
+        
+        /* Service Tag */
+        .service-tag {
+            display: inline-block;
+            background: linear-gradient(to right, #2a5298, #1e3c72);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
             font-size: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .design-3 .input-field:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
-        }
-
-        .design-3 .cta-button {
+            letter-spacing: 0.5px;
+            margin: 15px 0 25px;
+            text-align: center;
             width: 100%;
+            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.3);
+        }
+        
+        /* Button */
+        .review-button {
+            display: block;
+            width: 100%;
+            background: #ff6b35;
+            color: white;
+            border: none;
             padding: 18px;
-            font-size: 16px;
-            font-weight: 600;
-            background: #ffffff;
-            color: #000000;
-            border: none;
-            border-radius: 8px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
-            margin-top: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+            text-align: center;
+            text-decoration: none;
         }
-
-        .design-3 .trigger-button {
-            position: fixed;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%) rotate(-90deg);
-            transform-origin: right top;
-            background: rgba(0, 0, 0, 0.8);
-            color: #ffffff;
-            border: none;
-            padding: 12px 24px;
+        
+        .review-button:hover {
+            background: #ff5500;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 107, 53, 0.4);
+        }
+        
+        .review-button:active {
+            transform: translateY(0);
+        }
+        
+        /* Original design reference (for comparison) */
+        .original-design {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 350px;
             font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            cursor: pointer;
-            z-index: 99;
-            border-radius: 8px 8px 0 0;
-            white-space: nowrap;
+            border-left: 4px solid #ff6b35;
         }
-
-        /* ===== UTILITY ===== */
-        .hidden {
-            display: none;
+        
+        .original-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ff6b35;
         }
-
-        /* ===== RESPONSIVE ===== */
+        
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-            .design-3 {
-                max-width: 100%;
+            .floating-card {
+                position: relative;
+                top: auto;
+                right: auto;
+                width: 100%;
+                max-width: 400px;
+                margin: 20px auto;
             }
             
-            .design-3 .trigger-button {
-                display: none;
+            .background-container {
+                height: auto;
+                padding-bottom: 40px;
             }
-            
-            .design-switcher {
-                top: 10px;
-                right: 10px;
-                gap: 5px;
-            }
-            
-            .design-btn {
-                padding: 6px 12px;
-                font-size: 11px;
-            }
-        }
-
-        /* ===== AUTOCOMPLETE ===== */
-        .pac-container {
-            background: rgba(30, 30, 30, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            margin-top: 4px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            font-family: 'Inter', sans-serif;
-            backdrop-filter: blur(10px);
-        }
-
-        .pac-item {
-            padding: 12px 16px;
-            color: #e0e0e0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .pac-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .pac-item-query {
-            color: #ffffff;
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <!-- Background Image - 100% visible -->
-    <div class="background-image">
-        <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png" alt="AGTS Premium SUV">
-    </div>
-
-    <!-- Design Switcher -->
-    <div class="design-switcher">
-        <button class="design-btn active" data-design="1">Design 1: Floating Text</button>
-        <button class="design-btn" data-design="2">Design 2: Bottom Sheet</button>
-        <button class="design-btn" data-design="3">Design 3: Side Panel</button>
-    </div>
-
-    <!-- DESIGN 1: FLOATING TEXT -->
-    <div class="design-1" id="design-1">
-        <div class="header">
-            <div class="logo">AGTS GROUP</div>
-            <div class="tagline">Premium SUV Service</div>
-        </div>
-
-        <div class="form-container">
-            <!-- Pickup -->
-            <div class="form-group">
-                <label class="input-label">Pickup Location</label>
-                <div class="input-wrapper">
-                    <input type="text" 
-                           class="input-field pickup-input" 
-                           placeholder="Current location or address"
-                           autocomplete="off">
-                    <button type="button" class="action-button location-btn" title="Use current location">
-                        <svg class="action-icon" viewBox="0 0 24 24">
-                            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
-                        </svg>
-                    </button>
+    <div class="background-container">
+        <div class="background-image">
+            <!-- Floating Card -->
+            <div class="floating-card">
+                <div class="header">
+                    <div class="company-name">AGTS GROUP</div>
+                    <div class="service-type">PREMIUM SUV SERVICE</div>
+                    <div class="divider"></div>
                 </div>
-            </div>
-
-            <!-- Destination -->
-            <div class="form-group">
-                <label class="input-label">Destination</label>
-                <div class="input-wrapper">
-                    <input type="text" 
-                           class="input-field destination-input" 
-                           placeholder="Enter destination address"
-                           autocomplete="off">
-                    <button type="button" class="action-button add-stop-btn" title="Add a stop">
-                        <svg class="action-icon" viewBox="0 0 24 24">
-                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Date & Time -->
-            <div class="form-group">
-                <label class="input-label">Date & Time</label>
-                <div class="datetime-row">
-                    <div class="datetime-group">
-                        <div class="input-wrapper">
-                            <input type="date" class="input-field date-input">
-                        </div>
+                
+                <!-- Pickup Location -->
+                <div class="info-section">
+                    <div class="icon-container">
+                        <i class="fas fa-map-marker-alt info-icon"></i>
                     </div>
-                    <div class="datetime-group">
-                        <div class="input-wrapper">
-                            <input type="time" class="input-field time-input">
-                        </div>
+                    <div class="info-content">
+                        <div class="info-label">Pickup Location</div>
+                        <div class="info-value">9943 Saloma Ave, Mission Hills</div>
+                        <div class="info-subtext">CA 91345, United States</div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Submit -->
-            <button class="cta-button review-btn">Review Journey</button>
-        </div>
-    </div>
-
-    <!-- DESIGN 2: BOTTOM SHEET -->
-    <div class="design-2 hidden" id="design-2">
-        <div class="drag-handle"></div>
-        <div class="form-container">
-            <div class="header">
-                <div class="logo">BOOK YOUR JOURNEY</div>
-            </div>
-
-            <!-- Pickup -->
-            <div class="form-group">
-                <label class="input-label">Pickup</label>
-                <div class="input-wrapper">
-                    <input type="text" 
-                           class="input-field pickup-input" 
-                           placeholder="Current location or address"
-                           autocomplete="off">
-                    <button type="button" class="action-button location-btn" title="Use current location">
-                        <svg class="action-icon" viewBox="0 0 24 24">
-                            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Destination -->
-            <div class="form-group">
-                <label class="input-label">Destination</label>
-                <div class="input-wrapper">
-                    <input type="text" 
-                           class="input-field destination-input" 
-                           placeholder="Enter destination"
-                           autocomplete="off">
-                    <button type="button" class="action-button add-stop-btn" title="Add a stop">
-                        <svg class="action-icon" viewBox="0 0 24 24">
-                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Date & Time -->
-            <div class="form-group">
-                <label class="input-label">When</label>
-                <div class="datetime-row">
-                    <div class="datetime-group">
-                        <div class="input-wrapper">
-                            <input type="date" class="input-field date-input">
-                        </div>
+                
+                <!-- Destination -->
+                <div class="info-section">
+                    <div class="icon-container">
+                        <i class="fas fa-flag-checkered info-icon"></i>
                     </div>
-                    <div class="datetime-group">
-                        <div class="input-wrapper">
-                            <input type="time" class="input-field time-input">
-                        </div>
+                    <div class="info-content">
+                        <div class="info-label">Destination</div>
+                        <div class="info-value">Hollywood River, Los Angeles</div>
+                        <div class="info-subtext">California, USA</div>
                     </div>
                 </div>
+                
+                <!-- Date & Time -->
+                <div class="info-section">
+                    <div class="icon-container">
+                        <i class="far fa-calendar-alt info-icon"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Date & Time</div>
+                        <div class="info-value">Friday, December 20, 2024</div>
+                        <div class="info-subtext">3:00 PM • 4 passengers</div>
+                    </div>
+                </div>
+                
+                <!-- Service Type -->
+                <div class="service-tag">
+                    <i class="fas fa-car"></i> SUV TRANSPORTATION SERVICE
+                </div>
+                
+                <!-- Review Journey Button -->
+                <a href="#" class="review-button">
+                    <i class="fas fa-clipboard-check"></i> Review Journey
+                </a>
             </div>
-
-            <!-- Submit -->
-            <button class="cta-button review-btn">Continue</button>
+            
+            <!-- Original design reference -->
+            <div class="original-design">
+                <div class="original-title">Original Design Reference:</div>
+                <div><strong>AGTS GROUP</strong><br>
+                <strong>PREMIUM SUV SERVICE</strong><br><br>
+                PICKUP LOCATION<br>
+                9943 Saloma Ave, Mission Hills, CA 91345<br><br>
+                DESTINATION<br>
+                Hollywood River Los Angeles, CA USA<br><br>
+                DATE & TIME<br>
+                Dec 20<br><br>
+                SUV TRANSPORTATION SERVICE<br><br>
+                Review Journey</div>
+            </div>
         </div>
     </div>
-
-    <!-- DESIGN 3: SIDE PANEL -->
-    <button class="trigger-button" id="side-panel-trigger">BOOK NOW</button>
     
-    <div class="design-3" id="design-3">
-        <button class="close-btn" id="close-side-panel">×</button>
-        
-        <div class="header">
-            <div class="logo">AGTS GROUP</div>
-            <div class="tagline">Premium SUV Service</div>
-        </div>
-
-        <!-- Pickup -->
-        <div class="form-group">
-            <label class="input-label">Pickup Location</label>
-            <div class="input-wrapper">
-                <input type="text" 
-                       class="input-field pickup-input" 
-                       placeholder="Where to pick you up?"
-                       autocomplete="off">
-                <button type="button" class="action-button location-btn" title="Use current location">
-                    <svg class="action-icon" viewBox="0 0 24 24">
-                        <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Destination -->
-        <div class="form-group">
-            <label class="input-label">Destination</label>
-            <div class="input-wrapper">
-                <input type="text" 
-                       class="input-field destination-input" 
-                       placeholder="Where to?"
-                       autocomplete="off">
-                <button type="button" class="action-button add-stop-btn" title="Add a stop">
-                    <svg class="action-icon" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Date & Time -->
-        <div class="form-group">
-            <label class="input-label">Date & Time</label>
-            <div class="datetime-row">
-                <div class="datetime-group">
-                    <div class="input-wrapper">
-                        <input type="date" class="input-field date-input">
-                    </div>
-                </div>
-                <div class="datetime-group">
-                    <div class="input-wrapper">
-                        <input type="time" class="input-field time-input">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Submit -->
-        <button class="cta-button review-btn">Review & Book</button>
-    </div>
-
     <script>
-        // Configuration
-        const API_KEY = 'AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps';
-
-        // Elements
-        const designBtns = document.querySelectorAll('.design-btn');
-        const designs = {
-            1: document.getElementById('design-1'),
-            2: document.getElementById('design-2'),
-            3: document.getElementById('design-3')
-        };
-        const sidePanelTrigger = document.getElementById('side-panel-trigger');
-        const closeSidePanel = document.getElementById('close-side-panel');
-
-        // Current design state
-        let currentDesign = 1;
-
-        // Initialize
-        function init() {
-            setupDesignSwitcher();
-            setupEventListeners();
-            setupDateTime();
-            loadGoogleMaps();
-        }
-
-        // Setup design switcher
-        function setupDesignSwitcher() {
-            designBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const designNum = parseInt(btn.dataset.design);
-                    switchDesign(designNum);
-                });
+        // Add interactive functionality
+        document.querySelector('.review-button').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Create a confirmation popup
+            const popup = document.createElement('div');
+            popup.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                z-index: 1000;
+                text-align: center;
+                max-width: 350px;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            popup.innerHTML = `
+                <h3 style="margin-bottom: 15px; color: #1a3a5f;">Review Your Journey</h3>
+                <p style="margin-bottom: 20px; color: #555;">Your booking details have been loaded. Would you like to proceed with the review?</p>
+                <div style="display: flex; gap: 15px;">
+                    <button id="confirmReview" style="flex:1; padding:12px; background:#2a5298; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Continue</button>
+                    <button id="cancelReview" style="flex:1; padding:12px; background:#eee; color:#333; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // Add background overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
+            `;
+            document.body.appendChild(overlay);
+            
+            // Add event listeners to buttons
+            document.getElementById('confirmReview').addEventListener('click', function() {
+                alert('Proceeding to journey review...');
+                document.body.removeChild(popup);
+                document.body.removeChild(overlay);
             });
-        }
-
-        // Switch between designs
-        function switchDesign(designNum) {
-            // Hide all designs
-            Object.values(designs).forEach(design => {
-                design.classList.add('hidden');
+            
+            document.getElementById('cancelReview').addEventListener('click', function() {
+                document.body.removeChild(popup);
+                document.body.removeChild(overlay);
             });
             
-            // Show selected design
-            designs[designNum].classList.remove('hidden');
-            
-            // Update active button
-            designBtns.forEach(btn => {
-                btn.classList.remove('active');
-                if (parseInt(btn.dataset.design) === designNum) {
-                    btn.classList.add('active');
-                }
+            overlay.addEventListener('click', function() {
+                document.body.removeChild(popup);
+                document.body.removeChild(overlay);
             });
-            
-            currentDesign = designNum;
-            
-            // Special handling for Design 3
-            if (designNum === 3) {
-                designs[3].classList.add('active');
-                sidePanelTrigger.style.display = 'block';
-            } else {
-                designs[3].classList.remove('active');
-                sidePanelTrigger.style.display = 'none';
+        });
+        
+        // Add CSS for fadeIn animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translate(-50%, -55%); }
+                to { opacity: 1; transform: translate(-50%, -50%); }
             }
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Side panel toggle
-            sidePanelTrigger.addEventListener('click', () => {
-                designs[3].classList.add('active');
-            });
-            
-            closeSidePanel.addEventListener('click', () => {
-                designs[3].classList.remove('active');
-            });
-            
-            // Location buttons
-            document.querySelectorAll('.location-btn').forEach(btn => {
-                btn.addEventListener('click', getCurrentLocation);
-            });
-            
-            // Add stop buttons
-            document.querySelectorAll('.add-stop-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    alert('Add stop functionality would go here');
-                });
-            });
-            
-            // Review buttons
-            document.querySelectorAll('.review-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    alert('Review booking functionality would go here');
-                });
-            });
-            
-            // Bottom sheet drag handle
-            const dragHandle = designs[2].querySelector('.drag-handle');
-            if (dragHandle) {
-                dragHandle.addEventListener('click', () => {
-                    designs[2].style.transform = designs[2].style.transform === 'translateY(0)' 
-                        ? 'translateY(calc(100% - 80px))' 
-                        : 'translateY(0)';
-                });
-            }
-        }
-
-        // Setup date and time
-        function setupDateTime() {
-            const now = new Date();
-            const tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            
-            const nextHour = (now.getHours() + 1) % 24;
-            
-            // Format date as YYYY-MM-DD
-            const dateStr = tomorrow.toISOString().split('T')[0];
-            
-            // Format time as HH:MM
-            const timeStr = `${nextHour.toString().padStart(2, '0')}:00`;
-            
-            // Set on all date inputs
-            document.querySelectorAll('.date-input').forEach(input => {
-                input.value = dateStr;
-            });
-            
-            // Set on all time inputs
-            document.querySelectorAll('.time-input').forEach(input => {
-                input.value = timeStr;
-            });
-        }
-
-        // Load Google Maps
-        function loadGoogleMaps() {
-            if (window.google && window.google.maps) {
-                initAutocomplete();
-                return;
-            }
-            
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&callback=onGoogleMapsLoaded`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        }
-
-        // Google Maps loaded callback
-        window.onGoogleMapsLoaded = function() {
-            initAutocomplete();
-        };
-
-        // Initialize autocomplete
-        function initAutocomplete() {
-            if (!window.google || !window.google.maps || !window.google.maps.places) {
-                console.warn('Google Maps Places API not available');
-                return;
-            }
-
-            // Initialize for all pickup inputs
-            document.querySelectorAll('.pickup-input').forEach(input => {
-                const autocomplete = new google.maps.places.Autocomplete(input, {
-                    types: ['address'],
-                    componentRestrictions: { country: 'us' }
-                });
-                
-                autocomplete.addListener('place_changed', () => {
-                    const place = autocomplete.getPlace();
-                    if (place.formatted_address) {
-                        input.value = place.formatted_address;
-                    }
-                });
-            });
-
-            // Initialize for all destination inputs
-            document.querySelectorAll('.destination-input').forEach(input => {
-                const autocomplete = new google.maps.places.Autocomplete(input, {
-                    types: ['address'],
-                    componentRestrictions: { country: 'us' }
-                });
-                
-                autocomplete.addListener('place_changed', () => {
-                    const place = autocomplete.getPlace();
-                    if (place.formatted_address) {
-                        input.value = place.formatted_address;
-                    }
-                });
-            });
-
-            // Prevent form submission on Enter
-            document.querySelectorAll('.input-field').forEach(input => {
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        input.blur();
-                    }
-                });
-            });
-        }
-
-        // Get current location
-        async function getCurrentLocation() {
-            if (!navigator.geolocation) {
-                alert('Geolocation is not supported by your browser');
-                return;
-            }
-
-            // Get the pickup input for the current design
-            const pickupInput = designs[currentDesign].querySelector('.pickup-input');
-            if (!pickupInput) return;
-
-            // Show loading state
-            const icon = event.currentTarget.querySelector('.action-icon');
-            const originalFill = icon.style.fill;
-            icon.style.fill = '#4dabf7';
-
-            try {
-                const position = await new Promise((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, {
-                        timeout: 10000,
-                        maximumAge: 60000
-                    });
-                });
-
-                const { latitude, longitude } = position.coords;
-                
-                // Try to get address from coordinates
-                try {
-                    const response = await fetch(
-                        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`
-                    );
-                    const data = await response.json();
-                    
-                    if (data.results && data.results[0]) {
-                        pickupInput.value = data.results[0].formatted_address;
-                        alert('Location found! Address auto-filled.');
-                    } else {
-                        pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-                    }
-                } catch (error) {
-                    pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-                }
-
-            } catch (error) {
-                alert('Unable to retrieve your location. Please enter manually.');
-            } finally {
-                // Reset icon
-                icon.style.fill = originalFill;
-            }
-        }
-
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', init);
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
