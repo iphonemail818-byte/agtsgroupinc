@@ -16,13 +16,13 @@
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background: #0a0a0a;
-            color: #f0f0f0;
+            color: #ffffff;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
         }
 
-        /* Full-screen background - MORE VISIBLE */
+        /* Full-screen background - MAXIMUM VISIBILITY */
         .background-container {
             position: fixed;
             top: 0;
@@ -36,7 +36,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.7); /* Brighter background */
+            filter: brightness(0.85); /* Bright background */
         }
 
         /* Main container */
@@ -49,23 +49,23 @@
             flex-direction: column;
         }
 
-        /* REMOVED HEADER SECTION */
-
-        /* Booking container - MORE TRANSPARENT */
+        /* Floating booking card - VERY TRANSPARENT */
         .booking-container {
-            background: rgba(15, 15, 15, 0.5); /* More transparent */
-            backdrop-filter: blur(10px); /* Less blur */
-            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.1); /* Almost completely transparent */
+            backdrop-filter: blur(8px); /* Very subtle blur */
+            border-radius: 24px;
             padding: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            margin-top: 40px; /* Add some space from top */
+            margin-top: 40px;
         }
 
-        /* Form elements */
+        /* Form elements with glass effect */
         .form-group {
             margin-bottom: 28px;
             position: relative;
@@ -73,10 +73,12 @@
 
         .input-label {
             display: block;
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             margin-bottom: 10px;
             color: #ffffff;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .input-wrapper {
@@ -85,26 +87,30 @@
 
         .input-field {
             width: 100%;
-            padding: 18px 60px 18px 20px;
+            padding: 20px 60px 20px 20px;
             font-size: 17px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1.5px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
             color: #ffffff;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             font-family: 'Inter', sans-serif;
             -webkit-appearance: none;
+            font-weight: 500;
         }
 
         .input-field:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 
+                0 0 0 3px rgba(255, 255, 255, 0.1),
+                0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .input-field::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
         }
 
         /* Location icon for pickup */
@@ -125,14 +131,13 @@
         }
 
         .location-icon-btn:hover .location-icon {
-            fill: #ffffff;
-            opacity: 1;
+            transform: scale(1.1);
         }
 
         .location-icon {
             width: 22px;
             height: 22px;
-            fill: rgba(255, 255, 255, 0.8);
+            fill: rgba(255, 255, 255, 0.9);
             transition: all 0.2s ease;
         }
 
@@ -154,14 +159,13 @@
         }
 
         .add-stop-btn:hover .plus-icon {
-            fill: #ffffff;
-            opacity: 1;
+            transform: scale(1.1);
         }
 
         .plus-icon {
             width: 22px;
             height: 22px;
-            fill: rgba(255, 255, 255, 0.8);
+            fill: rgba(255, 255, 255, 0.9);
             transition: all 0.2s ease;
         }
 
@@ -173,6 +177,18 @@
         .stop-field {
             margin-bottom: 12px;
             position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .remove-stop-btn {
@@ -180,38 +196,41 @@
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0;
             color: #ffffff;
-            font-size: 16px;
-            font-weight: 500;
+            font-size: 18px;
+            font-weight: 300;
+            transition: all 0.2s ease;
         }
 
         .remove-stop-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.1);
         }
 
-        /* Summary items */
+        /* Summary items - subtle */
         .summary-container {
             margin-top: 8px;
         }
 
         .summary-item {
-            padding: 14px 20px;
+            padding: 16px 20px;
             margin-bottom: 10px;
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
+            border-radius: 12px;
             border-left: 3px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
             transition: all 0.2s;
+            backdrop-filter: blur(4px);
         }
 
         .summary-item:hover {
@@ -220,14 +239,17 @@
         }
 
         .summary-label {
-            font-size: 13px;
-            color: #cccccc;
-            margin-bottom: 4px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .summary-value {
             font-size: 16px;
             color: #ffffff;
+            font-weight: 500;
         }
 
         /* DateTime inputs */
@@ -240,7 +262,7 @@
             flex: 1;
         }
 
-        /* Action buttons */
+        /* Action buttons - glass effect */
         .action-buttons {
             margin-top: auto;
             padding-top: 30px;
@@ -248,49 +270,55 @@
 
         .btn {
             width: 100%;
-            padding: 20px;
+            padding: 22px;
             font-size: 17px;
-            font-weight: 500;
+            font-weight: 600;
             border: none;
-            border-radius: 14px;
+            border-radius: 16px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             font-family: 'Inter', sans-serif;
+            letter-spacing: 0.5px;
         }
 
         .btn-primary {
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.95);
             color: #0a0a0a;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         .btn-primary:hover {
-            background: #f0f0f0;
-            transform: translateY(-1px);
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
         }
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.15);
             color: #ffffff;
             margin-top: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
         }
 
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
         }
 
-        /* Autocomplete dropdown */
+        /* Autocomplete dropdown - glass effect */
         .pac-container {
             background: rgba(30, 30, 30, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             margin-top: 8px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             font-family: 'Inter', sans-serif;
             backdrop-filter: blur(10px);
         }
 
         .pac-item {
-            padding: 12px 20px;
+            padding: 14px 20px;
             color: #e0e0e0;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 15px;
@@ -326,6 +354,7 @@
             margin-bottom: 25px;
             letter-spacing: 1px;
             margin-top: 20px;
+            text-transform: uppercase;
         }
 
         /* Responsive adjustments */
@@ -336,13 +365,15 @@
             
             .booking-container {
                 padding: 24px;
-                background: rgba(15, 15, 15, 0.45);
+                background: rgba(0, 0, 0, 0.08);
                 margin-top: 30px;
+                border-radius: 20px;
             }
             
             .input-field {
-                padding: 16px 55px 16px 16px;
+                padding: 18px 55px 18px 16px;
                 font-size: 16px;
+                border-radius: 14px;
             }
             
             .datetime-row {
@@ -353,6 +384,11 @@
             .location-icon, .plus-icon {
                 width: 20px;
                 height: 20px;
+            }
+            
+            .btn {
+                padding: 20px;
+                border-radius: 14px;
             }
         }
 
@@ -368,6 +404,10 @@
             .form-group {
                 margin-bottom: 22px;
             }
+            
+            .input-field {
+                padding: 16px 55px 16px 16px;
+            }
         }
 
         /* Loading state */
@@ -376,14 +416,14 @@
             pointer-events: none;
         }
         
-        /* Modal styling */
+        /* Modal styling - glass effect */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(10px);
             z-index: 1000;
             display: flex;
@@ -393,31 +433,34 @@
         }
         
         .modal-content {
-            background: rgba(20, 20, 20, 0.9);
-            border-radius: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 24px;
             padding: 30px;
             max-width: 500px;
             width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
         }
         
         .modal-header {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 600;
             margin-bottom: 25px;
             color: #ffffff;
+            text-align: center;
         }
         
         .modal-details {
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 20px;
+            border-radius: 16px;
+            padding: 24px;
             margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .modal-detail-row {
-            padding: 15px 0;
+            padding: 16px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
@@ -427,18 +470,47 @@
         
         .modal-label {
             font-size: 13px;
-            color: #aaaaaa;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
         
         .modal-value {
             font-size: 16px;
             color: #ffffff;
+            font-weight: 500;
+        }
+        
+        /* Floating hint */
+        .hint {
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 15px;
+            font-weight: 400;
+        }
+        
+        /* Subtle focus indicator */
+        .focus-ring {
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 19px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .input-wrapper:focus-within .focus-ring {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <!-- Background Image - MORE VISIBLE -->
+    <!-- Background Image - MAXIMUM VISIBILITY -->
     <div class="background-container">
         <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png" alt="Premium SUV Background">
     </div>
@@ -447,13 +519,14 @@
     <div class="container">
         <!-- REMOVED HEADER -->
 
-        <div class="step-indicator">BOOK YOUR JOURNEY</div>
+        <div class="step-indicator">Book Your Premium Journey</div>
 
         <div class="booking-container">
             <!-- Pickup Location -->
             <div class="form-group">
                 <label class="input-label">Pickup Location</label>
                 <div class="input-wrapper">
+                    <div class="focus-ring"></div>
                     <input type="text" 
                            id="pickup-input" 
                            class="input-field" 
@@ -472,6 +545,7 @@
             <div class="form-group">
                 <label class="input-label">Destination</label>
                 <div class="input-wrapper">
+                    <div class="focus-ring"></div>
                     <input type="text" 
                            id="destination-input" 
                            class="input-field" 
@@ -495,6 +569,7 @@
                 <div class="datetime-row">
                     <div class="datetime-group">
                         <div class="input-wrapper">
+                            <div class="focus-ring"></div>
                             <input type="date" 
                                    id="date-input" 
                                    class="input-field">
@@ -502,6 +577,7 @@
                     </div>
                     <div class="datetime-group">
                         <div class="input-wrapper">
+                            <div class="focus-ring"></div>
                             <input type="time" 
                                    id="time-input" 
                                    class="input-field">
@@ -520,6 +596,8 @@
                     Edit Trip Details
                 </button>
             </div>
+            
+            <div class="hint">Tap any summary to edit</div>
         </div>
     </div>
 
@@ -636,6 +714,7 @@
             stopField.className = 'stop-field';
             stopField.innerHTML = `
                 <div class="input-wrapper">
+                    <div class="focus-ring"></div>
                     <input type="text" 
                            id="${stopId}" 
                            class="input-field stop-input" 
