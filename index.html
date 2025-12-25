@@ -3,385 +3,873 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium SUV Service - Floating Text Design</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AGTS Group Inc | Luxury SUV Transportation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
+        /* CSS Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
-        
+
+        :root {
+            --primary-dark: #0b0b10;
+            --card-dark: #1b1c26;
+            --card-darker: #111;
+            --neon-cyan: #00f3ff;
+            --neon-glow: 0 0 10px rgba(0, 243, 255, 0.7);
+            --text-light: #f0f0f0;
+            --text-muted: #aaa;
+            --border-radius: 22px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --backdrop-blur: blur(8px);
+        }
+
         body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'San Francisco', sans-serif;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a2a3a 0%, #0d1b2a 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #333;
+            overflow-x: hidden;
+            line-height: 1.5;
         }
-        
-        /* Background image simulation */
-        .background-container {
-            position: relative;
-            width: 100%;
-            max-width: 1200px;
-            height: 700px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        }
-        
-        .background-image {
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)), 
-                        url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-        
-        /* Floating Card */
-        .floating-card {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            width: 380px;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        /* Header Section */
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.08);
-        }
-        
-        .company-name {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1a3a5f;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-        
-        .service-type {
-            font-size: 16px;
-            font-weight: 600;
-            color: #2a5298;
-            letter-spacing: 1px;
-        }
-        
-        .divider {
-            height: 4px;
-            width: 60px;
-            background: linear-gradient(to right, #2a5298, #1e3c72);
-            margin: 12px auto;
-            border-radius: 2px;
-        }
-        
-        /* Info Sections */
-        .info-section {
+            background-color: var(--primary-dark);
             display: flex;
-            margin-bottom: 22px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
-        
-        .info-section:last-of-type {
-            border-bottom: none;
-            margin-bottom: 10px;
+
+        #loading-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
         }
-        
-        .icon-container {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
-            border-radius: 12px;
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.8rem;
+            letter-spacing: 1.5px;
+            color: var(--neon-cyan);
+            text-shadow: var(--neon-glow);
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .loading-bar-container {
+            width: 220px;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #0b0b10, var(--neon-cyan), #0b0b10);
+            background-size: 200% 100%;
+            animation: loading 3s forwards, shimmer 2s infinite;
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { text-shadow: 0 0 10px rgba(0, 243, 255, 0.7); }
+            50% { text-shadow: 0 0 20px rgba(0, 243, 255, 0.9), 0 0 30px rgba(0, 243, 255, 0.5); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Main Content */
+        #main-content {
+            opacity: 0;
+            transition: opacity 0.5s ease 0.3s;
+        }
+
+        #main-content.fade-in {
+            opacity: 1;
+        }
+
+        .header {
+            padding: 1.5rem 1rem 1rem;
+            text-align: center;
+        }
+
+        .main-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 1.2px;
+            color: var(--neon-cyan);
+            text-shadow: var(--neon-glow);
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* Backdrop */
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: var(--backdrop-blur);
+            z-index: 99;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Booking Card */
+        .booking-card {
+            max-width: 500px;
+            margin: 1rem auto;
+            background: linear-gradient(180deg, var(--card-dark), var(--card-darker));
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: var(--transition);
+            position: relative;
+            z-index: 100;
+        }
+
+        @media (min-width: 768px) {
+            .booking-card {
+                margin: 2rem auto;
+            }
+            .booking-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        /* Collapsed Search Input */
+        .collapsed-search {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 16px;
+        }
+
+        .search-pill {
+            width: 100%;
+            max-width: 400px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 1.2rem 1.5rem;
+            font-size: 1rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .search-pill:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+            border-color: rgba(0, 243, 255, 0.3);
+        }
+
+        /* Expanded Booking Form */
+        .booking-form {
+            display: none;
+        }
+
+        .booking-form.active {
+            display: block;
+        }
+
+        .form-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+            color: var(--text-light);
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+        }
+
+        .current-location-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--neon-cyan);
+            border: none;
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .current-location-btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+        }
+
+        /* Stops Container */
+        .stops-container {
+            margin-top: 1rem;
+        }
+
+        .stop-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .stop-number {
+            width: 24px;
+            height: 24px;
+            background-color: rgba(0, 243, 255, 0.2);
+            color: var(--neon-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-right: 0.8rem;
             flex-shrink: 0;
         }
-        
-        .info-icon {
-            font-size: 20px;
-            color: white;
+
+        .stop-input {
+            flex-grow: 1;
         }
-        
-        .info-content {
-            flex: 1;
-        }
-        
-        .info-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }
-        
-        .info-value {
-            font-size: 17px;
-            font-weight: 600;
-            color: #222;
-            line-height: 1.4;
-        }
-        
-        .info-subtext {
-            font-size: 14px;
-            color: #555;
-            margin-top: 3px;
-        }
-        
-        /* Service Tag */
-        .service-tag {
-            display: inline-block;
-            background: linear-gradient(to right, #2a5298, #1e3c72);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 15px;
-            letter-spacing: 0.5px;
-            margin: 15px 0 25px;
-            text-align: center;
-            width: 100%;
-            box-shadow: 0 5px 15px rgba(42, 82, 152, 0.3);
-        }
-        
-        /* Button */
-        .review-button {
-            display: block;
-            width: 100%;
-            background: #ff6b35;
-            color: white;
+
+        .remove-stop {
+            background: none;
             border: none;
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            color: #ff4757;
+            font-size: 1.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+            margin-left: 0.5rem;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .remove-stop:hover {
+            background-color: rgba(255, 71, 87, 0.1);
+        }
+
+        .add-stop-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 243, 255, 0.1);
+            color: var(--neon-cyan);
+            border: 1px dashed rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin: 0.5rem auto;
+            transition: var(--transition);
+        }
+
+        .add-stop-btn:hover {
+            background-color: rgba(0, 243, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Date & Time Fields */
+        .datetime-container {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .datetime-container.active {
+            display: grid;
+        }
+
+        @media (max-width: 480px) {
+            .datetime-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.9), rgba(0, 200, 255, 0.9));
+            border: none;
+            border-radius: 12px;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: var(--transition);
+            letter-spacing: 0.5px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 243, 255, 0.4);
+        }
+
+        /* Footer */
+        .footer {
             text-align: center;
-            text-decoration: none;
+            padding: 2rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
         }
-        
-        .review-button:hover {
-            background: #ff5500;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(255, 107, 53, 0.4);
+
+        .luxury-features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 2rem;
         }
-        
-        .review-button:active {
-            transform: translateY(0);
+
+        .feature {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 120px;
         }
-        
-        /* Original design reference (for comparison) */
-        .original-design {
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 243, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            color: var(--neon-cyan);
+        }
+
+        .feature-text {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes liftUp {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .sr-only {
             position: absolute;
-            bottom: 30px;
-            left: 30px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 350px;
-            font-size: 14px;
-            border-left: 4px solid #ff6b35;
-        }
-        
-        .original-title {
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #ff6b35;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .floating-card {
-                position: relative;
-                top: auto;
-                right: auto;
-                width: 100%;
-                max-width: 400px;
-                margin: 20px auto;
-            }
-            
-            .background-container {
-                height: auto;
-                padding-bottom: 40px;
-            }
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
         }
     </style>
 </head>
 <body>
-    <div class="background-container">
-        <div class="background-image">
-            <!-- Floating Card -->
-            <div class="floating-card">
-                <div class="header">
-                    <div class="company-name">AGTS GROUP</div>
-                    <div class="service-type">PREMIUM SUV SERVICE</div>
-                    <div class="divider"></div>
-                </div>
-                
-                <!-- Pickup Location -->
-                <div class="info-section">
-                    <div class="icon-container">
-                        <i class="fas fa-map-marker-alt info-icon"></i>
-                    </div>
-                    <div class="info-content">
-                        <div class="info-label">Pickup Location</div>
-                        <div class="info-value">9943 Saloma Ave, Mission Hills</div>
-                        <div class="info-subtext">CA 91345, United States</div>
-                    </div>
-                </div>
-                
-                <!-- Destination -->
-                <div class="info-section">
-                    <div class="icon-container">
-                        <i class="fas fa-flag-checkered info-icon"></i>
-                    </div>
-                    <div class="info-content">
-                        <div class="info-label">Destination</div>
-                        <div class="info-value">Hollywood River, Los Angeles</div>
-                        <div class="info-subtext">California, USA</div>
-                    </div>
-                </div>
-                
-                <!-- Date & Time -->
-                <div class="info-section">
-                    <div class="icon-container">
-                        <i class="far fa-calendar-alt info-icon"></i>
-                    </div>
-                    <div class="info-content">
-                        <div class="info-label">Date & Time</div>
-                        <div class="info-value">Friday, December 20, 2024</div>
-                        <div class="info-subtext">3:00 PM • 4 passengers</div>
-                    </div>
-                </div>
-                
-                <!-- Service Type -->
-                <div class="service-tag">
-                    <i class="fas fa-car"></i> SUV TRANSPORTATION SERVICE
-                </div>
-                
-                <!-- Review Journey Button -->
-                <a href="#" class="review-button">
-                    <i class="fas fa-clipboard-check"></i> Review Journey
-                </a>
-            </div>
-            
-            <!-- Original design reference -->
-            <div class="original-design">
-                <div class="original-title">Original Design Reference:</div>
-                <div><strong>AGTS GROUP</strong><br>
-                <strong>PREMIUM SUV SERVICE</strong><br><br>
-                PICKUP LOCATION<br>
-                9943 Saloma Ave, Mission Hills, CA 91345<br><br>
-                DESTINATION<br>
-                Hollywood River Los Angeles, CA USA<br><br>
-                DATE & TIME<br>
-                Dec 20<br><br>
-                SUV TRANSPORTATION SERVICE<br><br>
-                Review Journey</div>
-            </div>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="logo">AGTS GROUP INC</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
         </div>
     </div>
-    
-    <script>
-        // Add interactive functionality
-        document.querySelector('.review-button').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Create a confirmation popup
-            const popup = document.createElement('div');
-            popup.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: white;
-                padding: 30px;
-                border-radius: 15px;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-                z-index: 1000;
-                text-align: center;
-                max-width: 350px;
-                animation: fadeIn 0.3s ease;
-            `;
-            
-            popup.innerHTML = `
-                <h3 style="margin-bottom: 15px; color: #1a3a5f;">Review Your Journey</h3>
-                <p style="margin-bottom: 20px; color: #555;">Your booking details have been loaded. Would you like to proceed with the review?</p>
-                <div style="display: flex; gap: 15px;">
-                    <button id="confirmReview" style="flex:1; padding:12px; background:#2a5298; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Continue</button>
-                    <button id="cancelReview" style="flex:1; padding:12px; background:#eee; color:#333; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Cancel</button>
+
+    <!-- Backdrop -->
+    <div class="backdrop" id="backdrop"></div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <header class="header">
+            <div class="main-logo">AGTS GROUP INC</div>
+            <div class="tagline">Luxury SUV Transportation | Executive Travel</div>
+        </header>
+
+        <main>
+            <!-- Booking Card -->
+            <div class="booking-card" id="booking-card">
+                <!-- Collapsed Search Input -->
+                <div class="collapsed-search" id="collapsed-search">
+                    <div class="search-pill" id="search-pill">
+                        Where are you going?
+                    </div>
                 </div>
-            `;
+
+                <!-- Expanded Booking Form -->
+                <div class="booking-form" id="booking-form">
+                    <h2 class="form-title">Book Your Luxury SUV</h2>
+                    
+                    <div class="input-group">
+                        <label class="input-label" for="pickup">Pickup Location</label>
+                        <input type="text" 
+                               class="form-input" 
+                               id="pickup" 
+                               placeholder="Enter pickup location">
+                        <button class="current-location-btn" id="current-location">
+                            <span class="sr-only">Use Current Location</span>
+                            📍
+                        </button>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label class="input-label" for="destination">Destination</label>
+                        <input type="text" 
+                               class="form-input" 
+                               id="destination" 
+                               placeholder="Enter destination"
+                               autocomplete="off">
+                    </div>
+                    
+                    <!-- Additional Stops Container -->
+                    <div class="stops-container" id="stops-container">
+                        <!-- Additional stops will be added here dynamically -->
+                    </div>
+                    
+                    <!-- Add Stop Button -->
+                    <button class="add-stop-btn" id="add-stop-btn">
+                        +
+                    </button>
+                    
+                    <!-- Date & Time Fields -->
+                    <div class="datetime-container" id="datetime-container">
+                        <div class="input-group">
+                            <label class="input-label" for="pickup-date">Pickup Date</label>
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="pickup-date" 
+                                   placeholder="Select date"
+                                   readonly>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label class="input-label" for="pickup-time">Pickup Time</label>
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="pickup-time" 
+                                   placeholder="Select time"
+                                   readonly>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <button class="submit-btn" id="submit-btn">
+                        CONFIRM BOOKING
+                    </button>
+                </div>
+            </div>
             
-            document.body.appendChild(popup);
-            
-            // Add background overlay
-            const overlay = document.createElement('div');
-            overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.5);
-                z-index: 999;
-            `;
-            document.body.appendChild(overlay);
-            
-            // Add event listeners to buttons
-            document.getElementById('confirmReview').addEventListener('click', function() {
-                alert('Proceeding to journey review...');
-                document.body.removeChild(popup);
-                document.body.removeChild(overlay);
-            });
-            
-            document.getElementById('cancelReview').addEventListener('click', function() {
-                document.body.removeChild(popup);
-                document.body.removeChild(overlay);
-            });
-            
-            overlay.addEventListener('click', function() {
-                document.body.removeChild(popup);
-                document.body.removeChild(overlay);
-            });
-        });
+            <!-- Luxury Features -->
+            <div class="luxury-features">
+                <div class="feature">
+                    <div class="feature-icon">⭐</div>
+                    <div class="feature-text">Premium SUVs</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👔</div>
+                    <div class="feature-text">Professional Chauffeurs</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⏱️</div>
+                    <div class="feature-text">Punctual Service</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-text">Secure & Private</div>
+                </div>
+            </div>
+        </main>
         
-        // Add CSS for fadeIn animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translate(-50%, -55%); }
-                to { opacity: 1; transform: translate(-50%, -50%); }
+        <footer class="footer">
+            <p>© 2023 AGTS Group Inc. Luxury SUV Transportation Services.</p>
+            <p>Available 24/7 for executive travel needs.</p>
+        </footer>
+    </div>
+
+    <!-- Google Maps API (Replace with your own API key in production) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5uKjF1lq5R1pOe6K7_8v6wJ2wQYcX7V4&libraries=places&callback=initAutocomplete" async defer></script>
+    
+    <!-- Flatpickr for Date/Time Selection -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const loadingScreen = document.getElementById('loading-screen');
+            const mainContent = document.getElementById('main-content');
+            const searchPill = document.getElementById('search-pill');
+            const bookingForm = document.getElementById('booking-form');
+            const collapsedSearch = document.getElementById('collapsed-search');
+            const backdrop = document.getElementById('backdrop');
+            const pickupInput = document.getElementById('pickup');
+            const destinationInput = document.getElementById('destination');
+            const currentLocationBtn = document.getElementById('current-location');
+            const addStopBtn = document.getElementById('add-stop-btn');
+            const stopsContainer = document.getElementById('stops-container');
+            const datetimeContainer = document.getElementById('datetime-container');
+            const pickupDateInput = document.getElementById('pickup-date');
+            const pickupTimeInput = document.getElementById('pickup-time');
+            const submitBtn = document.getElementById('submit-btn');
+            const bookingCard = document.getElementById('booking-card');
+            
+            // Global variables
+            let autocompleteService;
+            let placesService;
+            let stopCount = 0;
+            let map;
+            
+            // Simulate loading screen for 3 seconds
+            setTimeout(() => {
+                loadingScreen.classList.add('fade-out');
+                mainContent.classList.add('fade-in');
+                
+                // Initialize date and time pickers after loading
+                initializeDateTimePickers();
+                
+                // After loading screen fades out, remove it from DOM
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 3000);
+            
+            // Initialize date and time pickers
+            function initializeDateTimePickers() {
+                // Date picker
+                flatpickr(pickupDateInput, {
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    onChange: function(selectedDates, dateStr, instance) {
+                        // Add some visual feedback when date is selected
+                        pickupDateInput.style.borderColor = 'var(--neon-cyan)';
+                    }
+                });
+                
+                // Time picker
+                flatpickr(pickupTimeInput, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    minuteIncrement: 15,
+                    defaultHour: 12,
+                    onChange: function(selectedDates, dateStr, instance) {
+                        // Add some visual feedback when time is selected
+                        pickupTimeInput.style.borderColor = 'var(--neon-cyan)';
+                    }
+                });
             }
-        `;
-        document.head.appendChild(style);
+            
+            // Expand booking form when search pill is clicked
+            searchPill.addEventListener('click', expandBookingForm);
+            
+            // Collapse booking form when backdrop is clicked
+            backdrop.addEventListener('click', collapseBookingForm);
+            
+            // Expand booking form function
+            function expandBookingForm() {
+                collapsedSearch.classList.add('hidden');
+                bookingForm.classList.add('active');
+                backdrop.classList.add('active');
+                bookingCard.style.zIndex = '101';
+                
+                // Focus on pickup input after animation
+                setTimeout(() => {
+                    pickupInput.focus();
+                }, 300);
+            }
+            
+            // Collapse booking form function
+            function collapseBookingForm() {
+                collapsedSearch.classList.remove('hidden');
+                bookingForm.classList.remove('active');
+                backdrop.classList.remove('active');
+                bookingCard.style.zIndex = '100';
+            }
+            
+            // Use current location for pickup
+            currentLocationBtn.addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    // Show loading state
+                    currentLocationBtn.textContent = 'Locating...';
+                    currentLocationBtn.style.opacity = '0.7';
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            // Success - set the pickup location
+                            pickupInput.value = "Current location";
+                            pickupInput.style.borderColor = 'var(--neon-cyan)';
+                            currentLocationBtn.textContent = '📍';
+                            currentLocationBtn.style.opacity = '1';
+                            
+                            // Show success message briefly
+                            const originalText = pickupInput.placeholder;
+                            pickupInput.placeholder = "Location detected ✓";
+                            setTimeout(() => {
+                                pickupInput.placeholder = originalText;
+                            }, 2000);
+                        },
+                        function(error) {
+                            // Error - handle permission denied or other errors
+                            console.error("Geolocation error:", error);
+                            currentLocationBtn.textContent = '📍';
+                            currentLocationBtn.style.opacity = '1';
+                            
+                            // Show error message
+                            pickupInput.placeholder = "Location access denied";
+                            pickupInput.style.borderColor = '#ff4757';
+                            setTimeout(() => {
+                                pickupInput.placeholder = "Enter pickup location";
+                                pickupInput.style.borderColor = '';
+                            }, 3000);
+                        },
+                        { timeout: 10000 }
+                    );
+                } else {
+                    // Browser doesn't support geolocation
+                    pickupInput.placeholder = "Geolocation not supported";
+                    pickupInput.style.borderColor = '#ff4757';
+                    setTimeout(() => {
+                        pickupInput.placeholder = "Enter pickup location";
+                        pickupInput.style.borderColor = '';
+                    }, 3000);
+                }
+            });
+            
+            // Show date/time fields when destination input starts
+            destinationInput.addEventListener('input', function() {
+                if (destinationInput.value.trim().length > 0) {
+                    datetimeContainer.classList.add('active');
+                } else {
+                    datetimeContainer.classList.remove('active');
+                }
+            });
+            
+            // Add additional stop
+            addStopBtn.addEventListener('click', function() {
+                stopCount++;
+                
+                const stopItem = document.createElement('div');
+                stopItem.className = 'stop-item';
+                stopItem.innerHTML = `
+                    <div class="stop-number">${stopCount}</div>
+                    <div class="stop-input">
+                        <input type="text" 
+                               class="form-input stop-location" 
+                               placeholder="Additional stop ${stopCount}"
+                               autocomplete="off">
+                    </div>
+                    <button class="remove-stop" type="button">×</button>
+                `;
+                
+                stopsContainer.appendChild(stopItem);
+                
+                // Add event listener to remove button
+                const removeBtn = stopItem.querySelector('.remove-stop');
+                removeBtn.addEventListener('click', function() {
+                    stopItem.remove();
+                    updateStopNumbers();
+                });
+                
+                // Initialize autocomplete for the new stop input
+                const stopInput = stopItem.querySelector('.stop-location');
+                initAutocompleteInput(stopInput);
+                
+                // Animate the new stop
+                stopItem.style.animation = 'fadeIn 0.3s ease';
+            });
+            
+            // Update stop numbers after removal
+            function updateStopNumbers() {
+                const stopNumbers = stopsContainer.querySelectorAll('.stop-number');
+                stopNumbers.forEach((number, index) => {
+                    number.textContent = index + 1;
+                });
+                stopCount = stopNumbers.length;
+            }
+            
+            // Initialize Google Maps Autocomplete
+            function initAutocomplete() {
+                // Initialize autocomplete for pickup and destination inputs
+                initAutocompleteInput(pickupInput);
+                initAutocompleteInput(destinationInput);
+                
+                // Note: In a real implementation, you would initialize the
+                // autocompleteService and placesService here with your API key
+                console.log("Google Maps API loaded - autocomplete initialized");
+            }
+            
+            // Initialize autocomplete for an input element
+            function initAutocompleteInput(inputElement) {
+                // Create autocomplete functionality
+                // Note: In a real implementation, this would use the Google Places API
+                // For this demo, we'll simulate it with a simple dropdown
+                
+                inputElement.addEventListener('focus', function() {
+                    this.style.borderColor = 'var(--neon-cyan)';
+                    this.style.boxShadow = '0 0 0 2px rgba(0, 243, 255, 0.2)';
+                });
+                
+                inputElement.addEventListener('blur', function() {
+                    this.style.borderColor = '';
+                    this.style.boxShadow = '';
+                });
+                
+                // Simulate autocomplete suggestions on input
+                inputElement.addEventListener('input', function() {
+                    // In a real implementation, this would call the Google Places API
+                    // For this demo, we'll just show a subtle visual effect
+                    if (this.value.length > 2) {
+                        this.style.background = 'rgba(255, 255, 255, 0.09)';
+                    } else {
+                        this.style.background = '';
+                    }
+                });
+            }
+            
+            // Handle form submission
+            submitBtn.addEventListener('click', function() {
+                // Get form values
+                const pickup = pickupInput.value.trim();
+                const destination = destinationInput.value.trim();
+                const date = pickupDateInput.value;
+                const time = pickupTimeInput.value;
+                
+                // Basic validation
+                if (!pickup || !destination) {
+                    alert("Please enter both pickup and destination locations.");
+                    return;
+                }
+                
+                // Get additional stops
+                const stopInputs = document.querySelectorAll('.stop-location');
+                const stops = Array.from(stopInputs)
+                    .map(input => input.value.trim())
+                    .filter(stop => stop.length > 0);
+                
+                // Show loading state on button
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = "PROCESSING...";
+                submitBtn.style.opacity = "0.8";
+                
+                // Simulate API call
+                setTimeout(() => {
+                    // Reset button
+                    submitBtn.textContent = originalText;
+                    submitBtn.style.opacity = "1";
+                    
+                    // Show success message
+                    alert(`Booking confirmed!\n\nPickup: ${pickup}\nDestination: ${destination}\nDate: ${date}\nTime: ${time}\n\nAdditional stops: ${stops.length > 0 ? stops.join(', ') : 'None'}\n\nYour luxury SUV will arrive promptly.`);
+                    
+                    // Reset form
+                    collapseBookingForm();
+                    resetForm();
+                }, 1500);
+            });
+            
+            // Reset form to initial state
+            function resetForm() {
+                pickupInput.value = '';
+                destinationInput.value = '';
+                pickupDateInput.value = '';
+                pickupTimeInput.value = '';
+                datetimeContainer.classList.remove('active');
+                
+                // Clear additional stops
+                stopsContainer.innerHTML = '';
+                stopCount = 0;
+            }
+            
+            // Make initAutocomplete globally accessible for Google Maps callback
+            window.initAutocomplete = initAutocomplete;
+        });
     </script>
 </body>
 </html>
