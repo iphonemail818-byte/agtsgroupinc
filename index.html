@@ -36,7 +36,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.25);
+            filter: brightness(0.4);
         }
 
         /* Main container */
@@ -72,12 +72,12 @@
 
         /* Booking container */
         .booking-container {
-            background: rgba(20, 20, 20, 0.85);
-            backdrop-filter: blur(20px);
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 28px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
             flex-grow: 1;
             display: flex;
             flex-direction: column;
@@ -103,10 +103,10 @@
 
         .input-field {
             width: 100%;
-            padding: 18px 52px 18px 20px;
+            padding: 18px 60px 18px 20px;
             font-size: 17px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1.5px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             color: #ffffff;
             transition: all 0.2s ease;
@@ -117,14 +117,74 @@
         .input-field:focus {
             outline: none;
             border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
         }
 
         .input-field::placeholder {
             color: rgba(255, 255, 255, 0.4);
         }
 
-        .input-icon {
+        /* Location icon for pickup */
+        .location-icon-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .location-icon-btn:hover .location-icon {
+            fill: #ffffff;
+            opacity: 1;
+        }
+
+        .location-icon {
+            width: 22px;
+            height: 22px;
+            fill: rgba(255, 255, 255, 0.7);
+            transition: all 0.2s ease;
+        }
+
+        /* Plus icon for destination */
+        .add-stop-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .add-stop-btn:hover .plus-icon {
+            fill: #ffffff;
+            opacity: 1;
+        }
+
+        .plus-icon {
+            width: 22px;
+            height: 22px;
+            fill: rgba(255, 255, 255, 0.7);
+            transition: all 0.2s ease;
+        }
+
+        /* Destination icon */
+        .destination-icon {
             position: absolute;
             right: 20px;
             top: 50%;
@@ -135,24 +195,38 @@
             opacity: 0.6;
         }
 
-        .current-location-btn {
+        /* Stop fields container */
+        .stops-container {
+            margin-top: 10px;
+        }
+
+        .stop-field {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .remove-stop-btn {
             position: absolute;
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
             background: rgba(255, 255, 255, 0.1);
             border: none;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
-            color: #ffffff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
             cursor: pointer;
-            transition: background 0.2s;
-            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 500;
         }
 
-        .current-location-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
+        .remove-stop-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         /* Summary items */
@@ -163,15 +237,15 @@
         .summary-item {
             padding: 14px 20px;
             margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            border-left: 3px solid rgba(255, 255, 255, 0.1);
+            border-left: 3px solid rgba(255, 255, 255, 0.15);
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .summary-item:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             border-left-color: rgba(255, 255, 255, 0.3);
         }
 
@@ -290,16 +364,22 @@
             
             .booking-container {
                 padding: 24px;
+                background: rgba(10, 10, 10, 0.75);
             }
             
             .input-field {
-                padding: 16px 48px 16px 16px;
+                padding: 16px 55px 16px 16px;
                 font-size: 16px;
             }
             
             .datetime-row {
                 flex-direction: column;
                 gap: 12px;
+            }
+            
+            .location-icon, .plus-icon, .destination-icon {
+                width: 20px;
+                height: 20px;
             }
         }
 
@@ -315,6 +395,66 @@
             height: 22px;
             fill: currentColor;
             opacity: 0.7;
+        }
+        
+        /* Modal styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-header {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+        
+        .modal-details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .modal-detail-row {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .modal-label {
+            font-size: 13px;
+            color: #aaaaaa;
+            margin-bottom: 5px;
+        }
+        
+        .modal-value {
+            font-size: 16px;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -343,8 +483,10 @@
                            class="input-field" 
                            placeholder="Current location or enter address"
                            autocomplete="off">
-                    <button type="button" class="current-location-btn" id="current-location-btn">
-                        Use Current
+                    <button type="button" class="location-icon-btn" id="current-location-btn" title="Use current location">
+                        <svg class="location-icon" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
                     </button>
                 </div>
                 <div class="summary-container" id="pickup-summary"></div>
@@ -359,28 +501,17 @@
                            class="input-field" 
                            placeholder="Enter destination address"
                            autocomplete="off">
-                    <svg class="input-icon" viewBox="0 0 24 24">
-                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-                    </svg>
+                    <button type="button" class="add-stop-btn" id="add-stop-btn" title="Add a stop">
+                        <svg class="plus-icon" viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                    </button>
                 </div>
                 <div class="summary-container" id="destination-summary"></div>
             </div>
 
-            <!-- Optional Stops -->
-            <div class="form-group">
-                <label class="input-label">Optional Stops</label>
-                <div class="input-wrapper">
-                    <input type="text" 
-                           id="stops-input" 
-                           class="input-field" 
-                           placeholder="Add a stop (optional)"
-                           autocomplete="off">
-                    <svg class="input-icon" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                </div>
-                <div class="summary-container" id="stops-summary"></div>
-            </div>
+            <!-- Stops Container (initially hidden) -->
+            <div class="stops-container" id="stops-container"></div>
 
             <!-- Date & Time -->
             <div class="form-group">
@@ -424,26 +555,26 @@
         const state = {
             pickup: '',
             destination: '',
-            stops: '',
+            stops: [], // Changed to array
             date: '',
             time: '',
-            currentStep: 'pickup'
+            stopCount: 0
         };
 
         // DOM Elements
         const elements = {
             pickupInput: document.getElementById('pickup-input'),
             destinationInput: document.getElementById('destination-input'),
-            stopsInput: document.getElementById('stops-input'),
             dateInput: document.getElementById('date-input'),
             timeInput: document.getElementById('time-input'),
             currentLocationBtn: document.getElementById('current-location-btn'),
+            addStopBtn: document.getElementById('add-stop-btn'),
+            stopsContainer: document.getElementById('stops-container'),
             reviewBtn: document.getElementById('review-btn'),
             editTripBtn: document.getElementById('edit-trip-btn'),
             summaryContainers: {
                 pickup: document.getElementById('pickup-summary'),
                 destination: document.getElementById('destination-summary'),
-                stops: document.getElementById('stops-summary'),
                 datetime: document.getElementById('datetime-summary')
             }
         };
@@ -485,13 +616,6 @@
                 case 'destination':
                     label = 'Destination';
                     break;
-                case 'stops':
-                    label = 'Stops';
-                    if (!value) {
-                        container.innerHTML = '';
-                        return;
-                    }
-                    break;
                 case 'datetime':
                     label = 'Date & Time';
                     if (state.date && state.time) {
@@ -529,6 +653,123 @@
             }
         }
 
+        // Create stop input field
+        function createStopField(index, value = '') {
+            const stopId = `stop-${index}`;
+            const stopField = document.createElement('div');
+            stopField.className = 'stop-field';
+            stopField.innerHTML = `
+                <div class="input-wrapper">
+                    <input type="text" 
+                           id="${stopId}" 
+                           class="input-field stop-input" 
+                           placeholder="Enter stop address"
+                           autocomplete="off"
+                           value="${value}">
+                    <button type="button" class="remove-stop-btn" data-stop-id="${stopId}">
+                        ×
+                    </button>
+                </div>
+            `;
+            
+            // Initialize autocomplete for this stop
+            setTimeout(() => initAutocompleteForStop(stopId), 100);
+            
+            return stopField;
+        }
+
+        // Initialize autocomplete for a stop field
+        function initAutocompleteForStop(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input || !window.google || !window.google.maps || !window.google.maps.places) return;
+            
+            const autocomplete = new google.maps.places.Autocomplete(
+                input,
+                {
+                    types: ['address'],
+                    componentRestrictions: { country: 'us' }
+                }
+            );
+            
+            autocomplete.addListener('place_changed', () => {
+                const place = autocomplete.getPlace();
+                if (place.formatted_address) {
+                    const stopIndex = parseInt(inputId.split('-')[1]);
+                    state.stops[stopIndex] = place.formatted_address;
+                }
+            });
+            
+            // Handle manual input
+            input.addEventListener('blur', () => {
+                if (input.value.trim()) {
+                    const stopIndex = parseInt(inputId.split('-')[1]);
+                    state.stops[stopIndex] = input.value;
+                }
+            });
+        }
+
+        // Add a new stop
+        elements.addStopBtn.addEventListener('click', () => {
+            const stopIndex = state.stopCount;
+            state.stops.push('');
+            
+            const stopField = createStopField(stopIndex);
+            elements.stopsContainer.appendChild(stopField);
+            
+            // Focus on the new stop input
+            const stopInput = document.getElementById(`stop-${stopIndex}`);
+            setTimeout(() => stopInput.focus(), 100);
+            
+            state.stopCount++;
+            
+            // Update summary for stops if needed
+            updateStopsSummary();
+        });
+
+        // Remove a stop
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-stop-btn')) {
+                const stopId = e.target.getAttribute('data-stop-id');
+                const stopIndex = parseInt(stopId.split('-')[1]);
+                
+                // Remove from state
+                state.stops.splice(stopIndex, 1);
+                
+                // Re-index remaining stops
+                state.stops = state.stops.filter((_, index) => true); // Keep all
+                
+                // Remove from DOM
+                const stopField = e.target.closest('.stop-field');
+                if (stopField) {
+                    stopField.remove();
+                }
+                
+                // Update stop IDs and reinitialize autocomplete
+                updateStopFields();
+                updateStopsSummary();
+            }
+        });
+
+        // Update stop fields after removal
+        function updateStopFields() {
+            const stopInputs = document.querySelectorAll('.stop-input');
+            stopInputs.forEach((input, index) => {
+                const newId = `stop-${index}`;
+                input.id = newId;
+                input.parentElement.querySelector('.remove-stop-btn').setAttribute('data-stop-id', newId);
+                
+                // Reinitialize autocomplete
+                initAutocompleteForStop(newId);
+            });
+            
+            state.stopCount = stopInputs.length;
+        }
+
+        // Update stops summary
+        function updateStopsSummary() {
+            // We'll handle stops in the review modal
+        }
+
         // Edit field
         function editField(field) {
             // Show input
@@ -540,9 +781,11 @@
                 input.classList.remove('hidden');
                 input.focus();
                 
-                // Show current location button only for pickup
+                // Show location icon button only for pickup
                 if (field === 'pickup') {
-                    elements.currentLocationBtn.classList.remove('hidden');
+                    document.querySelector('.location-icon-btn').classList.remove('hidden');
+                } else if (field === 'destination') {
+                    document.querySelector('.add-stop-btn').classList.remove('hidden');
                 }
             }
             
@@ -585,15 +828,6 @@
                 }
             );
 
-            // Create autocomplete for stops
-            const stopsAutocomplete = new google.maps.places.Autocomplete(
-                elements.stopsInput,
-                {
-                    types: ['address'],
-                    componentRestrictions: { country: 'us' }
-                }
-            );
-
             // Add place change listeners
             pickupAutocomplete.addListener('place_changed', () => {
                 const place = pickupAutocomplete.getPlace();
@@ -609,37 +843,23 @@
                 if (place.formatted_address) {
                     state.destination = place.formatted_address;
                     updateSummary('destination');
-                    elements.stopsInput.focus();
-                }
-            });
-
-            stopsAutocomplete.addListener('place_changed', () => {
-                const place = stopsAutocomplete.getPlace();
-                if (place.formatted_address) {
-                    state.stops = place.formatted_address;
-                    updateSummary('stops');
                 }
             });
 
             // Prevent form submission on enter in autocomplete fields
-            [elements.pickupInput, elements.destinationInput, elements.stopsInput].forEach(input => {
+            [elements.pickupInput, elements.destinationInput].forEach(input => {
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         
-                        // Trigger blur to confirm selection if autocomplete is open
                         if (input.value.trim()) {
-                            if (input.id === 'pickup-input' && input.value.trim()) {
+                            if (input.id === 'pickup-input') {
                                 state.pickup = input.value;
                                 updateSummary('pickup');
                                 elements.destinationInput.focus();
-                            } else if (input.id === 'destination-input' && input.value.trim()) {
+                            } else if (input.id === 'destination-input') {
                                 state.destination = input.value;
                                 updateSummary('destination');
-                                elements.stopsInput.focus();
-                            } else if (input.id === 'stops-input' && input.value.trim()) {
-                                state.stops = input.value;
-                                updateSummary('stops');
                             }
                         }
                     }
@@ -654,8 +874,10 @@
                 return;
             }
 
-            elements.currentLocationBtn.textContent = 'Detecting...';
-            elements.currentLocationBtn.classList.add('loading');
+            // Change icon to loading state
+            const locationIcon = elements.currentLocationBtn.querySelector('.location-icon');
+            locationIcon.style.fill = '#4dabf7';
+            locationIcon.style.opacity = '1';
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -667,29 +889,37 @@
                         .then(data => {
                             if (data.results && data.results[0]) {
                                 state.pickup = data.results[0].formatted_address;
+                                elements.pickupInput.value = data.results[0].formatted_address;
                             } else {
                                 state.pickup = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+                                elements.pickupInput.value = state.pickup;
                             }
                             updateSummary('pickup');
                             
-                            elements.currentLocationBtn.textContent = 'Use Current';
-                            elements.currentLocationBtn.classList.remove('loading');
+                            // Reset icon
+                            locationIcon.style.fill = '';
+                            locationIcon.style.opacity = '';
+                            
                             elements.destinationInput.focus();
                         })
                         .catch(() => {
                             // Fallback to coordinates if geocoding fails
                             state.pickup = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
+                            elements.pickupInput.value = state.pickup;
                             updateSummary('pickup');
                             
-                            elements.currentLocationBtn.textContent = 'Use Current';
-                            elements.currentLocationBtn.classList.remove('loading');
+                            // Reset icon
+                            locationIcon.style.fill = '';
+                            locationIcon.style.opacity = '';
+                            
                             elements.destinationInput.focus();
                         });
                 },
                 (error) => {
                     alert('Unable to retrieve your location. Please enter manually.');
-                    elements.currentLocationBtn.textContent = 'Use Current';
-                    elements.currentLocationBtn.classList.remove('loading');
+                    // Reset icon
+                    locationIcon.style.fill = '';
+                    locationIcon.style.opacity = '';
                 }
             );
         });
@@ -706,13 +936,6 @@
             if (elements.destinationInput.value.trim()) {
                 state.destination = elements.destinationInput.value;
                 updateSummary('destination');
-            }
-        });
-
-        elements.stopsInput.addEventListener('blur', () => {
-            if (elements.stopsInput.value.trim()) {
-                state.stops = elements.stopsInput.value;
-                updateSummary('stops');
             }
         });
 
@@ -742,27 +965,52 @@
                 return;
             }
 
-            // Show review summary in a more elegant way
-            const tripDetails = `
-                <div style="padding: 20px; max-width: 400px; margin: 0 auto;">
-                    <h3 style="margin-bottom: 20px; color: #fff; font-weight: 500;">Trip Review</h3>
-                    <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 20px;">
-                        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <div style="font-size: 13px; color: #aaa; margin-bottom: 4px;">Pickup</div>
-                            <div style="font-size: 16px; color: #fff;">${state.pickup}</div>
+            // Collect all stops from inputs
+            const stopInputs = document.querySelectorAll('.stop-input');
+            state.stops = [];
+            stopInputs.forEach(input => {
+                if (input.value.trim()) {
+                    state.stops.push(input.value);
+                }
+            });
+
+            // Create review modal
+            createReviewModal();
+        });
+
+        // Create review modal
+        function createReviewModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            
+            let stopsHtml = '';
+            if (state.stops.length > 0) {
+                state.stops.forEach((stop, index) => {
+                    stopsHtml += `
+                        <div class="modal-detail-row">
+                            <div class="modal-label">Stop ${index + 1}</div>
+                            <div class="modal-value">${stop}</div>
                         </div>
-                        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <div style="font-size: 13px; color: #aaa; margin-bottom: 4px;">Destination</div>
-                            <div style="font-size: 16px; color: #fff;">${state.destination}</div>
+                    `;
+                });
+            }
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">Trip Review</div>
+                    <div class="modal-details">
+                        <div class="modal-detail-row">
+                            <div class="modal-label">Pickup</div>
+                            <div class="modal-value">${state.pickup}</div>
                         </div>
-                        ${state.stops ? `
-                        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <div style="font-size: 13px; color: #aaa; margin-bottom: 4px;">Stops</div>
-                            <div style="font-size: 16px; color: #fff;">${state.stops}</div>
-                        </div>` : ''}
-                        <div style="margin-bottom: 10px;">
-                            <div style="font-size: 13px; color: #aaa; margin-bottom: 4px;">Date & Time</div>
-                            <div style="font-size: 16px; color: #fff;">${new Date(state.date + 'T' + state.time).toLocaleString('en-US', {
+                        <div class="modal-detail-row">
+                            <div class="modal-label">Destination</div>
+                            <div class="modal-value">${state.destination}</div>
+                        </div>
+                        ${stopsHtml}
+                        <div class="modal-detail-row">
+                            <div class="modal-label">Date & Time</div>
+                            <div class="modal-value">${new Date(state.date + 'T' + state.time).toLocaleString('en-US', {
                                 weekday: 'short',
                                 month: 'short',
                                 day: 'numeric',
@@ -771,57 +1019,50 @@
                             })}</div>
                         </div>
                     </div>
-                    <div style="margin-top: 25px; text-align: center;">
-                        <button id="confirm-booking" style="background: #fff; color: #000; border: none; border-radius: 12px; padding: 16px 40px; font-size: 16px; font-weight: 500; cursor: pointer; width: 100%;">
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn btn-primary" id="confirm-booking" style="flex: 1;">
                             Confirm Booking
+                        </button>
+                        <button class="btn btn-secondary" id="close-modal" style="flex: 1;">
+                            Edit Details
                         </button>
                     </div>
                 </div>
             `;
-
-            // Create modal
-            const modal = document.createElement('div');
-            modal.style.position = 'fixed';
-            modal.style.top = '0';
-            modal.style.left = '0';
-            modal.style.width = '100%';
-            modal.style.height = '100%';
-            modal.style.backgroundColor = 'rgba(0,0,0,0.85)';
-            modal.style.backdropFilter = 'blur(10px)';
-            modal.style.zIndex = '1000';
-            modal.style.display = 'flex';
-            modal.style.alignItems = 'center';
-            modal.style.justifyContent = 'center';
-            modal.innerHTML = tripDetails;
             
             document.body.appendChild(modal);
             
-            // Add close functionality
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    document.body.removeChild(modal);
-                }
-            });
-            
-            // Add confirm booking handler
+            // Add event listeners
             modal.querySelector('#confirm-booking').addEventListener('click', () => {
                 alert('Booking confirmed! A confirmation will be sent shortly.');
                 document.body.removeChild(modal);
                 elements.editTripBtn.classList.add('hidden');
-                
-                // Reset form (optional)
-                // resetForm();
             });
             
-            // Show edit button
-            elements.editTripBtn.classList.remove('hidden');
-        });
+            modal.querySelector('#close-modal').addEventListener('click', () => {
+                document.body.removeChild(modal);
+                elements.editTripBtn.classList.remove('hidden');
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                    elements.editTripBtn.classList.remove('hidden');
+                }
+            });
+        }
 
         // Edit trip
         elements.editTripBtn.addEventListener('click', () => {
             // Reset all fields to edit mode
-            ['pickup', 'destination', 'stops', 'datetime'].forEach(field => {
+            ['pickup', 'destination', 'datetime'].forEach(field => {
                 editField(field);
+            });
+            
+            // Show any existing stops
+            const stopInputs = document.querySelectorAll('.stop-input');
+            stopInputs.forEach(input => {
+                input.parentElement.parentElement.classList.remove('hidden');
             });
             
             // Hide edit button
@@ -830,32 +1071,6 @@
             // Focus on first field
             elements.pickupInput.focus();
         });
-
-        // Reset form (optional)
-        function resetForm() {
-            state.pickup = '';
-            state.destination = '';
-            state.stops = '';
-            initializeDateTime();
-            
-            // Clear inputs
-            elements.pickupInput.value = '';
-            elements.destinationInput.value = '';
-            elements.stopsInput.value = '';
-            
-            // Clear summaries
-            Object.keys(elements.summaryContainers).forEach(key => {
-                elements.summaryContainers[key].innerHTML = '';
-            });
-            
-            // Show all inputs
-            elements.pickupInput.classList.remove('hidden');
-            elements.destinationInput.classList.remove('hidden');
-            elements.stopsInput.classList.remove('hidden');
-            elements.dateInput.classList.remove('hidden');
-            elements.timeInput.classList.remove('hidden');
-            elements.currentLocationBtn.classList.remove('hidden');
-        }
 
         // Prevent auto-close and reset behaviors
         document.addEventListener('DOMContentLoaded', () => {
