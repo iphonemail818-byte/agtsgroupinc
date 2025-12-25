@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AGTS Premium SUV Service</title>
+    <title>AGTS Premium SUV | Design Options</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
         /* RESET & BASE */
@@ -23,8 +23,8 @@
             position: relative;
         }
 
-        /* BACKGROUND - MAX VISIBILITY */
-        .background-layer {
+        /* Background always 100% visible */
+        .background-image {
             position: fixed;
             top: 0;
             left: 0;
@@ -33,197 +33,258 @@
             z-index: -2;
         }
 
-        .background-layer img {
+        .background-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        /* Overlay for readability */
-        .overlay {
+        /* Design Switcher */
+        .design-switcher {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 0.1) 0%,
-                rgba(0, 0, 0, 0.2) 100%
-            );
-            z-index: -1;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
-        /* MAIN LAYOUT */
-        .container {
+        .design-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .design-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .design-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* ===== DESIGN 1: FLOATING TEXT ===== */
+        .design-1 {
+            position: relative;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .design-1 .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .design-1 .logo {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .design-1 .tagline {
+            font-size: 12px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .design-1 .form-group {
+            margin-bottom: 30px;
+        }
+
+        .design-1 .input-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .design-1 .input-wrapper {
+            position: relative;
+        }
+
+        .design-1 .input-field {
+            width: 100%;
+            padding: 18px 50px 18px 0;
+            font-size: 16px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .design-1 .input-field:focus {
+            outline: none;
+            border-bottom-color: #ffffff;
+        }
+
+        .design-1 .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .design-1 .action-button {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .design-1 .action-icon {
+            width: 20px;
+            height: 20px;
+            fill: rgba(255, 255, 255, 0.7);
+            transition: all 0.2s ease;
+        }
+
+        .design-1 .action-button:hover .action-icon {
+            fill: #ffffff;
+        }
+
+        .design-1 .datetime-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .design-1 .datetime-group {
+            flex: 1;
+        }
+
+        .design-1 .cta-button {
+            width: 100%;
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            margin-top: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .design-1 .cta-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ===== DESIGN 2: BOTTOM SHEET ===== */
+        .design-2 {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px 24px 0 0;
+            padding: 30px 20px;
+            transform: translateY(0);
+            transition: transform 0.4s ease;
+            z-index: 100;
+        }
+
+        .design-2 .drag-handle {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            margin: 0 auto 20px auto;
+            cursor: grab;
+        }
+
+        .design-2 .form-container {
             max-width: 500px;
             margin: 0 auto;
-            padding: 24px 20px;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* HEADER - Minimal */
-        .header {
-            padding: 20px 0 30px;
+        .design-2 .header {
             text-align: center;
+            margin-bottom: 30px;
         }
 
-        .brand-name {
+        .design-2 .logo {
             font-size: 14px;
             font-weight: 600;
             letter-spacing: 3px;
             color: #ffffff;
             text-transform: uppercase;
-            opacity: 0.9;
         }
 
-        .service-type {
-            font-size: 12px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.6);
-            letter-spacing: 1px;
-            margin-top: 4px;
+        .design-2 .form-group {
+            margin-bottom: 25px;
         }
 
-        /* BOOKING CARD - Clean & Premium */
-        .booking-card {
-            background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 32px 28px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* FORM ELEMENTS */
-        .form-section {
-            margin-bottom: 32px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-label {
+        .design-2 .input-label {
             display: block;
             font-size: 13px;
             font-weight: 500;
             margin-bottom: 8px;
             color: rgba(255, 255, 255, 0.7);
-            letter-spacing: 0.3px;
+            letter-spacing: 0.5px;
         }
 
-        .input-wrapper {
+        .design-2 .input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
         }
 
-        .input-field {
+        .design-2 .input-field {
             flex: 1;
-            padding: 16px 52px 16px 20px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 12px;
+            padding: 15px 45px 15px 15px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
             color: #ffffff;
             font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease;
         }
 
-        .input-field:focus {
+        .design-2 .input-field:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
-        .input-field::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        /* ACTION BUTTONS - Clean icons */
-        .action-button {
+        .design-2 .action-button {
             position: absolute;
-            right: 14px;
+            right: 12px;
             background: transparent;
             border: none;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
             padding: 0;
         }
 
-        .action-icon {
-            width: 18px;
-            height: 18px;
-            fill: rgba(255, 255, 255, 0.7);
-            transition: all 0.2s ease;
-        }
-
-        .action-button:hover .action-icon {
-            fill: #ffffff;
-        }
-
-        /* DATE TIME SECTION */
-        .datetime-row {
-            display: flex;
-            gap: 16px;
-        }
-
-        .datetime-group {
-            flex: 1;
-        }
-
-        /* SUMMARY ITEMS - Clean */
-        .summary-section {
-            margin-top: 8px;
-        }
-
-        .summary-item {
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            border-left: 2px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .summary-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-left-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .summary-label {
-            font-size: 11px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .summary-value {
-            font-size: 15px;
-            color: #ffffff;
-            font-weight: 500;
-        }
-
-        /* ACTION BUTTONS */
-        .action-section {
-            margin-top: auto;
-            padding-top: 24px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .primary-button {
+        .design-2 .cta-button {
             width: 100%;
             padding: 18px;
             font-size: 16px;
@@ -231,104 +292,178 @@
             background: #ffffff;
             color: #000000;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s ease;
             font-family: 'Inter', sans-serif;
-            letter-spacing: 0.3px;
+            margin-top: 20px;
         }
 
-        .primary-button:hover {
-            background: #f5f5f5;
-            transform: translateY(-1px);
+        .design-2 .cta-button:hover {
+            background: #f0f0f0;
         }
 
-        .secondary-button {
+        /* ===== DESIGN 3: SIDE PANEL ===== */
+        .design-3 {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
             width: 100%;
-            padding: 16px;
-            font-size: 15px;
-            font-weight: 500;
+            max-width: 400px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px 30px;
+            transform: translateX(100%);
+            transition: transform 0.4s ease;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .design-3.active {
+            transform: translateX(0);
+        }
+
+        .design-3 .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             background: transparent;
-            color: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
+            border: none;
+            color: #ffffff;
+            font-size: 24px;
             cursor: pointer;
-            margin-top: 12px;
-            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .design-3 .header {
+            margin-bottom: 40px;
+        }
+
+        .design-3 .logo {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #ffffff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .design-3 .tagline {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
+        }
+
+        .design-3 .form-group {
+            margin-bottom: 25px;
+        }
+
+        .design-3 .input-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.5px;
+        }
+
+        .design-3 .input-wrapper {
+            position: relative;
+        }
+
+        .design-3 .input-field {
+            width: 100%;
+            padding: 15px 45px 15px 15px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
             font-family: 'Inter', sans-serif;
         }
 
-        .secondary-button:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.3);
+        .design-3 .input-field:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
         }
 
-        /* HINT TEXT */
-        .hint-text {
-            text-align: center;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.4);
-            margin-top: 16px;
+        .design-3 .cta-button {
+            width: 100%;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            margin-top: 30px;
         }
 
-        /* UTILITY */
+        .design-3 .trigger-button {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%) rotate(-90deg);
+            transform-origin: right top;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            z-index: 99;
+            border-radius: 8px 8px 0 0;
+            white-space: nowrap;
+        }
+
+        /* ===== UTILITY ===== */
         .hidden {
             display: none;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px 16px;
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .design-3 {
+                max-width: 100%;
             }
             
-            .booking-card {
-                padding: 28px 20px;
-                border-radius: 16px;
+            .design-3 .trigger-button {
+                display: none;
             }
             
-            .datetime-row {
-                flex-direction: column;
-                gap: 12px;
+            .design-switcher {
+                top: 10px;
+                right: 10px;
+                gap: 5px;
             }
             
-            .input-field {
-                padding: 15px 48px 15px 16px;
-                font-size: 15px;
-            }
-            
-            .action-button {
-                right: 12px;
+            .design-btn {
+                padding: 6px 12px;
+                font-size: 11px;
             }
         }
 
-        @media (max-height: 700px) {
-            .header {
-                padding: 15px 0 20px;
-            }
-            
-            .booking-card {
-                padding: 24px 20px;
-            }
-            
-            .form-section {
-                margin-bottom: 24px;
-            }
-        }
-
-        /* AUTOCOMPLETE STYLING */
+        /* ===== AUTOCOMPLETE ===== */
         .pac-container {
             background: rgba(30, 30, 30, 0.98);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            margin-top: 4px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             font-family: 'Inter', sans-serif;
             backdrop-filter: blur(10px);
         }
 
         .pac-item {
-            padding: 12px 20px;
+            padding: 12px 16px;
             color: #e0e0e0;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             font-size: 14px;
@@ -343,240 +478,322 @@
             color: #ffffff;
             font-size: 14px;
         }
-
-        /* SIMPLE MODAL */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: rgba(25, 25, 25, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 450px;
-            width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(20px);
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 24px;
-            color: #ffffff;
-            text-align: center;
-        }
-
-        .modal-details {
-            margin-bottom: 30px;
-        }
-
-        .modal-row {
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .modal-row:last-child {
-            border-bottom: none;
-        }
-
-        .modal-label {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 4px;
-        }
-
-        .modal-value {
-            font-size: 15px;
-            color: #ffffff;
-            font-weight: 500;
-        }
     </style>
 </head>
 <body>
-    <!-- Background -->
-    <div class="background-layer">
-        <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png" alt="AGTS Premium SUV Service">
+    <!-- Background Image - 100% visible -->
+    <div class="background-image">
+        <img src="https://raw.githubusercontent.com/iphonemail818-byte/agtsgroupinc/main/IMG_6201.png" alt="AGTS Premium SUV">
     </div>
-    <div class="overlay"></div>
 
-    <!-- Main Content -->
-    <div class="container">
+    <!-- Design Switcher -->
+    <div class="design-switcher">
+        <button class="design-btn active" data-design="1">Design 1: Floating Text</button>
+        <button class="design-btn" data-design="2">Design 2: Bottom Sheet</button>
+        <button class="design-btn" data-design="3">Design 3: Side Panel</button>
+    </div>
+
+    <!-- DESIGN 1: FLOATING TEXT -->
+    <div class="design-1" id="design-1">
         <div class="header">
-            <div class="brand-name">AGTS GROUP</div>
-            <div class="service-type">Premium SUV Service</div>
+            <div class="logo">AGTS GROUP</div>
+            <div class="tagline">Premium SUV Service</div>
         </div>
 
-        <div class="booking-card">
-            <!-- Pickup Location -->
-            <div class="form-section">
-                <div class="input-group">
-                    <label class="input-label">Pickup Location</label>
-                    <div class="input-wrapper">
-                        <input type="text" 
-                               id="pickup-input" 
-                               class="input-field" 
-                               placeholder="Enter address or use current location"
-                               autocomplete="off">
-                        <button type="button" class="action-button" id="location-btn" title="Use current location">
-                            <svg class="action-icon" viewBox="0 0 24 24">
-                                <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="summary-section" id="pickup-summary"></div>
+        <div class="form-container">
+            <!-- Pickup -->
+            <div class="form-group">
+                <label class="input-label">Pickup Location</label>
+                <div class="input-wrapper">
+                    <input type="text" 
+                           class="input-field pickup-input" 
+                           placeholder="Current location or address"
+                           autocomplete="off">
+                    <button type="button" class="action-button location-btn" title="Use current location">
+                        <svg class="action-icon" viewBox="0 0 24 24">
+                            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
             <!-- Destination -->
-            <div class="form-section">
-                <div class="input-group">
-                    <label class="input-label">Destination</label>
-                    <div class="input-wrapper">
-                        <input type="text" 
-                               id="destination-input" 
-                               class="input-field" 
-                               placeholder="Enter destination address"
-                               autocomplete="off">
-                        <button type="button" class="action-button" id="add-stop-btn" title="Add a stop">
-                            <svg class="action-icon" viewBox="0 0 24 24">
-                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="summary-section" id="destination-summary"></div>
+            <div class="form-group">
+                <label class="input-label">Destination</label>
+                <div class="input-wrapper">
+                    <input type="text" 
+                           class="input-field destination-input" 
+                           placeholder="Enter destination address"
+                           autocomplete="off">
+                    <button type="button" class="action-button add-stop-btn" title="Add a stop">
+                        <svg class="action-icon" viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
-
-            <!-- Stops Container -->
-            <div id="stops-container"></div>
 
             <!-- Date & Time -->
-            <div class="form-section">
-                <div class="input-group">
-                    <label class="input-label">Date & Time</label>
-                    <div class="datetime-row">
-                        <div class="datetime-group">
-                            <div class="input-wrapper">
-                                <input type="date" 
-                                       id="date-input" 
-                                       class="input-field">
-                            </div>
-                        </div>
-                        <div class="datetime-group">
-                            <div class="input-wrapper">
-                                <input type="time" 
-                                       id="time-input" 
-                                       class="input-field">
-                            </div>
+            <div class="form-group">
+                <label class="input-label">Date & Time</label>
+                <div class="datetime-row">
+                    <div class="datetime-group">
+                        <div class="input-wrapper">
+                            <input type="date" class="input-field date-input">
                         </div>
                     </div>
-                    <div class="summary-section" id="datetime-summary"></div>
+                    <div class="datetime-group">
+                        <div class="input-wrapper">
+                            <input type="time" class="input-field time-input">
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Action Buttons -->
-            <div class="action-section">
-                <button type="button" class="primary-button" id="review-btn">
-                    Review Journey
-                </button>
-                <button type="button" class="secondary-button hidden" id="edit-btn">
-                    Edit Details
-                </button>
-            </div>
-
-            <div class="hint-text">Tap any summary to edit</div>
+            <!-- Submit -->
+            <button class="cta-button review-btn">Review Journey</button>
         </div>
     </div>
 
-    <!-- Modal for Review -->
-    <div class="modal-overlay" id="modal">
-        <div class="modal-content">
-            <div class="modal-title">Review Your Journey</div>
-            <div class="modal-details" id="modal-details"></div>
-            <button type="button" class="primary-button" id="confirm-btn">
-                Confirm Booking
-            </button>
-            <button type="button" class="secondary-button" id="modal-close-btn">
-                Make Changes
-            </button>
+    <!-- DESIGN 2: BOTTOM SHEET -->
+    <div class="design-2 hidden" id="design-2">
+        <div class="drag-handle"></div>
+        <div class="form-container">
+            <div class="header">
+                <div class="logo">BOOK YOUR JOURNEY</div>
+            </div>
+
+            <!-- Pickup -->
+            <div class="form-group">
+                <label class="input-label">Pickup</label>
+                <div class="input-wrapper">
+                    <input type="text" 
+                           class="input-field pickup-input" 
+                           placeholder="Current location or address"
+                           autocomplete="off">
+                    <button type="button" class="action-button location-btn" title="Use current location">
+                        <svg class="action-icon" viewBox="0 0 24 24">
+                            <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Destination -->
+            <div class="form-group">
+                <label class="input-label">Destination</label>
+                <div class="input-wrapper">
+                    <input type="text" 
+                           class="input-field destination-input" 
+                           placeholder="Enter destination"
+                           autocomplete="off">
+                    <button type="button" class="action-button add-stop-btn" title="Add a stop">
+                        <svg class="action-icon" viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="form-group">
+                <label class="input-label">When</label>
+                <div class="datetime-row">
+                    <div class="datetime-group">
+                        <div class="input-wrapper">
+                            <input type="date" class="input-field date-input">
+                        </div>
+                    </div>
+                    <div class="datetime-group">
+                        <div class="input-wrapper">
+                            <input type="time" class="input-field time-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <button class="cta-button review-btn">Continue</button>
         </div>
+    </div>
+
+    <!-- DESIGN 3: SIDE PANEL -->
+    <button class="trigger-button" id="side-panel-trigger">BOOK NOW</button>
+    
+    <div class="design-3" id="design-3">
+        <button class="close-btn" id="close-side-panel">×</button>
+        
+        <div class="header">
+            <div class="logo">AGTS GROUP</div>
+            <div class="tagline">Premium SUV Service</div>
+        </div>
+
+        <!-- Pickup -->
+        <div class="form-group">
+            <label class="input-label">Pickup Location</label>
+            <div class="input-wrapper">
+                <input type="text" 
+                       class="input-field pickup-input" 
+                       placeholder="Where to pick you up?"
+                       autocomplete="off">
+                <button type="button" class="action-button location-btn" title="Use current location">
+                    <svg class="action-icon" viewBox="0 0 24 24">
+                        <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3c-.46-4.17-3.77-7.48-7.94-7.94V1h-2v2.06C6.83 3.52 3.52 6.83 3.06 11H1v2h2.06c.46 4.17 3.77 7.48 7.94 7.94V23h2v-2.06c4.17-.46 7.48-3.77 7.94-7.94H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Destination -->
+        <div class="form-group">
+            <label class="input-label">Destination</label>
+            <div class="input-wrapper">
+                <input type="text" 
+                       class="input-field destination-input" 
+                       placeholder="Where to?"
+                       autocomplete="off">
+                <button type="button" class="action-button add-stop-btn" title="Add a stop">
+                    <svg class="action-icon" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Date & Time -->
+        <div class="form-group">
+            <label class="input-label">Date & Time</label>
+            <div class="datetime-row">
+                <div class="datetime-group">
+                    <div class="input-wrapper">
+                        <input type="date" class="input-field date-input">
+                    </div>
+                </div>
+                <div class="datetime-group">
+                    <div class="input-wrapper">
+                        <input type="time" class="input-field time-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="cta-button review-btn">Review & Book</button>
     </div>
 
     <script>
         // Configuration
-        const CONFIG = {
-            GOOGLE_MAPS_API_KEY: 'AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps',
-            DEFAULT_DATE_OFFSET: 1, // Tomorrow
-            DEFAULT_TIME_HOUR_OFFSET: 1 // Next hour
-        };
-
-        // State
-        const state = {
-            pickup: '',
-            destination: '',
-            stops: [],
-            date: '',
-            time: '',
-            stopCount: 0
-        };
+        const API_KEY = 'AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps';
 
         // Elements
-        const elements = {
-            pickupInput: document.getElementById('pickup-input'),
-            destinationInput: document.getElementById('destination-input'),
-            dateInput: document.getElementById('date-input'),
-            timeInput: document.getElementById('time-input'),
-            locationBtn: document.getElementById('location-btn'),
-            addStopBtn: document.getElementById('add-stop-btn'),
-            stopsContainer: document.getElementById('stops-container'),
-            reviewBtn: document.getElementById('review-btn'),
-            editBtn: document.getElementById('edit-btn'),
-            modal: document.getElementById('modal'),
-            modalDetails: document.getElementById('modal-details'),
-            confirmBtn: document.getElementById('confirm-btn'),
-            modalCloseBtn: document.getElementById('modal-close-btn'),
-            summaries: {
-                pickup: document.getElementById('pickup-summary'),
-                destination: document.getElementById('destination-summary'),
-                datetime: document.getElementById('datetime-summary')
-            }
+        const designBtns = document.querySelectorAll('.design-btn');
+        const designs = {
+            1: document.getElementById('design-1'),
+            2: document.getElementById('design-2'),
+            3: document.getElementById('design-3')
         };
+        const sidePanelTrigger = document.getElementById('side-panel-trigger');
+        const closeSidePanel = document.getElementById('close-side-panel');
+
+        // Current design state
+        let currentDesign = 1;
 
         // Initialize
         function init() {
-            setupDateTime();
+            setupDesignSwitcher();
             setupEventListeners();
+            setupDateTime();
             loadGoogleMaps();
         }
 
-        // Setup Date & Time
+        // Setup design switcher
+        function setupDesignSwitcher() {
+            designBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const designNum = parseInt(btn.dataset.design);
+                    switchDesign(designNum);
+                });
+            });
+        }
+
+        // Switch between designs
+        function switchDesign(designNum) {
+            // Hide all designs
+            Object.values(designs).forEach(design => {
+                design.classList.add('hidden');
+            });
+            
+            // Show selected design
+            designs[designNum].classList.remove('hidden');
+            
+            // Update active button
+            designBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.design) === designNum) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            currentDesign = designNum;
+            
+            // Special handling for Design 3
+            if (designNum === 3) {
+                designs[3].classList.add('active');
+                sidePanelTrigger.style.display = 'block';
+            } else {
+                designs[3].classList.remove('active');
+                sidePanelTrigger.style.display = 'none';
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Side panel toggle
+            sidePanelTrigger.addEventListener('click', () => {
+                designs[3].classList.add('active');
+            });
+            
+            closeSidePanel.addEventListener('click', () => {
+                designs[3].classList.remove('active');
+            });
+            
+            // Location buttons
+            document.querySelectorAll('.location-btn').forEach(btn => {
+                btn.addEventListener('click', getCurrentLocation);
+            });
+            
+            // Add stop buttons
+            document.querySelectorAll('.add-stop-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    alert('Add stop functionality would go here');
+                });
+            });
+            
+            // Review buttons
+            document.querySelectorAll('.review-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    alert('Review booking functionality would go here');
+                });
+            });
+            
+            // Bottom sheet drag handle
+            const dragHandle = designs[2].querySelector('.drag-handle');
+            if (dragHandle) {
+                dragHandle.addEventListener('click', () => {
+                    designs[2].style.transform = designs[2].style.transform === 'translateY(0)' 
+                        ? 'translateY(calc(100% - 80px))' 
+                        : 'translateY(0)';
+                });
+            }
+        }
+
+        // Setup date and time
         function setupDateTime() {
             const now = new Date();
             const tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + CONFIG.DEFAULT_DATE_OFFSET);
+            tomorrow.setDate(tomorrow.getDate() + 1);
             
-            const nextHour = (now.getHours() + CONFIG.DEFAULT_TIME_HOUR_OFFSET) % 24;
+            const nextHour = (now.getHours() + 1) % 24;
             
             // Format date as YYYY-MM-DD
             const dateStr = tomorrow.toISOString().split('T')[0];
@@ -584,64 +801,14 @@
             // Format time as HH:MM
             const timeStr = `${nextHour.toString().padStart(2, '0')}:00`;
             
-            elements.dateInput.value = dateStr;
-            elements.timeInput.value = timeStr;
-            
-            state.date = dateStr;
-            state.time = timeStr;
-            
-            updateDateTimeSummary();
-        }
-
-        // Setup Event Listeners
-        function setupEventListeners() {
-            // Location button
-            elements.locationBtn.addEventListener('click', getCurrentLocation);
-            
-            // Add stop button
-            elements.addStopBtn.addEventListener('click', addStop);
-            
-            // Input blur events
-            elements.pickupInput.addEventListener('blur', () => {
-                if (elements.pickupInput.value.trim()) {
-                    state.pickup = elements.pickupInput.value;
-                    updatePickupSummary();
-                }
+            // Set on all date inputs
+            document.querySelectorAll('.date-input').forEach(input => {
+                input.value = dateStr;
             });
             
-            elements.destinationInput.addEventListener('blur', () => {
-                if (elements.destinationInput.value.trim()) {
-                    state.destination = elements.destinationInput.value;
-                    updateDestinationSummary();
-                }
-            });
-            
-            // Date/Time changes
-            elements.dateInput.addEventListener('change', () => {
-                state.date = elements.dateInput.value;
-                updateDateTimeSummary();
-            });
-            
-            elements.timeInput.addEventListener('change', () => {
-                state.time = elements.timeInput.value;
-                updateDateTimeSummary();
-            });
-            
-            // Review button
-            elements.reviewBtn.addEventListener('click', showReview);
-            
-            // Edit button
-            elements.editBtn.addEventListener('click', editDetails);
-            
-            // Modal buttons
-            elements.confirmBtn.addEventListener('click', confirmBooking);
-            elements.modalCloseBtn.addEventListener('click', closeModal);
-            
-            // Close modal on overlay click
-            elements.modal.addEventListener('click', (e) => {
-                if (e.target === elements.modal) {
-                    closeModal();
-                }
+            // Set on all time inputs
+            document.querySelectorAll('.time-input').forEach(input => {
+                input.value = timeStr;
             });
         }
 
@@ -653,7 +820,7 @@
             }
             
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&libraries=places&callback=onGoogleMapsLoaded`;
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&libraries=places&callback=onGoogleMapsLoaded`;
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
@@ -671,38 +838,38 @@
                 return;
             }
 
-            // Pickup autocomplete
-            const pickupAutocomplete = new google.maps.places.Autocomplete(elements.pickupInput, {
-                types: ['address'],
-                componentRestrictions: { country: 'us' }
+            // Initialize for all pickup inputs
+            document.querySelectorAll('.pickup-input').forEach(input => {
+                const autocomplete = new google.maps.places.Autocomplete(input, {
+                    types: ['address'],
+                    componentRestrictions: { country: 'us' }
+                });
+                
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    if (place.formatted_address) {
+                        input.value = place.formatted_address;
+                    }
+                });
             });
 
-            // Destination autocomplete
-            const destinationAutocomplete = new google.maps.places.Autocomplete(elements.destinationInput, {
-                types: ['address'],
-                componentRestrictions: { country: 'us' }
-            });
-
-            // Place changed listeners
-            pickupAutocomplete.addListener('place_changed', () => {
-                const place = pickupAutocomplete.getPlace();
-                if (place.formatted_address) {
-                    state.pickup = place.formatted_address;
-                    updatePickupSummary();
-                    elements.destinationInput.focus();
-                }
-            });
-
-            destinationAutocomplete.addListener('place_changed', () => {
-                const place = destinationAutocomplete.getPlace();
-                if (place.formatted_address) {
-                    state.destination = place.formatted_address;
-                    updateDestinationSummary();
-                }
+            // Initialize for all destination inputs
+            document.querySelectorAll('.destination-input').forEach(input => {
+                const autocomplete = new google.maps.places.Autocomplete(input, {
+                    types: ['address'],
+                    componentRestrictions: { country: 'us' }
+                });
+                
+                autocomplete.addListener('place_changed', () => {
+                    const place = autocomplete.getPlace();
+                    if (place.formatted_address) {
+                        input.value = place.formatted_address;
+                    }
+                });
             });
 
             // Prevent form submission on Enter
-            [elements.pickupInput, elements.destinationInput].forEach(input => {
+            document.querySelectorAll('.input-field').forEach(input => {
                 input.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -719,8 +886,13 @@
                 return;
             }
 
+            // Get the pickup input for the current design
+            const pickupInput = designs[currentDesign].querySelector('.pickup-input');
+            if (!pickupInput) return;
+
             // Show loading state
-            const icon = elements.locationBtn.querySelector('.action-icon');
+            const icon = event.currentTarget.querySelector('.action-icon');
+            const originalFill = icon.style.fill;
             icon.style.fill = '#4dabf7';
 
             try {
@@ -736,331 +908,26 @@
                 // Try to get address from coordinates
                 try {
                     const response = await fetch(
-                        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${CONFIG.GOOGLE_MAPS_API_KEY}`
+                        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${API_KEY}`
                     );
                     const data = await response.json();
                     
                     if (data.results && data.results[0]) {
-                        state.pickup = data.results[0].formatted_address;
-                        elements.pickupInput.value = data.results[0].formatted_address;
+                        pickupInput.value = data.results[0].formatted_address;
+                        alert('Location found! Address auto-filled.');
                     } else {
-                        state.pickup = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-                        elements.pickupInput.value = state.pickup;
+                        pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
                     }
                 } catch (error) {
-                    state.pickup = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-                    elements.pickupInput.value = state.pickup;
+                    pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
                 }
-
-                updatePickupSummary();
-                elements.destinationInput.focus();
 
             } catch (error) {
                 alert('Unable to retrieve your location. Please enter manually.');
             } finally {
                 // Reset icon
-                icon.style.fill = '';
+                icon.style.fill = originalFill;
             }
-        }
-
-        // Add a stop
-        function addStop() {
-            const stopId = `stop-${state.stopCount}`;
-            const stopElement = document.createElement('div');
-            stopElement.className = 'input-group';
-            stopElement.innerHTML = `
-                <label class="input-label">Stop ${state.stopCount + 1}</label>
-                <div class="input-wrapper">
-                    <input type="text" 
-                           id="${stopId}" 
-                           class="input-field stop-input" 
-                           placeholder="Enter stop address"
-                           autocomplete="off">
-                    <button type="button" class="action-button remove-stop-btn" data-stop-id="${stopId}">
-                        <svg class="action-icon" viewBox="0 0 24 24">
-                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                        </svg>
-                    </button>
-                </div>
-            `;
-
-            elements.stopsContainer.appendChild(stopElement);
-            state.stops.push('');
-            state.stopCount++;
-
-            // Initialize autocomplete for new stop
-            setTimeout(() => initStopAutocomplete(stopId), 100);
-        }
-
-        // Initialize autocomplete for a stop
-        function initStopAutocomplete(inputId) {
-            const input = document.getElementById(inputId);
-            if (!input || !window.google || !window.google.maps || !window.google.maps.places) return;
-
-            const autocomplete = new google.maps.places.Autocomplete(input, {
-                types: ['address'],
-                componentRestrictions: { country: 'us' }
-            });
-
-            autocomplete.addListener('place_changed', () => {
-                const place = autocomplete.getPlace();
-                if (place.formatted_address) {
-                    const index = parseInt(inputId.split('-')[1]);
-                    state.stops[index] = place.formatted_address;
-                }
-            });
-
-            // Handle manual input
-            input.addEventListener('blur', () => {
-                if (input.value.trim()) {
-                    const index = parseInt(inputId.split('-')[1]);
-                    state.stops[index] = input.value;
-                }
-            });
-        }
-
-        // Remove stop event delegation
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.remove-stop-btn')) {
-                const button = e.target.closest('.remove-stop-btn');
-                const stopId = button.getAttribute('data-stop-id');
-                const index = parseInt(stopId.split('-')[1]);
-                
-                // Remove from state
-                state.stops.splice(index, 1);
-                
-                // Remove element
-                button.closest('.input-group').remove();
-                
-                // Reindex remaining stops
-                reindexStops();
-            }
-        });
-
-        // Reindex stops after removal
-        function reindexStops() {
-            const stopElements = elements.stopsContainer.querySelectorAll('.input-group');
-            stopElements.forEach((element, index) => {
-                const label = element.querySelector('.input-label');
-                const input = element.querySelector('.stop-input');
-                const button = element.querySelector('.remove-stop-btn');
-                
-                const newId = `stop-${index}`;
-                label.textContent = `Stop ${index + 1}`;
-                input.id = newId;
-                button.setAttribute('data-stop-id', newId);
-                
-                // Update state
-                state.stops[index] = input.value;
-            });
-            
-            state.stopCount = stopElements.length;
-        }
-
-        // Update summaries
-        function updatePickupSummary() {
-            updateSummary('pickup', state.pickup);
-            elements.pickupInput.classList.add('hidden');
-        }
-
-        function updateDestinationSummary() {
-            updateSummary('destination', state.destination);
-            elements.destinationInput.classList.add('hidden');
-        }
-
-        function updateDateTimeSummary() {
-            if (state.date && state.time) {
-                const dateObj = new Date(`${state.date}T${state.time}`);
-                const formatted = dateObj.toLocaleString('en-US', {
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit'
-                });
-                updateSummary('datetime', formatted);
-                elements.dateInput.classList.add('hidden');
-                elements.timeInput.classList.add('hidden');
-            }
-        }
-
-        function updateSummary(type, value) {
-            if (!value) return;
-            
-            const container = elements.summaries[type];
-            if (!container) return;
-            
-            const label = type === 'pickup' ? 'Pickup' : 
-                         type === 'destination' ? 'Destination' : 
-                         'Date & Time';
-            
-            container.innerHTML = `
-                <div class="summary-item" data-edit="${type}">
-                    <div class="summary-label">${label}</div>
-                    <div class="summary-value">${value}</div>
-                </div>
-            `;
-            
-            // Add edit handler
-            container.querySelector('.summary-item').addEventListener('click', () => editField(type));
-        }
-
-        // Edit field
-        function editField(field) {
-            if (field === 'datetime') {
-                elements.dateInput.classList.remove('hidden');
-                elements.timeInput.classList.remove('hidden');
-            } else if (field === 'pickup') {
-                elements.pickupInput.classList.remove('hidden');
-                elements.pickupInput.focus();
-            } else if (field === 'destination') {
-                elements.destinationInput.classList.remove('hidden');
-                elements.destinationInput.focus();
-            }
-            
-            elements.summaries[field].innerHTML = '';
-            elements.editBtn.classList.remove('hidden');
-        }
-
-        // Show review modal
-        function showReview() {
-            // Validate
-            if (!state.pickup.trim()) {
-                alert('Please enter pickup location');
-                elements.pickupInput.focus();
-                return;
-            }
-            
-            if (!state.destination.trim()) {
-                alert('Please enter destination');
-                elements.destinationInput.focus();
-                return;
-            }
-            
-            // Collect stops from inputs
-            const stopInputs = document.querySelectorAll('.stop-input');
-            state.stops = Array.from(stopInputs).map(input => input.value).filter(Boolean);
-            
-            // Build modal content
-            let html = '';
-            
-            // Pickup
-            html += `
-                <div class="modal-row">
-                    <div class="modal-label">Pickup</div>
-                    <div class="modal-value">${state.pickup}</div>
-                </div>
-            `;
-            
-            // Destination
-            html += `
-                <div class="modal-row">
-                    <div class="modal-label">Destination</div>
-                    <div class="modal-value">${state.destination}</div>
-                </div>
-            `;
-            
-            // Stops
-            state.stops.forEach((stop, index) => {
-                if (stop.trim()) {
-                    html += `
-                        <div class="modal-row">
-                            <div class="modal-label">Stop ${index + 1}</div>
-                            <div class="modal-value">${stop}</div>
-                        </div>
-                    `;
-                }
-            });
-            
-            // Date & Time
-            if (state.date && state.time) {
-                const dateObj = new Date(`${state.date}T${state.time}`);
-                const formatted = dateObj.toLocaleString('en-US', {
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: '2-digit'
-                });
-                
-                html += `
-                    <div class="modal-row">
-                        <div class="modal-label">Date & Time</div>
-                        <div class="modal-value">${formatted}</div>
-                    </div>
-                `;
-            }
-            
-            elements.modalDetails.innerHTML = html;
-            elements.modal.classList.add('active');
-        }
-
-        // Close modal
-        function closeModal() {
-            elements.modal.classList.remove('active');
-        }
-
-        // Edit details
-        function editDetails() {
-            // Show all inputs
-            elements.pickupInput.classList.remove('hidden');
-            elements.destinationInput.classList.remove('hidden');
-            elements.dateInput.classList.remove('hidden');
-            elements.timeInput.classList.remove('hidden');
-            
-            // Clear summaries
-            Object.values(elements.summaries).forEach(summary => {
-                summary.innerHTML = '';
-            });
-            
-            // Hide edit button
-            elements.editBtn.classList.add('hidden');
-            
-            // Focus on pickup
-            elements.pickupInput.focus();
-        }
-
-        // Confirm booking
-        function confirmBooking() {
-            alert('Booking confirmed! You will receive a confirmation shortly.');
-            closeModal();
-            
-            // Reset form
-            resetForm();
-        }
-
-        // Reset form
-        function resetForm() {
-            // Clear state
-            state.pickup = '';
-            state.destination = '';
-            state.stops = [];
-            state.stopCount = 0;
-            
-            // Clear inputs
-            elements.pickupInput.value = '';
-            elements.destinationInput.value = '';
-            elements.stopsContainer.innerHTML = '';
-            
-            // Reset date/time
-            setupDateTime();
-            
-            // Clear summaries
-            Object.values(elements.summaries).forEach(summary => {
-                summary.innerHTML = '';
-            });
-            
-            // Show all inputs
-            elements.pickupInput.classList.remove('hidden');
-            elements.destinationInput.classList.remove('hidden');
-            elements.dateInput.classList.remove('hidden');
-            elements.timeInput.classList.remove('hidden');
-            
-            // Hide edit button
-            elements.editBtn.classList.add('hidden');
-            
-            // Focus on pickup
-            elements.pickupInput.focus();
         }
 
         // Initialize on load
