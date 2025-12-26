@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* CSS Reset and Base Styles */
@@ -31,6 +30,9 @@
             --success-green: #00ff9d;
             --warning-orange: #ffa500;
             --error-red: #ff4757;
+            --iphone-gray: #2c2c2e;
+            --iphone-light: #3a3a3c;
+            --iphone-highlight: #48484a;
         }
 
         body {
@@ -112,21 +114,6 @@
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-
-        /* Pulse animation for missing buttons */
-        @keyframes pulseMissing {
-            0%, 100% { 
-                box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); 
-            }
-            50% { 
-                box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); 
-            }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-5px); }
         }
 
         /* Main Content */
@@ -394,7 +381,7 @@
             transform: scale(1.05);
         }
 
-        /* Date & Time Picker - COMPLETELY HIDDEN WHITE FIELD */
+        /* Date & Time Picker - iPhone Style */
         .datetime-container {
             display: none;
             margin-top: 1.5rem;
@@ -407,10 +394,170 @@
 
         .datetime-wrapper {
             display: flex;
-            flex-direction: row; /* Changed from column to row */
+            flex-direction: row;
             align-items: center;
-            gap: 1rem; /* Space between icon and text */
-            justify-content: flex-start; /* Left align */
+            gap: 1rem;
+            justify-content: flex-start;
+        }
+
+        /* iPhone Style Date/Time Picker Modal */
+        .iphone-picker-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .iphone-picker-modal.active {
+            display: flex;
+        }
+
+        .iphone-picker-container {
+            width: 90%;
+            max-width: 400px;
+            background-color: var(--iphone-gray);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .iphone-picker-header {
+            background-color: var(--iphone-light);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .iphone-picker-header h3 {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        .iphone-picker-close {
+            background: none;
+            border: none;
+            color: var(--neon-cyan);
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .iphone-picker-close:hover {
+            background-color: rgba(0, 243, 255, 0.1);
+        }
+
+        .iphone-picker-body {
+            padding: 1.5rem;
+        }
+
+        /* iPhone Style Wheel Picker */
+        .iphone-wheel-picker {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .wheel-container {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--iphone-light);
+            border-radius: 12px;
+        }
+
+        .wheel {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .wheel-items {
+            list-style: none;
+            transform: translateY(0);
+            transition: transform 0.3s ease-out;
+        }
+
+        .wheel-item {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-light);
+            opacity: 0.4;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .wheel-item.selected {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--neon-cyan);
+            opacity: 1;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .wheel-highlight {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 40px;
+            transform: translateY(-50%);
+            background-color: rgba(0, 243, 255, 0.1);
+            border-top: 1px solid rgba(0, 243, 255, 0.3);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Date/Time Display */
+        .datetime-display {
+            text-align: left;
+            font-size: 0.9rem;
+            color: var(--neon-cyan);
+            min-height: 1.2rem;
+            padding: 0.5rem 1rem;
+            background-color: rgba(0, 243, 255, 0.05);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 300px;
+            flex-grow: 1;
+            border: 1px solid transparent;
+            transition: var(--transition);
+        }
+
+        .datetime-display.has-selection {
+            border-color: rgba(0, 243, 255, 0.3);
+            background-color: rgba(0, 243, 255, 0.1);
         }
 
         /* Passenger Count Container */
@@ -527,7 +674,7 @@
             justify-content: flex-start;
         }
 
-        /* Universal Icon Button Style - Same as date/time picker */
+        /* Universal Icon Button Style */
         .icon-btn {
             display: flex;
             align-items: center;
@@ -715,145 +862,7 @@
             color: var(--text-muted);
         }
 
-        /* Universal text display (for date/time) */
-        .text-display {
-            text-align: left;
-            font-size: 0.9rem;
-            color: var(--neon-cyan);
-            min-height: 1.2rem;
-            padding: 0.5rem 1rem;
-            background-color: rgba(0, 243, 255, 0.05);
-            border-radius: 8px;
-            width: 100%;
-            max-width: 300px;
-            flex-grow: 1;
-        }
-
-        /* Hidden datetime input for Flatpickr */
-        #pickup-datetime {
-            display: none;
-        }
-
-        /* COMPLETE CUSTOM FLATPICKR THEME - HIDE WHITE INPUT */
-        .flatpickr-calendar {
-            background: var(--card-dark) !important;
-            border: 1px solid rgba(0, 243, 255, 0.3) !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 243, 255, 0.2) !important;
-            border-radius: 12px !important;
-        }
-
-        /* HIDE THE WHITE INPUT FIELD IN CALENDAR */
-        .flatpickr-calendar .flatpickr-input {
-            display: none !important;
-        }
-
-        .flatpickr-months {
-            background: var(--card-darker) !important;
-            border-bottom: 1px solid rgba(0, 243, 255, 0.2) !important;
-            border-radius: 12px 12px 0 0 !important;
-            padding: 10px 0 !important;
-        }
-
-        .flatpickr-month {
-            color: var(--neon-cyan) !important;
-        }
-
-        .flatpickr-current-month {
-            color: var(--neon-cyan) !important;
-        }
-
-        .flatpickr-current-month .flatpickr-monthDropdown-months,
-        .flatpickr-current-month input.cur-year {
-            color: var(--neon-cyan) !important;
-            background: transparent !important;
-            border: 1px solid rgba(0, 243, 255, 0.2) !important;
-            border-radius: 6px !important;
-            padding: 4px 8px !important;
-        }
-
-        .flatpickr-weekdays {
-            background: var(--card-darker) !important;
-            padding: 8px 0 !important;
-        }
-
-        .flatpickr-weekday {
-            color: var(--text-muted) !important;
-            font-weight: 600 !important;
-        }
-
-        .flatpickr-day {
-            color: var(--text-light) !important;
-            border: 1px solid transparent !important;
-            border-radius: 6px !important;
-            margin: 2px !important;
-        }
-
-        .flatpickr-day:hover {
-            background: rgba(0, 243, 255, 0.1) !important;
-            border-color: var(--neon-cyan) !important;
-            color: var(--neon-cyan) !important;
-        }
-
-        .flatpickr-day.selected {
-            background: var(--neon-cyan) !important;
-            color: var(--primary-dark) !important;
-            border-color: var(--neon-cyan) !important;
-            font-weight: bold !important;
-        }
-
-        .flatpickr-day.today {
-            border-color: var(--neon-cyan) !important;
-            color: var(--neon-cyan) !important;
-        }
-
-        .flatpickr-time {
-            background: var(--card-darker) !important;
-            border-top: 1px solid rgba(0, 243, 255, 0.2) !important;
-            padding: 10px 0 !important;
-        }
-
-        .flatpickr-time .numInputWrapper {
-            background: var(--card-dark) !important;
-            border: 1px solid rgba(0, 243, 255, 0.2) !important;
-            border-radius: 6px !important;
-            margin: 0 5px !important;
-        }
-
-        .flatpickr-time input {
-            color: var(--neon-cyan) !important;
-            background: transparent !important;
-            font-weight: bold !important;
-        }
-
-        .flatpickr-time .flatpickr-am-pm {
-            color: var(--neon-cyan) !important;
-            background: var(--card-dark) !important;
-            border: 1px solid rgba(0, 243, 255, 0.2) !important;
-            border-radius: 6px !important;
-            padding: 4px 8px !important;
-        }
-
-        .flatpickr-time .flatpickr-am-pm:hover {
-            background: rgba(0, 243, 255, 0.1) !important;
-        }
-
-        .flatpickr-time .numInputWrapper span.arrowUp:after {
-            border-bottom-color: var(--neon-cyan) !important;
-        }
-
-        .flatpickr-time .numInputWrapper span.arrowDown:after {
-            border-top-color: var(--neon-cyan) !important;
-        }
-
-        .flatpickr-time .numInputWrapper span.arrowUp:hover:after {
-            border-bottom-color: var(--text-light) !important;
-        }
-
-        .flatpickr-time .numInputWrapper span.arrowDown:hover:after {
-            border-top-color: var(--text-light) !important;
-        }
-
-        /* Submit Button */
+        /* Submit Button - Initially Hidden */
         .submit-btn {
             width: 100%;
             background: linear-gradient(90deg, rgba(0, 243, 255, 0.9), rgba(0, 200, 255, 0.9));
@@ -868,6 +877,16 @@
             transition: var(--transition);
             letter-spacing: 0.5px;
             font-family: 'Orbitron', sans-serif;
+            display: none; /* Initially hidden */
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+        }
+
+        .submit-btn.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .submit-btn:hover {
@@ -877,6 +896,13 @@
 
         .submit-btn:active {
             transform: scale(0.98);
+        }
+
+        .submit-btn:disabled {
+            background: linear-gradient(90deg, rgba(0, 243, 255, 0.3), rgba(0, 200, 255, 0.3));
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         /* Footer */
@@ -1024,7 +1050,7 @@
             color: var(--error-red) !important;
         }
 
-        /* Also add a class for validation error message */
+        /* Validation error message */
         .validation-error {
             position: relative;
             background: rgba(255, 71, 87, 0.1) !important;
@@ -1046,7 +1072,46 @@
             transform: translateX(-50%);
             color: var(--error-red);
             font-size: 1.2rem;
-            animation: bounce 1s infinite;
+        }
+
+        /* Field Completion Indicator */
+        .field-complete {
+            position: relative;
+        }
+
+        .field-complete::after {
+            content: '✓';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--success-green);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Progress indicator */
+        .progress-indicator {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--success-green));
+            width: 0%;
+            transition: width 0.5s ease;
         }
     </style>
 </head>
@@ -1062,6 +1127,89 @@
     <!-- Backdrop -->
     <div class="backdrop" id="backdrop"></div>
 
+    <!-- iPhone Style Date/Time Picker Modal -->
+    <div class="iphone-picker-modal" id="iphone-picker-modal">
+        <div class="iphone-picker-container">
+            <div class="iphone-picker-header">
+                <h3>Select Date & Time</h3>
+                <button class="iphone-picker-close" id="close-picker">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="iphone-picker-body">
+                <div class="iphone-wheel-picker">
+                    <!-- Month Wheel -->
+                    <div class="wheel-container">
+                        <div class="wheel" id="month-wheel">
+                            <ul class="wheel-items" id="month-items">
+                                <!-- Months will be populated by JavaScript -->
+                            </ul>
+                            <div class="wheel-highlight"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Day Wheel -->
+                    <div class="wheel-container">
+                        <div class="wheel" id="day-wheel">
+                            <ul class="wheel-items" id="day-items">
+                                <!-- Days will be populated by JavaScript -->
+                            </ul>
+                            <div class="wheel-highlight"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Year Wheel -->
+                    <div class="wheel-container">
+                        <div class="wheel" id="year-wheel">
+                            <ul class="wheel-items" id="year-items">
+                                <!-- Years will be populated by JavaScript -->
+                            </ul>
+                            <div class="wheel-highlight"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="iphone-wheel-picker">
+                    <!-- Hour Wheel -->
+                    <div class="wheel-container">
+                        <div class="wheel" id="hour-wheel">
+                            <ul class="wheel-items" id="hour-items">
+                                <!-- Hours will be populated by JavaScript -->
+                            </ul>
+                            <div class="wheel-highlight"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Minute Wheel -->
+                    <div class="wheel-container">
+                        <div class="wheel" id="minute-wheel">
+                            <ul class="wheel-items" id="minute-items">
+                                <!-- Minutes will be populated by JavaScript -->
+                            </ul>
+                            <div class="wheel-highlight"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- AM/PM Wheel -->
+                    <div class="wheel-container">
+                        <div class="wheel" id="ampm-wheel">
+                            <ul class="wheel-items" id="ampm-items">
+                                <li class="wheel-item" data-value="AM">AM</li>
+                                <li class="wheel-item" data-value="PM">PM</li>
+                            </ul>
+                            <div class="wheel-highlight"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="submit-btn" id="confirm-datetime" style="display: block; opacity: 1;">
+                    <i class="far fa-calendar-check" style="margin-right: 10px;"></i>
+                    CONFIRM DATE & TIME
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div id="main-content">
         <header class="header">
@@ -1072,6 +1220,14 @@
         <main>
             <!-- Booking Card -->
             <div class="booking-card" id="booking-card">
+                <!-- Progress Indicator -->
+                <div class="progress-indicator" id="progress-indicator">
+                    <div>Complete all required fields to book</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+
                 <!-- Collapsed Search Input -->
                 <div class="collapsed-search" id="collapsed-search">
                     <div class="search-pill" id="search-pill">
@@ -1121,7 +1277,7 @@
                         <i class="fas fa-plus"></i>
                     </button>
                     
-                    <!-- Date & Time Picker - Custom Dark Theme -->
+                    <!-- Date & Time Picker - iPhone Style -->
                     <div class="datetime-container" id="datetime-container">
                         <div class="input-group">
                             <label class="input-label">Pickup Date & Time<span class="required-star">*</span></label>
@@ -1129,13 +1285,9 @@
                                 <button class="icon-btn" id="datetime-btn" title="Select date and time">
                                     <i class="far fa-calendar-alt"></i>
                                 </button>
-                                <div class="text-display" id="datetime-text">
+                                <div class="datetime-display" id="datetime-text">
                                     <!-- Date/time will appear here when selected -->
                                 </div>
-                                <input type="text" 
-                                       id="pickup-datetime" 
-                                       placeholder="Select date and time"
-                                       readonly>
                             </div>
                         </div>
                     </div>
@@ -1253,7 +1405,7 @@
                         </div>
                     </div>
                     
-                    <!-- Submit Button -->
+                    <!-- Submit Button - Hidden until all required fields are filled -->
                     <button class="submit-btn" id="submit-btn">
                         <i class="fas fa-car" style="margin-right: 10px;"></i>
                         CONFIRM BOOKING
@@ -1288,11 +1440,8 @@
         </footer>
     </div>
 
-    <!-- Google Maps API with YOUR API Key -->
+    <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places&callback=initGoogleMaps" async defer></script>
-    
-    <!-- Flatpickr for Date/Time Selection -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
         // Wait for DOM to be fully loaded
@@ -1312,7 +1461,21 @@
             const datetimeContainer = document.getElementById('datetime-container');
             const datetimeBtn = document.getElementById('datetime-btn');
             const datetimeText = document.getElementById('datetime-text');
-            const pickupDatetimeInput = document.getElementById('pickup-datetime');
+            const submitBtn = document.getElementById('submit-btn');
+            const bookingCard = document.getElementById('booking-card');
+            
+            // iPhone Picker Elements
+            const iphonePickerModal = document.getElementById('iphone-picker-modal');
+            const closePickerBtn = document.getElementById('close-picker');
+            const confirmDatetimeBtn = document.getElementById('confirm-datetime');
+            
+            // Wheel Elements
+            const monthWheel = document.getElementById('month-wheel');
+            const dayWheel = document.getElementById('day-wheel');
+            const yearWheel = document.getElementById('year-wheel');
+            const hourWheel = document.getElementById('hour-wheel');
+            const minuteWheel = document.getElementById('minute-wheel');
+            const ampmWheel = document.getElementById('ampm-wheel');
             
             // Passenger Count Elements
             const passengerContainer = document.getElementById('passenger-container');
@@ -1346,24 +1509,33 @@
             const notesChars = document.getElementById('notes-chars');
             const notesBtn = document.getElementById('notes-btn');
             
-            const submitBtn = document.getElementById('submit-btn');
-            const bookingCard = document.getElementById('booking-card');
+            // Progress Elements
+            const progressFill = document.getElementById('progress-fill');
+            const progressIndicator = document.getElementById('progress-indicator');
             
             // Global variables
             let stopCount = 0;
             let selectedDateTime = null;
-            let selectedPassengerCount = 1; // Default to 1
+            let selectedPassengerCount = 1;
             let selectedPets = null;
             let autocompletePickup = null;
             let autocompleteDestination = null;
+            
+            // Date/Time Selection Variables
+            let selectedMonth = new Date().getMonth();
+            let selectedDay = new Date().getDate();
+            let selectedYear = new Date().getFullYear();
+            let selectedHour = 12;
+            let selectedMinute = 0;
+            let selectedAmPm = "PM";
             
             // Simulate loading screen for 3 seconds
             setTimeout(() => {
                 loadingScreen.classList.add('fade-out');
                 mainContent.classList.add('fade-in');
                 
-                // Initialize date and time pickers after loading
-                initializeDateTimePicker();
+                // Initialize iPhone wheel picker after loading
+                initializeiPhonePicker();
                 
                 // After loading screen fades out, remove it from DOM
                 setTimeout(() => {
@@ -1371,94 +1543,353 @@
                 }, 500);
             }, 3000);
             
-            // Initialize combined date and time picker with COMPLETE CUSTOM THEME
-            function initializeDateTimePicker() {
-                // Create custom instance
-                const fp = flatpickr(pickupDatetimeInput, {
-                    enableTime: true,
-                    dateFormat: "F j, Y at h:i K",
-                    minDate: "today",
-                    defaultHour: 12,
-                    minuteIncrement: 15,
-                    disableMobile: true, // Use custom picker on mobile
-                    inline: false,
-                    clickOpens: true,
-                    onReady: function(selectedDates, dateStr, instance) {
-                        // Apply additional custom styling when calendar is ready
-                        const calendar = instance.calendarContainer;
-                        if (calendar) {
-                            // Add custom class for styling
-                            calendar.classList.add('agts-flatpickr');
-                            
-                            // Hide the default input field completely
-                            const inputField = calendar.querySelector('.flatpickr-input');
-                            if (inputField) {
-                                inputField.style.display = 'none';
-                                inputField.style.opacity = '0';
-                                inputField.style.height = '0';
-                                inputField.style.padding = '0';
-                                inputField.style.border = 'none';
-                            }
-                            
-                            // Also hide the time input if it's visible
-                            const timeInputs = calendar.querySelectorAll('.flatpickr-time input');
-                            timeInputs.forEach(input => {
-                                input.style.color = 'var(--neon-cyan)';
-                                input.style.background = 'transparent';
-                                input.style.border = '1px solid rgba(0, 243, 255, 0.2)';
-                                input.style.borderRadius = '6px';
-                            });
-                        }
-                    },
-                    onChange: function(selectedDates, dateStr, instance) {
-                        selectedDateTime = dateStr;
-                        // Update the text display below the icon
-                        datetimeText.textContent = dateStr;
-                        // Update button title for tooltip
-                        datetimeBtn.title = dateStr;
-                        // Add visual indication that date is selected
-                        datetimeBtn.classList.add('selected');
-                        // Update button icon
-                        datetimeBtn.innerHTML = '<i class="far fa-calendar-check"></i>';
-                        
-                        // Show passenger container when date is selected
-                        passengerContainer.classList.add('active');
-                    },
-                    onOpen: function(selectedDates, dateStr, instance) {
-                        // When calendar opens, ensure styling is applied
-                        setTimeout(() => {
-                            const calendar = instance.calendarContainer;
-                            if (calendar) {
-                                // Hide the input field
-                                const inputField = calendar.querySelector('.flatpickr-input');
-                                if (inputField) {
-                                    inputField.style.display = 'none';
-                                }
-                            }
-                        }, 10);
-                    },
-                    onClose: function(selectedDates, dateStr, instance) {
-                        if (!dateStr) {
-                            datetimeBtn.classList.remove('selected');
-                            datetimeBtn.title = "Select date and time";
-                            datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
-                            datetimeText.textContent = '';
-                            // Hide all subsequent containers if date is cleared
-                            passengerContainer.classList.remove('active');
-                            petsContainer.classList.remove('active');
-                            passengerNameContainer.classList.remove('active');
-                            phoneContainer.classList.remove('active');
-                            emailContainer.classList.remove('active');
-                            notesContainer.classList.remove('active');
-                        }
-                    }
+            // Initialize iPhone Style Wheel Picker
+            function initializeiPhonePicker() {
+                // Populate month wheel (1-12)
+                const monthItems = document.getElementById('month-items');
+                const months = [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ];
+                
+                months.forEach((month, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'wheel-item';
+                    li.textContent = month;
+                    li.setAttribute('data-value', index);
+                    monthItems.appendChild(li);
                 });
                 
-                // Trigger Flatpickr when button is clicked
-                datetimeBtn.addEventListener('click', function() {
-                    fp.open();
+                // Populate day wheel (1-31)
+                const dayItems = document.getElementById('day-items');
+                for (let i = 1; i <= 31; i++) {
+                    const li = document.createElement('li');
+                    li.className = 'wheel-item';
+                    li.textContent = i < 10 ? `0${i}` : i;
+                    li.setAttribute('data-value', i);
+                    dayItems.appendChild(li);
+                }
+                
+                // Populate year wheel (current year to current+2)
+                const yearItems = document.getElementById('year-items');
+                const currentYear = new Date().getFullYear();
+                for (let i = currentYear; i <= currentYear + 2; i++) {
+                    const li = document.createElement('li');
+                    li.className = 'wheel-item';
+                    li.textContent = i;
+                    li.setAttribute('data-value', i);
+                    yearItems.appendChild(li);
+                }
+                
+                // Populate hour wheel (1-12)
+                const hourItems = document.getElementById('hour-items');
+                for (let i = 1; i <= 12; i++) {
+                    const li = document.createElement('li');
+                    li.className = 'wheel-item';
+                    li.textContent = i < 10 ? `0${i}` : i;
+                    li.setAttribute('data-value', i);
+                    hourItems.appendChild(li);
+                }
+                
+                // Populate minute wheel (00-59)
+                const minuteItems = document.getElementById('minute-items');
+                for (let i = 0; i < 60; i += 5) {
+                    const li = document.createElement('li');
+                    li.className = 'wheel-item';
+                    li.textContent = i < 10 ? `0${i}` : i;
+                    li.setAttribute('data-value', i);
+                    minuteItems.appendChild(li);
+                }
+                
+                // Set initial selected values
+                setSelectedWheelItem('month', selectedMonth);
+                setSelectedWheelItem('day', selectedDay);
+                setSelectedWheelItem('year', selectedYear);
+                setSelectedWheelItem('hour', selectedHour);
+                setSelectedWheelItem('minute', selectedMinute);
+                setSelectedWheelItem('ampm', selectedAmPm);
+                
+                // Add wheel interaction
+                setupWheelInteractions();
+            }
+            
+            // Set selected wheel item
+            function setSelectedWheelItem(wheelType, value) {
+                const wheel = document.getElementById(`${wheelType}-wheel`);
+                const items = wheel.querySelectorAll('.wheel-item');
+                
+                items.forEach(item => {
+                    item.classList.remove('selected');
+                    
+                    const itemValue = wheelType === 'month' ? parseInt(item.getAttribute('data-value')) : 
+                                    wheelType === 'day' ? parseInt(item.getAttribute('data-value')) :
+                                    wheelType === 'year' ? parseInt(item.getAttribute('data-value')) :
+                                    wheelType === 'hour' ? parseInt(item.getAttribute('data-value')) :
+                                    wheelType === 'minute' ? parseInt(item.getAttribute('data-value')) :
+                                    item.getAttribute('data-value');
+                    
+                    if (wheelType === 'month' && itemValue === value) {
+                        item.classList.add('selected');
+                        // Center the selected item
+                        const index = Array.from(items).indexOf(item);
+                        const wheelItems = wheel.querySelector('.wheel-items');
+                        const offset = -(index * 40) + 80; // 40px per item, center offset
+                        wheelItems.style.transform = `translateY(${offset}px)`;
+                    } else if (wheelType !== 'month' && itemValue === value) {
+                        item.classList.add('selected');
+                        // Center the selected item
+                        const index = Array.from(items).indexOf(item);
+                        const wheelItems = wheel.querySelector('.wheel-items');
+                        const offset = -(index * 40) + 80; // 40px per item, center offset
+                        wheelItems.style.transform = `translateY(${offset}px)`;
+                    }
                 });
             }
+            
+            // Setup wheel interactions
+            function setupWheelInteractions() {
+                const wheels = document.querySelectorAll('.wheel');
+                
+                wheels.forEach(wheel => {
+                    let isDragging = false;
+                    let startY = 0;
+                    let currentY = 0;
+                    let currentTranslate = 0;
+                    let velocity = 0;
+                    let lastY = 0;
+                    let lastTime = 0;
+                    let animationFrameId = null;
+                    
+                    const wheelItems = wheel.querySelector('.wheel-items');
+                    const items = wheel.querySelectorAll('.wheel-item');
+                    const itemHeight = 40;
+                    
+                    // Get current translate value
+                    function getTranslateY(element) {
+                        const style = window.getComputedStyle(element);
+                        const matrix = new DOMMatrixReadOnly(style.transform);
+                        return matrix.m42;
+                    }
+                    
+                    // Set translate value
+                    function setTranslateY(element, y) {
+                        element.style.transform = `translateY(${y}px)`;
+                    }
+                    
+                    // Snap to nearest item
+                    function snapToItem() {
+                        const currentTranslate = getTranslateY(wheelItems);
+                        const index = Math.round(-currentTranslate / itemHeight);
+                        const maxIndex = items.length - 1;
+                        const clampedIndex = Math.max(0, Math.min(index, maxIndex));
+                        const targetTranslate = -clampedIndex * itemHeight;
+                        
+                        // Animate to target position
+                        animateTo(targetTranslate);
+                        
+                        // Update selected item
+                        items.forEach(item => item.classList.remove('selected'));
+                        items[clampedIndex].classList.add('selected');
+                        
+                        // Update global variable based on wheel type
+                        updateSelectedValue(wheel.id.replace('-wheel', ''), items[clampedIndex]);
+                    }
+                    
+                    // Animate to position
+                    function animateTo(targetTranslate) {
+                        cancelAnimationFrame(animationFrameId);
+                        
+                        const startTranslate = getTranslateY(wheelItems);
+                        const startTime = Date.now();
+                        const duration = 300;
+                        
+                        function animate() {
+                            const elapsed = Date.now() - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            
+                            // Easing function
+                            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                            const currentTranslate = startTranslate + (targetTranslate - startTranslate) * easeOutCubic;
+                            
+                            setTranslateY(wheelItems, currentTranslate);
+                            
+                            if (progress < 1) {
+                                animationFrameId = requestAnimationFrame(animate);
+                            }
+                        }
+                        
+                        animationFrameId = requestAnimationFrame(animate);
+                    }
+                    
+                    // Mouse/touch event handlers
+                    wheel.addEventListener('mousedown', startDrag);
+                    wheel.addEventListener('touchstart', startDrag);
+                    document.addEventListener('mousemove', drag);
+                    document.addEventListener('touchmove', drag);
+                    document.addEventListener('mouseup', endDrag);
+                    document.addEventListener('touchend', endDrag);
+                    
+                    function startDrag(e) {
+                        isDragging = true;
+                        startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                        currentY = startY;
+                        currentTranslate = getTranslateY(wheelItems);
+                        velocity = 0;
+                        lastY = startY;
+                        lastTime = Date.now();
+                        
+                        cancelAnimationFrame(animationFrameId);
+                        wheel.style.cursor = 'grabbing';
+                    }
+                    
+                    function drag(e) {
+                        if (!isDragging) return;
+                        
+                        e.preventDefault();
+                        
+                        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+                        const deltaY = clientY - currentY;
+                        currentY = clientY;
+                        
+                        // Calculate velocity
+                        const currentTime = Date.now();
+                        const deltaTime = currentTime - lastTime;
+                        if (deltaTime > 0) {
+                            velocity = (clientY - lastY) / deltaTime;
+                        }
+                        lastY = clientY;
+                        lastTime = currentTime;
+                        
+                        // Update position
+                        currentTranslate += deltaY;
+                        setTranslateY(wheelItems, currentTranslate);
+                    }
+                    
+                    function endDrag() {
+                        if (!isDragging) return;
+                        
+                        isDragging = false;
+                        wheel.style.cursor = '';
+                        
+                        // Apply momentum
+                        const momentum = velocity * 100;
+                        currentTranslate += momentum;
+                        
+                        // Snap to nearest item
+                        snapToItem();
+                    }
+                    
+                    // Also allow click selection
+                    items.forEach(item => {
+                        item.addEventListener('click', () => {
+                            const index = Array.from(items).indexOf(item);
+                            const targetTranslate = -index * itemHeight;
+                            animateTo(targetTranslate);
+                            
+                            items.forEach(i => i.classList.remove('selected'));
+                            item.classList.add('selected');
+                            
+                            updateSelectedValue(wheel.id.replace('-wheel', ''), item);
+                        });
+                    });
+                });
+            }
+            
+            // Update selected value when wheel changes
+            function updateSelectedValue(wheelType, item) {
+                const value = item.getAttribute('data-value');
+                
+                switch(wheelType) {
+                    case 'month':
+                        selectedMonth = parseInt(value);
+                        break;
+                    case 'day':
+                        selectedDay = parseInt(value);
+                        break;
+                    case 'year':
+                        selectedYear = parseInt(value);
+                        break;
+                    case 'hour':
+                        selectedHour = parseInt(value);
+                        break;
+                    case 'minute':
+                        selectedMinute = parseInt(value);
+                        break;
+                    case 'ampm':
+                        selectedAmPm = value;
+                        break;
+                }
+            }
+            
+            // Format selected date/time for display
+            function formatDateTime() {
+                const months = [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ];
+                
+                // Convert 12-hour to 24-hour for date object
+                let hour24 = selectedHour;
+                if (selectedAmPm === "PM" && selectedHour !== 12) {
+                    hour24 = selectedHour + 12;
+                } else if (selectedAmPm === "AM" && selectedHour === 12) {
+                    hour24 = 0;
+                }
+                
+                // Create date object for validation
+                const selectedDate = new Date(selectedYear, selectedMonth, selectedDay, hour24, selectedMinute);
+                
+                // Format for display
+                const monthName = months[selectedMonth];
+                const day = selectedDay;
+                const year = selectedYear;
+                const hour = selectedHour < 10 ? `0${selectedHour}` : selectedHour;
+                const minute = selectedMinute < 10 ? `0${selectedMinute}` : selectedMinute;
+                const ampm = selectedAmPm;
+                
+                return `${monthName} ${day}, ${year} at ${hour}:${minute} ${ampm}`;
+            }
+            
+            // Open iPhone picker modal
+            datetimeBtn.addEventListener('click', function() {
+                iphonePickerModal.classList.add('active');
+                backdrop.classList.add('active');
+            });
+            
+            // Close iPhone picker modal
+            closePickerBtn.addEventListener('click', closeiPhonePicker);
+            
+            // Close picker when clicking backdrop
+            backdrop.addEventListener('click', function() {
+                if (iphonePickerModal.classList.contains('active')) {
+                    closeiPhonePicker();
+                } else {
+                    collapseBookingForm();
+                }
+            });
+            
+            function closeiPhonePicker() {
+                iphonePickerModal.classList.remove('active');
+                backdrop.classList.remove('active');
+            }
+            
+            // Confirm date/time selection
+            confirmDatetimeBtn.addEventListener('click', function() {
+                selectedDateTime = formatDateTime();
+                datetimeText.textContent = selectedDateTime;
+                datetimeText.classList.add('has-selection');
+                datetimeBtn.classList.add('selected');
+                datetimeBtn.innerHTML = '<i class="far fa-calendar-check"></i>';
+                datetimeBtn.title = selectedDateTime;
+                
+                closeiPhonePicker();
+                
+                // Show passenger container when date is selected
+                passengerContainer.classList.add('active');
+                
+                // Check if all fields are complete
+                checkAllFieldsComplete();
+            });
             
             // Initialize Google Maps Autocomplete
             function initGoogleMaps() {
@@ -1478,10 +1909,18 @@
                             pickupInput.style.borderColor = 'var(--neon-cyan)';
                             pickupInput.style.color = 'var(--neon-cyan)';
                             
+                            // Show date/time picker if destination is filled
+                            if (destinationInput.value.trim().length > 0) {
+                                datetimeContainer.classList.add('active');
+                            }
+                            
                             // Reset to normal color after 1 second
                             setTimeout(() => {
                                 pickupInput.style.color = 'var(--text-light)';
                             }, 1000);
+                            
+                            // Check field completion
+                            checkAllFieldsComplete();
                         }
                     });
                     
@@ -1498,41 +1937,29 @@
                             destinationInput.style.borderColor = 'var(--neon-cyan)';
                             destinationInput.style.color = 'var(--neon-cyan)';
                             
-                            // Show date/time picker if destination is filled
-                            datetimeContainer.classList.add('active');
+                            // Show date/time picker if pickup is filled
+                            if (pickupInput.value.trim().length > 0) {
+                                datetimeContainer.classList.add('active');
+                            }
                             
                             // Reset to normal color after 1 second
                             setTimeout(() => {
                                 destinationInput.style.color = 'var(--text-light)';
                             }, 1000);
-                        }
-                    });
-                    
-                    // Prevent form submission when selecting from dropdown
-                    pickupInput.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                        }
-                    });
-                    
-                    destinationInput.addEventListener('keydown', function(e) {
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
+                            
+                            // Check field completion
+                            checkAllFieldsComplete();
                         }
                     });
                     
                     console.log("Google Places Autocomplete initialized");
                 } else {
                     console.error("Google Maps Places API not available");
-                    // Fallback to basic input
                 }
             }
             
             // Expand booking form when search pill is clicked
             searchPill.addEventListener('click', expandBookingForm);
-            
-            // Collapse booking form when backdrop is clicked
-            backdrop.addEventListener('click', collapseBookingForm);
             
             // Expand booking form function
             function expandBookingForm() {
@@ -1579,24 +2006,21 @@
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
                                     pickupInput.style.color = 'var(--neon-cyan)';
                                     
-                                    // Show success message
-                                    showTemporaryMessage(pickupInput, "✓ Location detected", true);
+                                    // Show date/time picker if destination is filled
+                                    if (destinationInput.value.trim().length > 0) {
+                                        datetimeContainer.classList.add('active');
+                                    }
                                     
-                                    // Reset to normal state after 2 seconds
-                                    setTimeout(() => {
-                                        pickupInput.style.color = 'var(--text-light)';
-                                    }, 2000);
+                                    // Check field completion
+                                    checkAllFieldsComplete();
                                 })
                                 .catch(error => {
                                     // Fallback to coordinates
                                     pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
-                                    showTemporaryMessage(pickupInput, "Using your coordinates", true);
                                     
-                                    // Reset to normal state after 2 seconds
-                                    setTimeout(() => {
-                                        pickupInput.style.color = 'var(--text-light)';
-                                    }, 2000);
+                                    // Check field completion
+                                    checkAllFieldsComplete();
                                 })
                                 .finally(() => {
                                     // Reset button
@@ -1605,25 +2029,7 @@
                                 });
                         },
                         function(error) {
-                            // Error - handle permission denied or other errors
                             console.error("Geolocation error:", error);
-                            
-                            let errorMessage = "Location access denied";
-                            if (error.code === error.TIMEOUT) {
-                                errorMessage = "Location request timed out";
-                            } else if (error.code === error.POSITION_UNAVAILABLE) {
-                                errorMessage = "Location unavailable";
-                            }
-                            
-                            showTemporaryMessage(pickupInput, errorMessage, false);
-                            pickupInput.style.borderColor = '#ff4757';
-                            
-                            // Reset to normal state after 2 seconds
-                            setTimeout(() => {
-                                pickupInput.style.color = 'var(--text-light)';
-                                pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                            }, 2000);
-                            
                             // Reset button
                             currentLocationBtn.innerHTML = originalIcon;
                             currentLocationBtn.disabled = false;
@@ -1635,16 +2041,6 @@
                     );
                 } else {
                     // Browser doesn't support geolocation
-                    showTemporaryMessage(pickupInput, "Geolocation not supported", false);
-                    pickupInput.style.borderColor = '#ff4757';
-                    
-                    // Reset to normal state after 2 seconds
-                    setTimeout(() => {
-                        pickupInput.style.color = 'var(--text-light)';
-                        pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                    }, 2000);
-                    
-                    // Reset button
                     currentLocationBtn.innerHTML = originalIcon;
                     currentLocationBtn.disabled = false;
                 }
@@ -1671,38 +2067,22 @@
                 });
             }
             
-            // Show temporary message in input field
-            function showTemporaryMessage(inputElement, message, isSuccess) {
-                const originalPlaceholder = inputElement.placeholder;
-                const originalValue = inputElement.value;
-                
-                inputElement.value = "";
-                inputElement.placeholder = message;
-                inputElement.style.borderColor = isSuccess ? 'var(--neon-cyan)' : '#ff4757';
-                inputElement.style.color = isSuccess ? 'var(--neon-cyan)' : '#ff4757';
-                
-                setTimeout(() => {
-                    inputElement.placeholder = originalPlaceholder;
-                    inputElement.value = originalValue;
-                    inputElement.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                    inputElement.style.color = 'var(--text-light)';
-                }, 2000);
-            }
-            
             // Show date/time field when destination input starts
             destinationInput.addEventListener('input', function() {
-                if (destinationInput.value.trim().length > 0) {
+                if (destinationInput.value.trim().length > 0 && pickupInput.value.trim().length > 0) {
                     datetimeContainer.classList.add('active');
                 } else {
                     datetimeContainer.classList.remove('active');
                 }
+                checkAllFieldsComplete();
             });
             
             // Also show date/time when pickup is filled
             pickupInput.addEventListener('input', function() {
-                if (destinationInput.value.trim().length > 0 || pickupInput.value.trim().length > 0) {
+                if (destinationInput.value.trim().length > 0 && pickupInput.value.trim().length > 0) {
                     datetimeContainer.classList.add('active');
                 }
+                checkAllFieldsComplete();
             });
             
             // Add additional stop
@@ -1783,6 +2163,9 @@
                     
                     // Show pets container when passenger count is selected
                     petsContainer.classList.add('active');
+                    
+                    // Check field completion
+                    checkAllFieldsComplete();
                 });
             });
             
@@ -1806,15 +2189,11 @@
                     petsBtn.title = `Pets: ${selectedPets === 'yes' ? 'Yes' : 'No'}`;
                     petsBtn.classList.add('selected');
                     
-                    // Change icon based on selection
-                    if (selectedPets === 'yes') {
-                        petsBtn.innerHTML = '<i class="fas fa-paw"></i>';
-                    } else {
-                        petsBtn.innerHTML = '<i class="fas fa-times-circle"></i>';
-                    }
-                    
                     // Show passenger name container when pets is selected
                     passengerNameContainer.classList.add('active');
+                    
+                    // Check field completion
+                    checkAllFieldsComplete();
                 });
             });
             
@@ -1835,6 +2214,7 @@
                     emailContainer.classList.remove('active');
                     notesContainer.classList.remove('active');
                 }
+                checkAllFieldsComplete();
             });
             
             // Handle phone input
@@ -1853,6 +2233,7 @@
                     emailContainer.classList.remove('active');
                     notesContainer.classList.remove('active');
                 }
+                checkAllFieldsComplete();
             });
             
             // Handle email input
@@ -1870,6 +2251,7 @@
                     emailBtn.classList.remove('selected');
                     notesContainer.classList.remove('active');
                 }
+                checkAllFieldsComplete();
             });
             
             // Handle notes character count
@@ -1898,100 +2280,63 @@
                 }
             });
             
-            // Function to highlight missing field
-            function highlightMissingField(field) {
-                // Remove any existing highlights
-                removeHighlights();
+            // Check if all required fields are complete
+            function checkAllFieldsComplete() {
+                const pickup = pickupInput.value.trim();
+                const destination = destinationInput.value.trim();
+                const datetime = selectedDateTime;
+                const passengerCount = selectedPassengerCount;
+                const pets = selectedPets;
+                const passengerName = passengerNameInput.value.trim();
+                const phone = phoneInput.value.trim();
+                const email = emailInput.value.trim();
                 
-                // Add highlight class based on field type
-                if (field.classList.contains('form-input') || field.classList.contains('icon-input')) {
-                    field.classList.add('missing-field');
-                    
-                    // Add shake animation
-                    field.style.animation = 'shake 0.5s ease-in-out';
-                    
-                    // Remove animation after it completes
-                    setTimeout(() => {
-                        field.style.animation = '';
-                    }, 500);
-                } else if (field.classList.contains('icon-btn') || field.classList.contains('pets-btn')) {
-                    // For icon buttons, highlight the button
-                    field.classList.add('missing-field-btn');
-                    
-                    // Add pulse animation
-                    field.style.animation = 'pulseMissing 1s ease-in-out';
-                    
-                    // Remove animation after it completes
-                    setTimeout(() => {
-                        field.style.animation = '';
-                    }, 1000);
+                // Count completed fields
+                let completedCount = 0;
+                const totalFields = 8; // pickup, destination, datetime, passengerCount, pets, name, phone, email
+                
+                if (pickup) completedCount++;
+                if (destination) completedCount++;
+                if (datetime) completedCount++;
+                if (passengerCount) completedCount++;
+                if (pets) completedCount++;
+                if (passengerName) completedCount++;
+                if (phone) completedCount++;
+                if (email && email.includes('@')) completedCount++;
+                
+                // Update progress bar
+                const progressPercentage = (completedCount / totalFields) * 100;
+                progressFill.style.width = `${progressPercentage}%`;
+                
+                // Update progress text
+                const progressText = progressIndicator.querySelector('div');
+                if (completedCount < totalFields) {
+                    progressText.textContent = `${completedCount} of ${totalFields} fields completed`;
+                } else {
+                    progressText.textContent = "All fields complete! Ready to book";
+                    progressText.style.color = "var(--success-green)";
                 }
                 
-                // Remove highlight after 3 seconds
-                setTimeout(() => {
-                    if (field.classList.contains('missing-field')) {
-                        field.classList.remove('missing-field');
-                    }
-                    if (field.classList.contains('missing-field-btn')) {
-                        field.classList.remove('missing-field-btn');
-                    }
-                }, 3000);
-            }
-            
-            // Function to remove all highlights
-            function removeHighlights() {
-                const highlightedFields = document.querySelectorAll('.missing-field, .missing-field-btn');
-                highlightedFields.forEach(field => {
-                    field.classList.remove('missing-field');
-                    field.classList.remove('missing-field-btn');
-                    field.style.animation = '';
-                });
-            }
-            
-            // Function to show validation error
-            function showValidationError(message) {
-                // Remove any existing error message
-                const existingError = document.querySelector('.validation-error');
-                if (existingError) {
-                    existingError.remove();
+                // Show/hide submit button
+                if (completedCount === totalFields) {
+                    submitBtn.classList.add('active');
+                    submitBtn.disabled = false;
+                } else {
+                    submitBtn.classList.remove('active');
+                    submitBtn.disabled = true;
                 }
                 
-                // Create error message
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'validation-error';
-                errorDiv.innerHTML = `
-                    <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
-                    ${message}
-                `;
-                
-                // Insert after form title
-                const formTitle = document.querySelector('.form-title');
-                formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
-                
-                // Scroll error into view
-                setTimeout(() => {
-                    errorDiv.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start'
-                    });
-                }, 100);
-                
-                // Remove after 5 seconds
-                setTimeout(() => {
-                    if (errorDiv.parentNode) {
-                        errorDiv.style.opacity = '0';
-                        errorDiv.style.transition = 'opacity 0.3s';
-                        setTimeout(() => {
-                            if (errorDiv.parentNode) {
-                                errorDiv.parentNode.removeChild(errorDiv);
-                            }
-                        }, 300);
-                    }
-                }, 5000);
+                return completedCount === totalFields;
             }
             
             // Handle form submission
             submitBtn.addEventListener('click', function() {
+                // Double-check all fields are complete
+                if (!checkAllFieldsComplete()) {
+                    showValidationError("Please complete all required fields");
+                    return;
+                }
+                
                 // Get form values
                 const pickup = pickupInput.value.trim();
                 const destination = destinationInput.value.trim();
@@ -2008,69 +2353,6 @@
                 const stops = Array.from(stopInputs)
                     .map(input => input.value.trim())
                     .filter(stop => stop.length > 0);
-                
-                // Check for missing mandatory fields and focus on the first one
-                let firstMissingField = null;
-                let errorMessage = "";
-                
-                if (!pickup) {
-                    firstMissingField = pickupInput;
-                    errorMessage = "Pickup location is required";
-                } else if (!destination) {
-                    firstMissingField = destinationInput;
-                    errorMessage = "Destination is required";
-                } else if (!datetime) {
-                    firstMissingField = datetimeBtn;
-                    errorMessage = "Date and time is required";
-                } else if (!passengerCount || passengerCount < 1 || passengerCount > 6) {
-                    firstMissingField = passengerBtn;
-                    errorMessage = "Please select passenger count (1-6)";
-                } else if (!pets) {
-                    firstMissingField = document.querySelector('.pets-btn');
-                    errorMessage = "Please indicate if traveling with pets";
-                } else if (!passengerName) {
-                    firstMissingField = passengerNameInput;
-                    errorMessage = "Passenger name is required";
-                } else if (!phone) {
-                    firstMissingField = phoneInput;
-                    errorMessage = "Phone number is required";
-                } else if (!email) {
-                    firstMissingField = emailInput;
-                    errorMessage = "Email address is required";
-                } else if (email && !email.includes('@')) {
-                    firstMissingField = emailInput;
-                    errorMessage = "Please enter a valid email address";
-                }
-                
-                // If there's a missing field, focus on it and show error
-                if (firstMissingField) {
-                    showValidationError(errorMessage);
-                    
-                    // Ensure form is expanded so user can see the field
-                    expandBookingForm();
-                    
-                    // Add visual highlight to the missing field
-                    highlightMissingField(firstMissingField);
-                    
-                    // Focus on the field or button
-                    setTimeout(() => {
-                        if (firstMissingField.tagName === 'BUTTON') {
-                            // For buttons, we can focus on them
-                            firstMissingField.focus();
-                        } else {
-                            firstMissingField.focus();
-                            
-                            // Scroll the field into view with some padding
-                            firstMissingField.scrollIntoView({ 
-                                behavior: 'smooth', 
-                                block: 'center',
-                                inline: 'nearest'
-                            });
-                        }
-                    }, 100);
-                    
-                    return;
-                }
                 
                 // Show loading state on button
                 const originalText = submitBtn.innerHTML;
@@ -2092,7 +2374,7 @@
                 }, 1500);
             });
             
-            // Show booking confirmation (updated with new fields)
+            // Show booking confirmation
             function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops) {
                 const confirmationHTML = `
                     <div style="
@@ -2149,6 +2431,7 @@
                 destinationInput.value = '';
                 selectedDateTime = null;
                 datetimeText.textContent = '';
+                datetimeText.classList.remove('has-selection');
                 datetimeBtn.classList.remove('selected');
                 datetimeBtn.title = "Select date and time";
                 datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
@@ -2202,6 +2485,58 @@
                 // Clear additional stops
                 stopsContainer.innerHTML = '';
                 stopCount = 0;
+                
+                // Reset progress bar
+                progressFill.style.width = '0%';
+                const progressText = progressIndicator.querySelector('div');
+                progressText.textContent = "Complete all required fields to book";
+                progressText.style.color = "";
+                
+                // Hide submit button
+                submitBtn.classList.remove('active');
+                submitBtn.disabled = true;
+            }
+            
+            // Show validation error
+            function showValidationError(message) {
+                // Remove any existing error message
+                const existingError = document.querySelector('.validation-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Create error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'validation-error';
+                errorDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                    ${message}
+                `;
+                
+                // Insert after form title
+                const formTitle = document.querySelector('.form-title');
+                formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
+                
+                // Scroll error into view
+                setTimeout(() => {
+                    errorDiv.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start'
+                    });
+                }, 100);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.style.opacity = '0';
+                        errorDiv.style.transition = 'opacity 0.3s';
+                        setTimeout(() => {
+                            if (errorDiv.parentNode) {
+                                errorDiv.parentNode.removeChild(errorDiv);
+                            }
+                        }, 300);
+                    }
+                }, 5000);
             }
             
             // Make initGoogleMaps globally accessible for Google Maps callback
