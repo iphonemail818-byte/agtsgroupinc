@@ -28,6 +28,8 @@
             --border-radius: 22px;
             --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             --backdrop-blur: blur(8px);
+            --success-green: #00ff9d;
+            --warning-orange: #ffa500;
         }
 
         body {
@@ -388,7 +390,65 @@
             justify-content: flex-start; /* Left align */
         }
 
-        .datetime-icon-btn {
+        /* NEW: Passenger Count Container */
+        .passenger-container {
+            display: none;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .passenger-container.active {
+            display: block;
+        }
+
+        .passenger-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+            justify-content: flex-start;
+        }
+
+        /* NEW: Pets Container */
+        .pets-container {
+            display: none;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .pets-container.active {
+            display: block;
+        }
+
+        .pets-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+            justify-content: flex-start;
+        }
+
+        /* NEW: Notes Container */
+        .notes-container {
+            display: none;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .notes-container.active {
+            display: block;
+        }
+
+        .notes-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 1rem;
+            justify-content: flex-start;
+        }
+
+        /* Universal Icon Button Style - Same as date/time picker */
+        .icon-btn {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -401,23 +461,158 @@
             font-size: 1.8rem;
             cursor: pointer;
             transition: var(--transition);
-            /* Removed margin: 0 auto - now left aligned */
+            flex-shrink: 0;
         }
 
-        .datetime-icon-btn:hover {
+        .icon-btn:hover {
             background-color: rgba(0, 243, 255, 0.2);
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
         }
 
-        .datetime-icon-btn.selected {
+        .icon-btn.selected {
             background-color: rgba(0, 243, 255, 0.2);
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
             border-color: var(--neon-cyan);
         }
 
-        .datetime-text {
-            text-align: left; /* Left aligned text */
+        /* Passenger selector styles */
+        .passenger-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(0, 243, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            flex-grow: 1;
+        }
+
+        .passenger-btn {
+            background: none;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: var(--text-light);
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .passenger-btn:hover {
+            background-color: rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-cyan);
+        }
+
+        .passenger-btn.selected {
+            background-color: rgba(0, 243, 255, 0.2);
+            color: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+
+        .passenger-count-display {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--neon-cyan);
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* Pets selector styles */
+        .pets-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background-color: rgba(0, 243, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            flex-grow: 1;
+        }
+
+        .pets-btn {
+            background: none;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            color: var(--text-light);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            flex: 1;
+            text-align: center;
+        }
+
+        .pets-btn:hover {
+            background-color: rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-cyan);
+        }
+
+        .pets-btn.selected {
+            background-color: rgba(0, 243, 255, 0.2);
+            color: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+        }
+
+        .pets-yes {
+            background-color: rgba(0, 255, 157, 0.1);
+            border-color: rgba(0, 255, 157, 0.3);
+        }
+
+        .pets-yes.selected {
+            background-color: rgba(0, 255, 157, 0.2);
+            color: var(--success-green);
+            border-color: var(--success-green);
+        }
+
+        .pets-no {
+            background-color: rgba(255, 165, 0, 0.1);
+            border-color: rgba(255, 165, 0, 0.3);
+        }
+
+        .pets-no.selected {
+            background-color: rgba(255, 165, 0, 0.2);
+            color: var(--warning-orange);
+            border-color: var(--warning-orange);
+        }
+
+        /* Notes input styles */
+        .notes-input-wrapper {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .notes-input {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+            color: var(--text-light);
+            transition: var(--transition);
+            font-family: inherit;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .notes-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+        }
+
+        .notes-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Universal text display (for date/time) */
+        .text-display {
+            text-align: left;
             font-size: 0.9rem;
             color: var(--neon-cyan);
             min-height: 1.2rem;
@@ -426,8 +621,7 @@
             border-radius: 8px;
             width: 100%;
             max-width: 300px;
-            /* Removed margin: 0 auto - now left aligned */
-            flex-grow: 1; /* Takes available space */
+            flex-grow: 1;
         }
 
         /* Hidden datetime input for Flatpickr */
@@ -684,6 +878,12 @@
             white-space: nowrap;
             border-width: 0;
         }
+
+        /* Mandatory field indicator */
+        .required-star {
+            color: #ff4757;
+            margin-left: 3px;
+        }
     </style>
 </head>
 <body>
@@ -760,18 +960,76 @@
                     <!-- Date & Time Picker - Custom Dark Theme -->
                     <div class="datetime-container" id="datetime-container">
                         <div class="input-group">
-                            <label class="input-label">Pickup Date & Time</label>
+                            <label class="input-label">Pickup Date & Time<span class="required-star">*</span></label>
                             <div class="datetime-wrapper">
-                                <button class="datetime-icon-btn" id="datetime-btn" title="Select date and time">
+                                <button class="icon-btn" id="datetime-btn" title="Select date and time">
                                     <i class="far fa-calendar-alt"></i>
                                 </button>
-                                <div class="datetime-text" id="datetime-text">
+                                <div class="text-display" id="datetime-text">
                                     <!-- Date/time will appear here when selected -->
                                 </div>
                                 <input type="text" 
                                        id="pickup-datetime" 
                                        placeholder="Select date and time"
                                        readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Passenger Count - NEW -->
+                    <div class="passenger-container" id="passenger-container">
+                        <div class="input-group">
+                            <label class="input-label">Passenger Count<span class="required-star">*</span></label>
+                            <div class="passenger-wrapper">
+                                <button class="icon-btn" id="passenger-btn" title="Select passenger count">
+                                    <i class="fas fa-users"></i>
+                                </button>
+                                <div class="passenger-selector">
+                                    <button class="passenger-btn" data-value="1">1</button>
+                                    <button class="passenger-btn" data-value="2">2</button>
+                                    <button class="passenger-btn" data-value="3">3</button>
+                                    <button class="passenger-btn" data-value="4">4</button>
+                                    <button class="passenger-btn" data-value="5">5</button>
+                                    <button class="passenger-btn" data-value="6">6</button>
+                                    <div class="passenger-count-display" id="passenger-count">1</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pets - NEW -->
+                    <div class="pets-container" id="pets-container">
+                        <div class="input-group">
+                            <label class="input-label">Traveling with Pets?<span class="required-star">*</span></label>
+                            <div class="pets-wrapper">
+                                <button class="icon-btn" id="pets-btn" title="Pet information">
+                                    <i class="fas fa-paw"></i>
+                                </button>
+                                <div class="pets-selector">
+                                    <button class="pets-btn pets-yes" data-value="yes">Yes</button>
+                                    <button class="pets-btn pets-no" data-value="no">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notes - NEW -->
+                    <div class="notes-container" id="notes-container">
+                        <div class="input-group">
+                            <label class="input-label">Special Notes for Driver (Optional)</label>
+                            <div class="notes-wrapper">
+                                <button class="icon-btn" id="notes-btn" title="Add special notes">
+                                    <i class="fas fa-sticky-note"></i>
+                                </button>
+                                <div class="notes-input-wrapper">
+                                    <textarea class="notes-input" 
+                                              id="notes-input" 
+                                              placeholder="Any special instructions for the driver? (e.g., extra luggage, accessibility needs, child seats, etc.)"
+                                              maxlength="500"></textarea>
+                                    <div style="text-align: right; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem;">
+                                        <span id="notes-chars">0</span>/500 characters
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -836,12 +1094,30 @@
             const datetimeBtn = document.getElementById('datetime-btn');
             const datetimeText = document.getElementById('datetime-text');
             const pickupDatetimeInput = document.getElementById('pickup-datetime');
+            
+            // NEW ELEMENTS
+            const passengerContainer = document.getElementById('passenger-container');
+            const passengerBtns = document.querySelectorAll('.passenger-btn');
+            const passengerCountDisplay = document.getElementById('passenger-count');
+            const passengerBtn = document.getElementById('passenger-btn');
+            
+            const petsContainer = document.getElementById('pets-container');
+            const petsBtns = document.querySelectorAll('.pets-btn');
+            const petsBtn = document.getElementById('pets-btn');
+            
+            const notesContainer = document.getElementById('notes-container');
+            const notesInput = document.getElementById('notes-input');
+            const notesChars = document.getElementById('notes-chars');
+            const notesBtn = document.getElementById('notes-btn');
+            
             const submitBtn = document.getElementById('submit-btn');
             const bookingCard = document.getElementById('booking-card');
             
             // Global variables
             let stopCount = 0;
             let selectedDateTime = null;
+            let selectedPassengerCount = 1; // Default to 1
+            let selectedPets = null;
             let autocompletePickup = null;
             let autocompleteDestination = null;
             
@@ -908,6 +1184,9 @@
                         datetimeBtn.classList.add('selected');
                         // Update button icon
                         datetimeBtn.innerHTML = '<i class="far fa-calendar-check"></i>';
+                        
+                        // Show passenger container when date is selected
+                        passengerContainer.classList.add('active');
                     },
                     onOpen: function(selectedDates, dateStr, instance) {
                         // When calendar opens, ensure styling is applied
@@ -928,6 +1207,10 @@
                             datetimeBtn.title = "Select date and time";
                             datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
                             datetimeText.textContent = '';
+                            // Hide passenger container if date is cleared
+                            passengerContainer.classList.remove('active');
+                            petsContainer.classList.remove('active');
+                            notesContainer.classList.remove('active');
                         }
                     }
                 });
@@ -1242,12 +1525,93 @@
                 stopCount = stopNumbers.length;
             }
             
+            // Handle passenger count selection
+            passengerBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove selected class from all passenger buttons
+                    passengerBtns.forEach(b => b.classList.remove('selected'));
+                    
+                    // Add selected class to clicked button
+                    this.classList.add('selected');
+                    
+                    // Update passenger count
+                    selectedPassengerCount = parseInt(this.getAttribute('data-value'));
+                    passengerCountDisplay.textContent = selectedPassengerCount;
+                    
+                    // Update button title
+                    passengerBtn.title = `${selectedPassengerCount} Passenger${selectedPassengerCount > 1 ? 's' : ''}`;
+                    passengerBtn.classList.add('selected');
+                    
+                    // Show pets container when passenger count is selected
+                    petsContainer.classList.add('active');
+                });
+            });
+            
+            // Set default passenger selection
+            document.querySelector('.passenger-btn[data-value="1"]').classList.add('selected');
+            passengerBtn.title = "1 Passenger";
+            
+            // Handle pets selection
+            petsBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove selected class from all pets buttons
+                    petsBtns.forEach(b => b.classList.remove('selected'));
+                    
+                    // Add selected class to clicked button
+                    this.classList.add('selected');
+                    
+                    // Update pets selection
+                    selectedPets = this.getAttribute('data-value');
+                    
+                    // Update button title and icon
+                    petsBtn.title = `Pets: ${selectedPets === 'yes' ? 'Yes' : 'No'}`;
+                    petsBtn.classList.add('selected');
+                    
+                    // Change icon based on selection
+                    if (selectedPets === 'yes') {
+                        petsBtn.innerHTML = '<i class="fas fa-paw"></i>';
+                    } else {
+                        petsBtn.innerHTML = '<i class="fas fa-times-circle"></i>';
+                    }
+                    
+                    // Show notes container when pets is selected
+                    notesContainer.classList.add('active');
+                });
+            });
+            
+            // Handle notes character count
+            notesInput.addEventListener('input', function() {
+                const length = this.value.length;
+                notesChars.textContent = length;
+                
+                // Update button title if there's content
+                if (length > 0) {
+                    notesBtn.title = `Notes: ${length} characters`;
+                    notesBtn.classList.add('selected');
+                } else {
+                    notesBtn.title = "Add special notes";
+                    notesBtn.classList.remove('selected');
+                }
+                
+                // Optional: Change color when approaching limit
+                if (length > 450) {
+                    notesChars.style.color = '#ff4757';
+                } else if (length > 0) {
+                    notesChars.style.color = 'var(--neon-cyan)';
+                } else {
+                    notesChars.style.color = 'var(--text-muted)';
+                }
+            });
+            
             // Handle form submission
             submitBtn.addEventListener('click', function() {
                 // Get form values
                 const pickup = pickupInput.value.trim();
                 const destination = destinationInput.value.trim();
                 const datetime = selectedDateTime;
+                const passengerCount = selectedPassengerCount;
+                const pets = selectedPets;
+                const notes = notesInput.value.trim();
                 
                 // Get additional stops
                 const stopInputs = document.querySelectorAll('.stop-location');
@@ -1260,6 +1624,8 @@
                 if (!pickup) errors.push("Pickup location");
                 if (!destination) errors.push("Destination");
                 if (!datetime) errors.push("Date and time");
+                if (!passengerCount || passengerCount < 1 || passengerCount > 6) errors.push("Passenger count (1-6)");
+                if (!pets) errors.push("Pet information (Yes/No)");
                 
                 if (errors.length > 0) {
                     showValidationError(`Please fill in: ${errors.join(', ')}`);
@@ -1277,8 +1643,8 @@
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                     
-                    // Show success message
-                    showBookingConfirmation(pickup, destination, datetime, stops);
+                    // Show success message with all details
+                    showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, notes, stops);
                     
                     // Reset form
                     collapseBookingForm();
@@ -1319,8 +1685,8 @@
                 }, 3000);
             }
             
-            // Show booking confirmation
-            function showBookingConfirmation(pickup, destination, datetime, stops) {
+            // Show booking confirmation (updated with new fields)
+            function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, notes, stops) {
                 const confirmationHTML = `
                     <div style="
                         background: rgba(0, 243, 255, 0.1);
@@ -1338,6 +1704,9 @@
                             <p><strong>Pickup:</strong> ${pickup}</p>
                             <p><strong>Destination:</strong> ${destination}</p>
                             <p><strong>Date & Time:</strong> ${datetime}</p>
+                            <p><strong>Passengers:</strong> ${passengerCount}</p>
+                            <p><strong>Traveling with Pets:</strong> ${pets === 'yes' ? 'Yes' : 'No'}</p>
+                            ${notes ? `<p><strong>Special Notes:</strong> ${notes}</p>` : ''}
                             ${stops.length > 0 ? `<p><strong>Additional Stops:</strong> ${stops.join(', ')}</p>` : ''}
                             <p style="margin-top: 15px; color: var(--neon-cyan);">
                                 Your luxury SUV will arrive promptly. A confirmation has been sent to your email.
@@ -1374,6 +1743,33 @@
                 datetimeBtn.title = "Select date and time";
                 datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
                 datetimeContainer.classList.remove('active');
+                
+                // Reset passenger count
+                passengerBtns.forEach(btn => btn.classList.remove('selected'));
+                document.querySelector('.passenger-btn[data-value="1"]').classList.add('selected');
+                selectedPassengerCount = 1;
+                passengerCountDisplay.textContent = '1';
+                passengerBtn.title = "1 Passenger";
+                passengerBtn.classList.remove('selected');
+                passengerBtn.innerHTML = '<i class="fas fa-users"></i>';
+                passengerContainer.classList.remove('active');
+                
+                // Reset pets
+                petsBtns.forEach(btn => btn.classList.remove('selected'));
+                selectedPets = null;
+                petsBtn.title = "Pet information";
+                petsBtn.classList.remove('selected');
+                petsBtn.innerHTML = '<i class="fas fa-paw"></i>';
+                petsContainer.classList.remove('active');
+                
+                // Reset notes
+                notesInput.value = '';
+                notesChars.textContent = '0';
+                notesChars.style.color = 'var(--text-muted)';
+                notesBtn.title = "Add special notes";
+                notesBtn.classList.remove('selected');
+                notesBtn.innerHTML = '<i class="fas fa-sticky-note"></i>';
+                notesContainer.classList.remove('active');
                 
                 // Clear additional stops
                 stopsContainer.innerHTML = '';
