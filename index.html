@@ -42,9 +42,6 @@
             min-height: 100vh;
             overflow-x: hidden;
             line-height: 1.5;
-            position: relative;
-            height: 100vh;
-            overflow-y: auto;
         }
 
         /* Loading Screen */
@@ -117,13 +114,6 @@
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
-
-        /* Vibration animation */
-        @keyframes vibrate {
-            0%, 100% { transform: translate(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translate(-1px, -1px); }
-            20%, 40%, 60%, 80% { transform: translate(1px, 1px); }
         }
 
         /* Main Content */
@@ -281,7 +271,7 @@
             box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
         }
 
-        /* Current Location Button - PERFECTLY CENTERED */
+        /* Current Location Button */
         .current-location-btn {
             position: absolute;
             right: 0.75rem;
@@ -369,7 +359,7 @@
             background-color: rgba(255, 71, 87, 0.1);
         }
 
-        /* Add Stop Button - LEFT ALIGNED */
+        /* Add Stop Button */
         .add-stop-btn {
             display: flex;
             align-items: center;
@@ -382,7 +372,7 @@
             height: 44px;
             font-size: 1.5rem;
             cursor: pointer;
-            margin: 0.5rem 0; /* Changed from auto to 0 - left aligned */
+            margin: 0.5rem 0;
             transition: var(--transition);
         }
 
@@ -391,7 +381,7 @@
             transform: scale(1.05);
         }
 
-        /* Date & Time Picker - iPhone Style */
+        /* Date & Time Picker - Simple Style */
         .datetime-container {
             display: none;
             margin-top: 1.5rem;
@@ -410,8 +400,8 @@
             justify-content: flex-start;
         }
 
-        /* iPhone Style Date/Time Picker Modal - FIXED SCROLLING */
-        .iphone-picker-modal {
+        /* SIMPLE DATE/TIME PICKER MODAL */
+        .simple-picker-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -423,18 +413,15 @@
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.3s ease;
-            overflow: hidden;
         }
 
-        .iphone-picker-modal.active {
+        .simple-picker-modal.active {
             display: flex;
-            overflow: hidden;
         }
 
-        .iphone-picker-container {
+        .simple-picker-container {
             width: 90%;
             max-width: 400px;
-            max-height: 90vh;
             background-color: var(--iphone-gray);
             border-radius: 18px;
             overflow: hidden;
@@ -449,23 +436,22 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        .iphone-picker-header {
+        .simple-picker-header {
             background-color: var(--iphone-light);
             padding: 1rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
         }
 
-        .iphone-picker-header h3 {
+        .simple-picker-header h3 {
             font-weight: 600;
             font-size: 1.1rem;
             color: var(--text-light);
         }
 
-        .iphone-picker-close {
+        .simple-picker-close {
             background: none;
             border: none;
             color: var(--neon-cyan);
@@ -480,91 +466,173 @@
             transition: var(--transition);
         }
 
-        .iphone-picker-close:hover {
+        .simple-picker-close:hover {
             background-color: rgba(0, 243, 255, 0.1);
         }
 
-        .iphone-picker-body {
+        .simple-picker-body {
             padding: 1.5rem;
-            overflow: hidden;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
         }
 
-        /* iPhone Style Wheel Picker - FIXED SCROLLING */
-        .iphone-wheel-picker {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            height: 200px;
-            position: relative;
-            overflow: hidden;
+        /* SIMPLE PICKER STYLES - EASY TO USE */
+        .simple-date-picker {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
             margin-bottom: 1.5rem;
-            flex-shrink: 0;
-            touch-action: none; /* Prevent default touch behaviors */
-        }
-
-        .wheel-container {
-            flex: 1;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
             background-color: var(--iphone-light);
+            padding: 15px;
             border-radius: 12px;
-            touch-action: none; /* Prevent default touch behaviors */
         }
 
-        .wheel {
-            position: relative;
-            height: 200px;
-            overflow: hidden;
-            padding-top: 80px;
-            user-select: none; /* Prevent text selection */
-            -webkit-user-select: none;
-            touch-action: none; /* Prevent default touch behaviors */
+        .day-header {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            padding: 5px 0;
+            font-weight: 600;
         }
 
-        .wheel-items {
-            list-style: none;
-            transform: translateY(0);
-            transition: transform 0.3s ease-out;
-            user-select: none;
-        }
-
-        .wheel-item {
-            height: 40px;
+        .day-cell {
+            text-align: center;
+            padding: 10px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            font-size: 0.9rem;
+            min-height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            color: var(--text-light);
-            opacity: 0.4;
-            transition: all 0.2s ease;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
 
-        .wheel-item.selected {
-            font-size: 1.4rem;
+        .day-cell:hover {
+            background-color: rgba(0, 243, 255, 0.1);
+        }
+
+        .day-cell.selected {
+            background-color: var(--neon-cyan);
+            color: var(--primary-dark);
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .day-cell.disabled {
+            color: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.4;
+        }
+
+        .month-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: var(--iphone-light);
+            border-radius: 12px;
+        }
+
+        .month-nav {
+            background: none;
+            border: none;
+            color: var(--neon-cyan);
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .month-nav:hover {
+            background-color: rgba(0, 243, 255, 0.1);
+        }
+
+        .current-month {
             font-weight: 600;
             color: var(--neon-cyan);
-            opacity: 1;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            font-size: 1.1rem;
+            text-align: center;
+            flex-grow: 1;
         }
 
-        .wheel-highlight {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 40px;
-            transform: translateY(-50%);
+        /* SIMPLE TIME PICKER */
+        .simple-time-picker {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--iphone-light);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .time-select {
+            background-color: var(--card-dark);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .time-select:hover {
             background-color: rgba(0, 243, 255, 0.1);
-            border-top: 1px solid rgba(0, 243, 255, 0.3);
-            border-bottom: 1px solid rgba(0, 243, 255, 0.3);
-            pointer-events: none;
-            z-index: 1;
+            border-color: var(--neon-cyan);
+        }
+
+        .time-select:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+        }
+
+        .time-separator {
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
+            font-weight: bold;
+        }
+
+        .ampm-selector {
+            display: flex;
+            gap: 5px;
+        }
+
+        .ampm-btn {
+            background-color: var(--card-dark);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .ampm-btn:hover {
+            background-color: rgba(0, 243, 255, 0.1);
+            border-color: var(--neon-cyan);
+        }
+
+        .ampm-btn.selected {
+            background-color: var(--neon-cyan);
+            color: var(--primary-dark);
+            border-color: var(--neon-cyan);
+            font-weight: bold;
         }
 
         /* Date/Time Display */
@@ -1065,14 +1133,14 @@
             border-color: var(--error-red) !important;
             background-color: rgba(255, 71, 87, 0.05) !important;
             box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.2) !important;
-            animation: shake 0.5s ease-in-out, vibrate 0.3s ease-in-out !important;
+            animation: shake 0.5s ease-in-out !important;
         }
 
         .missing-field-btn {
             border-color: var(--error-red) !important;
             background-color: rgba(255, 71, 87, 0.1) !important;
             color: var(--error-red) !important;
-            animation: shake 0.5s ease-in-out, vibrate 0.3s ease-in-out !important;
+            animation: shake 0.5s ease-in-out !important;
         }
 
         /* Make sure the calendar icon shows error state */
@@ -1143,26 +1211,6 @@
             width: 0%;
             transition: width 0.5s ease;
         }
-
-        /* Vibration indicator */
-        .vibration-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--card-dark);
-            border: 1px solid var(--neon-cyan);
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            color: var(--neon-cyan);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-            display: none;
-        }
-
-        .vibration-indicator.active {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -1177,84 +1225,46 @@
     <!-- Backdrop -->
     <div class="backdrop" id="backdrop"></div>
 
-    <!-- Vibration Indicator -->
-    <div class="vibration-indicator" id="vibration-indicator">
-        <i class="fas fa-vibrate" style="margin-right: 8px;"></i>
-        Vibration Feedback Enabled
-    </div>
-
-    <!-- iPhone Style Date/Time Picker Modal -->
-    <div class="iphone-picker-modal" id="iphone-picker-modal">
-        <div class="iphone-picker-container">
-            <div class="iphone-picker-header">
+    <!-- Simple Date/Time Picker Modal -->
+    <div class="simple-picker-modal" id="simple-picker-modal">
+        <div class="simple-picker-container">
+            <div class="simple-picker-header">
                 <h3>Select Date & Time</h3>
-                <button class="iphone-picker-close" id="close-picker">
+                <button class="simple-picker-close" id="close-picker">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="iphone-picker-body">
-                <div class="iphone-wheel-picker">
-                    <!-- Month Wheel -->
-                    <div class="wheel-container">
-                        <div class="wheel" id="month-wheel">
-                            <ul class="wheel-items" id="month-items">
-                                <!-- Months will be populated by JavaScript -->
-                            </ul>
-                            <div class="wheel-highlight"></div>
-                        </div>
+            <div class="simple-picker-body">
+                <!-- Month Selector -->
+                <div class="month-selector">
+                    <button class="month-nav" id="prev-month">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="current-month" id="current-month-display">
+                        <!-- Month will be displayed here -->
                     </div>
-                    
-                    <!-- Day Wheel -->
-                    <div class="wheel-container">
-                        <div class="wheel" id="day-wheel">
-                            <ul class="wheel-items" id="day-items">
-                                <!-- Days will be populated by JavaScript -->
-                            </ul>
-                            <div class="wheel-highlight"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Year Wheel -->
-                    <div class="wheel-container">
-                        <div class="wheel" id="year-wheel">
-                            <ul class="wheel-items" id="year-items">
-                                <!-- Years will be populated by JavaScript -->
-                            </ul>
-                            <div class="wheel-highlight"></div>
-                        </div>
-                    </div>
+                    <button class="month-nav" id="next-month">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
                 </div>
                 
-                <div class="iphone-wheel-picker">
-                    <!-- Hour Wheel -->
-                    <div class="wheel-container">
-                        <div class="wheel" id="hour-wheel">
-                            <ul class="wheel-items" id="hour-items">
-                                <!-- Hours will be populated by JavaScript -->
-                            </ul>
-                            <div class="wheel-highlight"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Minute Wheel -->
-                    <div class="wheel-container">
-                        <div class="wheel" id="minute-wheel">
-                            <ul class="wheel-items" id="minute-items">
-                                <!-- Minutes will be populated by JavaScript -->
-                            </ul>
-                            <div class="wheel-highlight"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- AM/PM Wheel -->
-                    <div class="wheel-container">
-                        <div class="wheel" id="ampm-wheel">
-                            <ul class="wheel-items" id="ampm-items">
-                                <li class="wheel-item" data-value="AM">AM</li>
-                                <li class="wheel-item" data-value="PM">PM</li>
-                            </ul>
-                            <div class="wheel-highlight"></div>
-                        </div>
+                <!-- Calendar Grid -->
+                <div class="simple-date-picker" id="date-picker">
+                    <!-- Calendar will be generated here -->
+                </div>
+                
+                <!-- Time Selector -->
+                <div class="simple-time-picker">
+                    <select class="time-select" id="hour-select">
+                        <!-- Hours will be populated by JavaScript -->
+                    </select>
+                    <span class="time-separator">:</span>
+                    <select class="time-select" id="minute-select">
+                        <!-- Minutes will be populated by JavaScript -->
+                    </select>
+                    <div class="ampm-selector">
+                        <button class="ampm-btn" data-value="AM">AM</button>
+                        <button class="ampm-btn" data-value="PM">PM</button>
                     </div>
                 </div>
                 
@@ -1333,7 +1343,7 @@
                         <i class="fas fa-plus"></i>
                     </button>
                     
-                    <!-- Date & Time Picker - iPhone Style -->
+                    <!-- Date & Time Picker - Simple Style -->
                     <div class="datetime-container" id="datetime-container">
                         <div class="input-group">
                             <label class="input-label">Pickup Date & Time<span class="required-star">*</span></label>
@@ -1519,20 +1529,18 @@
             const datetimeText = document.getElementById('datetime-text');
             const submitBtn = document.getElementById('submit-btn');
             const bookingCard = document.getElementById('booking-card');
-            const vibrationIndicator = document.getElementById('vibration-indicator');
             
-            // iPhone Picker Elements
-            const iphonePickerModal = document.getElementById('iphone-picker-modal');
+            // Simple Picker Elements
+            const simplePickerModal = document.getElementById('simple-picker-modal');
             const closePickerBtn = document.getElementById('close-picker');
             const confirmDatetimeBtn = document.getElementById('confirm-datetime');
-            
-            // Wheel Elements
-            const monthWheel = document.getElementById('month-wheel');
-            const dayWheel = document.getElementById('day-wheel');
-            const yearWheel = document.getElementById('year-wheel');
-            const hourWheel = document.getElementById('hour-wheel');
-            const minuteWheel = document.getElementById('minute-wheel');
-            const ampmWheel = document.getElementById('ampm-wheel');
+            const datePicker = document.getElementById('date-picker');
+            const currentMonthDisplay = document.getElementById('current-month-display');
+            const prevMonthBtn = document.getElementById('prev-month');
+            const nextMonthBtn = document.getElementById('next-month');
+            const hourSelect = document.getElementById('hour-select');
+            const minuteSelect = document.getElementById('minute-select');
+            const ampmBtns = document.querySelectorAll('.ampm-btn');
             
             // Passenger Count Elements
             const passengerContainer = document.getElementById('passenger-container');
@@ -1579,56 +1587,22 @@
             let autocompleteDestination = null;
             
             // Date/Time Selection Variables
-            let selectedMonth = new Date().getMonth();
-            let selectedDay = new Date().getDate();
-            let selectedYear = new Date().getFullYear();
+            let selectedDate = new Date();
             let selectedHour = 12;
             let selectedMinute = 0;
             let selectedAmPm = "PM";
             
-            // Vibration support check
-            let vibrationSupported = false;
-            
-            // Check for vibration API support
-            function checkVibrationSupport() {
-                if ('vibrate' in navigator) {
-                    vibrationSupported = true;
-                    console.log("Vibration API is supported");
-                    
-                    // Show vibration indicator
-                    vibrationIndicator.classList.add('active');
-                    setTimeout(() => {
-                        vibrationIndicator.classList.remove('active');
-                    }, 3000);
-                    
-                    return true;
-                } else {
-                    console.log("Vibration API is not supported");
-                    return false;
-                }
-            }
-            
-            // Vibrate function
-            function vibrate(pattern) {
-                if (vibrationSupported) {
-                    try {
-                        navigator.vibrate(pattern);
-                    } catch (e) {
-                        console.log("Vibration failed:", e);
-                    }
-                }
-            }
+            // Calendar state
+            let currentMonth = selectedDate.getMonth();
+            let currentYear = selectedDate.getFullYear();
             
             // Simulate loading screen for 3 seconds
             setTimeout(() => {
                 loadingScreen.classList.add('fade-out');
                 mainContent.classList.add('fade-in');
                 
-                // Check vibration support
-                vibrationSupported = checkVibrationSupport();
-                
-                // Initialize iPhone wheel picker after loading
-                initializeiPhonePicker();
+                // Initialize simple picker after loading
+                initializeSimplePicker();
                 
                 // After loading screen fades out, remove it from DOM
                 setTimeout(() => {
@@ -1636,352 +1610,186 @@
                 }, 500);
             }, 3000);
             
-            // Initialize iPhone Style Wheel Picker
-            function initializeiPhonePicker() {
-                // Populate month wheel (1-12)
-                const monthItems = document.getElementById('month-items');
-                const months = [
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
-                ];
-                
-                months.forEach((month, index) => {
-                    const li = document.createElement('li');
-                    li.className = 'wheel-item';
-                    li.textContent = month;
-                    li.setAttribute('data-value', index);
-                    monthItems.appendChild(li);
-                });
-                
-                // Populate day wheel (1-31)
-                const dayItems = document.getElementById('day-items');
-                for (let i = 1; i <= 31; i++) {
-                    const li = document.createElement('li');
-                    li.className = 'wheel-item';
-                    li.textContent = i < 10 ? `0${i}` : i;
-                    li.setAttribute('data-value', i);
-                    dayItems.appendChild(li);
-                }
-                
-                // Populate year wheel (current year to current+2)
-                const yearItems = document.getElementById('year-items');
-                const currentYear = new Date().getFullYear();
-                for (let i = currentYear; i <= currentYear + 2; i++) {
-                    const li = document.createElement('li');
-                    li.className = 'wheel-item';
-                    li.textContent = i;
-                    li.setAttribute('data-value', i);
-                    yearItems.appendChild(li);
-                }
-                
-                // Populate hour wheel (1-12)
-                const hourItems = document.getElementById('hour-items');
+            // Initialize Simple Date/Time Picker
+            function initializeSimplePicker() {
+                // Populate hour dropdown (1-12)
                 for (let i = 1; i <= 12; i++) {
-                    const li = document.createElement('li');
-                    li.className = 'wheel-item';
-                    li.textContent = i < 10 ? `0${i}` : i;
-                    li.setAttribute('data-value', i);
-                    hourItems.appendChild(li);
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i < 10 ? `0${i}` : i;
+                    hourSelect.appendChild(option);
                 }
                 
-                // Populate minute wheel (00-59)
-                const minuteItems = document.getElementById('minute-items');
-                for (let i = 0; i < 60; i += 5) {
-                    const li = document.createElement('li');
-                    li.className = 'wheel-item';
-                    li.textContent = i < 10 ? `0${i}` : i;
-                    li.setAttribute('data-value', i);
-                    minuteItems.appendChild(li);
+                // Populate minute dropdown (in 15-minute increments)
+                for (let i = 0; i < 60; i += 15) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i < 10 ? `0${i}` : i;
+                    minuteSelect.appendChild(option);
                 }
                 
-                // Set initial selected values
-                setSelectedWheelItem('month', selectedMonth);
-                setSelectedWheelItem('day', selectedDay);
-                setSelectedWheelItem('year', selectedYear);
-                setSelectedWheelItem('hour', selectedHour);
-                setSelectedWheelItem('minute', selectedMinute);
-                setSelectedWheelItem('ampm', selectedAmPm);
+                // Set initial selections
+                hourSelect.value = selectedHour;
+                minuteSelect.value = selectedMinute;
                 
-                // Add wheel interaction
-                setupWheelInteractions();
-            }
-            
-            // Set selected wheel item
-            function setSelectedWheelItem(wheelType, value) {
-                const wheel = document.getElementById(`${wheelType}-wheel`);
-                const items = wheel.querySelectorAll('.wheel-item');
-                
-                items.forEach(item => {
-                    item.classList.remove('selected');
-                    
-                    const itemValue = wheelType === 'month' ? parseInt(item.getAttribute('data-value')) : 
-                                    wheelType === 'day' ? parseInt(item.getAttribute('data-value')) :
-                                    wheelType === 'year' ? parseInt(item.getAttribute('data-value')) :
-                                    wheelType === 'hour' ? parseInt(item.getAttribute('data-value')) :
-                                    wheelType === 'minute' ? parseInt(item.getAttribute('data-value')) :
-                                    item.getAttribute('data-value');
-                    
-                    if (wheelType === 'month' && itemValue === value) {
-                        item.classList.add('selected');
-                        // Center the selected item
-                        const index = Array.from(items).indexOf(item);
-                        const wheelItems = wheel.querySelector('.wheel-items');
-                        const offset = -(index * 40) + 80; // 40px per item, center offset
-                        wheelItems.style.transform = `translateY(${offset}px)`;
-                    } else if (wheelType !== 'month' && itemValue === value) {
-                        item.classList.add('selected');
-                        // Center the selected item
-                        const index = Array.from(items).indexOf(item);
-                        const wheelItems = wheel.querySelector('.wheel-items');
-                        const offset = -(index * 40) + 80; // 40px per item, center offset
-                        wheelItems.style.transform = `translateY(${offset}px)`;
+                // Set initial AM/PM selection
+                ampmBtns.forEach(btn => {
+                    btn.classList.remove('selected');
+                    if (btn.getAttribute('data-value') === selectedAmPm) {
+                        btn.classList.add('selected');
                     }
                 });
+                
+                // Generate initial calendar
+                generateCalendar(currentMonth, currentYear);
             }
             
-            // Setup wheel interactions - FIXED SCROLLING ISSUE
-            function setupWheelInteractions() {
-                const wheels = document.querySelectorAll('.wheel');
+            // Generate calendar for given month/year
+            function generateCalendar(month, year) {
+                // Clear existing calendar
+                datePicker.innerHTML = '';
                 
-                wheels.forEach(wheel => {
-                    let isDragging = false;
-                    let startY = 0;
-                    let currentY = 0;
-                    let currentTranslate = 0;
-                    let velocity = 0;
-                    let lastY = 0;
-                    let lastTime = 0;
-                    let animationFrameId = null;
-                    
-                    const wheelItems = wheel.querySelector('.wheel-items');
-                    const items = wheel.querySelectorAll('.wheel-item');
-                    const itemHeight = 40;
-                    
-                    // Get current translate value
-                    function getTranslateY(element) {
-                        const style = window.getComputedStyle(element);
-                        const matrix = new DOMMatrixReadOnly(style.transform);
-                        return matrix.m42;
-                    }
-                    
-                    // Set translate value
-                    function setTranslateY(element, y) {
-                        element.style.transform = `translateY(${y}px)`;
-                    }
-                    
-                    // Snap to nearest item
-                    function snapToItem() {
-                        const currentTranslate = getTranslateY(wheelItems);
-                        const index = Math.round(-currentTranslate / itemHeight);
-                        const maxIndex = items.length - 1;
-                        const clampedIndex = Math.max(0, Math.min(index, maxIndex));
-                        const targetTranslate = -clampedIndex * itemHeight;
-                        
-                        // Animate to target position
-                        animateTo(targetTranslate);
-                        
-                        // Update selected item
-                        items.forEach(item => item.classList.remove('selected'));
-                        items[clampedIndex].classList.add('selected');
-                        
-                        // Update global variable based on wheel type
-                        updateSelectedValue(wheel.id.replace('-wheel', ''), items[clampedIndex]);
-                    }
-                    
-                    // Animate to position
-                    function animateTo(targetTranslate) {
-                        cancelAnimationFrame(animationFrameId);
-                        
-                        const startTranslate = getTranslateY(wheelItems);
-                        const startTime = Date.now();
-                        const duration = 300;
-                        
-                        function animate() {
-                            const elapsed = Date.now() - startTime;
-                            const progress = Math.min(elapsed / duration, 1);
-                            
-                            // Easing function
-                            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-                            const currentTranslate = startTranslate + (targetTranslate - startTranslate) * easeOutCubic;
-                            
-                            setTranslateY(wheelItems, currentTranslate);
-                            
-                            if (progress < 1) {
-                                animationFrameId = requestAnimationFrame(animate);
-                            }
-                        }
-                        
-                        animationFrameId = requestAnimationFrame(animate);
-                    }
-                    
-                    // Prevent wheel scrolling on the entire modal
-                    function preventDefaultScroll(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
-                    }
-                    
-                    // Add touch action none and prevent default behaviors
-                    wheel.style.touchAction = 'none';
-                    
-                    // Prevent wheel event on the wheel
-                    wheel.addEventListener('wheel', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }, { passive: false });
-                    
-                    // Mouse/touch event handlers
-                    wheel.addEventListener('mousedown', startDrag);
-                    wheel.addEventListener('touchstart', startDrag, { passive: false });
-                    
-                    function startDrag(e) {
-                        isDragging = true;
-                        startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-                        currentY = startY;
-                        currentTranslate = getTranslateY(wheelItems);
-                        velocity = 0;
-                        lastY = startY;
-                        lastTime = Date.now();
-                        
-                        cancelAnimationFrame(animationFrameId);
-                        wheel.style.cursor = 'grabbing';
-                        
-                        // Prevent text selection
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        // Add document-level listeners
-                        document.addEventListener('mousemove', drag);
-                        document.addEventListener('touchmove', drag, { passive: false });
-                        document.addEventListener('mouseup', endDrag);
-                        document.addEventListener('touchend', endDrag);
-                    }
-                    
-                    function drag(e) {
-                        if (!isDragging) return;
-                        
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-                        const deltaY = clientY - currentY;
-                        currentY = clientY;
-                        
-                        // Calculate velocity
-                        const currentTime = Date.now();
-                        const deltaTime = currentTime - lastTime;
-                        if (deltaTime > 0) {
-                            velocity = (clientY - lastY) / deltaTime;
-                        }
-                        lastY = clientY;
-                        lastTime = currentTime;
-                        
-                        // Update position
-                        currentTranslate += deltaY;
-                        setTranslateY(wheelItems, currentTranslate);
-                        
-                        // Provide haptic feedback on mobile
-                        if (vibrationSupported && (e.type === 'touchmove') && Math.abs(deltaY) > 5) {
-                            vibrate(5); // Very short vibration
-                        }
-                    }
-                    
-                    function endDrag(e) {
-                        if (!isDragging) return;
-                        
-                        isDragging = false;
-                        wheel.style.cursor = '';
-                        
-                        // Remove document-level listeners
-                        document.removeEventListener('mousemove', drag);
-                        document.removeEventListener('touchmove', drag);
-                        document.removeEventListener('mouseup', endDrag);
-                        document.removeEventListener('touchend', endDrag);
-                        
-                        // Apply momentum
-                        const momentum = velocity * 100;
-                        currentTranslate += momentum;
-                        
-                        // Snap to nearest item
-                        snapToItem();
-                        
-                        // Provide haptic feedback on mobile
-                        if (vibrationSupported && e.type === 'touchend') {
-                            vibrate([10, 20, 10]);
-                        }
-                    }
-                    
-                    // Also allow click selection
-                    items.forEach(item => {
-                        item.addEventListener('click', () => {
-                            const index = Array.from(items).indexOf(item);
-                            const targetTranslate = -index * itemHeight;
-                            animateTo(targetTranslate);
-                            
-                            items.forEach(i => i.classList.remove('selected'));
-                            item.classList.add('selected');
-                            
-                            updateSelectedValue(wheel.id.replace('-wheel', ''), item);
-                            
-                            // Haptic feedback
-                            if (vibrationSupported) {
-                                vibrate(20);
-                            }
-                        });
-                    });
+                // Add day headers
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                dayNames.forEach(day => {
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'day-header';
+                    dayHeader.textContent = day;
+                    datePicker.appendChild(dayHeader);
                 });
                 
-                // Prevent page scrolling when picker is open
-                const wheelContainers = document.querySelectorAll('.wheel-container');
-                wheelContainers.forEach(container => {
-                    container.addEventListener('touchmove', function(e) {
-                        if (iphonePickerModal.classList.contains('active')) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }
-                    }, { passive: false });
-                    
-                    container.addEventListener('wheel', function(e) {
-                        if (iphonePickerModal.classList.contains('active')) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }
-                    }, { passive: false });
-                });
-            }
-            
-            // Update selected value when wheel changes
-            function updateSelectedValue(wheelType, item) {
-                const value = item.getAttribute('data-value');
+                // Get first day of month
+                const firstDay = new Date(year, month, 1);
+                // Get last day of month
+                const lastDay = new Date(year, month + 1, 0);
+                // Get number of days in month
+                const daysInMonth = lastDay.getDate();
+                // Get day of week for first day (0 = Sunday, 1 = Monday, etc.)
+                const startingDay = firstDay.getDay();
                 
-                switch(wheelType) {
-                    case 'month':
-                        selectedMonth = parseInt(value);
-                        break;
-                    case 'day':
-                        selectedDay = parseInt(value);
-                        break;
-                    case 'year':
-                        selectedYear = parseInt(value);
-                        break;
-                    case 'hour':
-                        selectedHour = parseInt(value);
-                        break;
-                    case 'minute':
-                        selectedMinute = parseInt(value);
-                        break;
-                    case 'ampm':
-                        selectedAmPm = value;
-                        break;
-                }
-            }
-            
-            // Format selected date/time for display
-            function formatDateTime() {
-                const months = [
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
+                // Update month display
+                const monthNames = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
                 ];
+                currentMonthDisplay.textContent = `${monthNames[month]} ${year}`;
+                
+                // Add empty cells for days before first day of month
+                for (let i = 0; i < startingDay; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = 'day-cell disabled';
+                    datePicker.appendChild(emptyCell);
+                }
+                
+                // Add cells for each day of the month
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayCell = document.createElement('div');
+                    dayCell.className = 'day-cell';
+                    dayCell.textContent = day;
+                    dayCell.dataset.day = day;
+                    dayCell.dataset.month = month;
+                    dayCell.dataset.year = year;
+                    
+                    // Check if this is the selected date
+                    const cellDate = new Date(year, month, day);
+                    if (selectedDate.getDate() === day && 
+                        selectedDate.getMonth() === month && 
+                        selectedDate.getFullYear() === year) {
+                        dayCell.classList.add('selected');
+                    }
+                    
+                    // Check if date is in the past
+                    if (cellDate < today) {
+                        dayCell.classList.add('disabled');
+                    } else {
+                        // Add click event
+                        dayCell.addEventListener('click', function() {
+                            // Remove selected class from all days
+                            document.querySelectorAll('.day-cell').forEach(cell => {
+                                cell.classList.remove('selected');
+                            });
+                            
+                            // Add selected class to clicked day
+                            this.classList.add('selected');
+                            
+                            // Update selected date
+                            selectedDate = new Date(
+                                parseInt(this.dataset.year),
+                                parseInt(this.dataset.month),
+                                parseInt(this.dataset.day)
+                            );
+                        });
+                    }
+                    
+                    datePicker.appendChild(dayCell);
+                }
+            }
+            
+            // Open simple picker modal
+            datetimeBtn.addEventListener('click', function() {
+                simplePickerModal.classList.add('active');
+                backdrop.classList.add('active');
+                
+                // Prevent body scrolling when picker is open
+                document.body.style.overflow = 'hidden';
+            });
+            
+            // Close simple picker modal
+            closePickerBtn.addEventListener('click', closeSimplePicker);
+            
+            // Close picker when clicking backdrop
+            backdrop.addEventListener('click', function() {
+                if (simplePickerModal.classList.contains('active')) {
+                    closeSimplePicker();
+                } else {
+                    collapseBookingForm();
+                }
+            });
+            
+            function closeSimplePicker() {
+                simplePickerModal.classList.remove('active');
+                backdrop.classList.remove('active');
+                
+                // Re-enable body scrolling
+                document.body.style.overflow = 'auto';
+            }
+            
+            // Month navigation
+            prevMonthBtn.addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            
+            nextMonthBtn.addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            
+            // AM/PM selection
+            ampmBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    ampmBtns.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedAmPm = this.getAttribute('data-value');
+                });
+            });
+            
+            // Confirm date/time selection
+            confirmDatetimeBtn.addEventListener('click', function() {
+                // Get selected values
+                selectedHour = parseInt(hourSelect.value);
+                selectedMinute = parseInt(minuteSelect.value);
                 
                 // Convert 12-hour to 24-hour for date object
                 let hour24 = selectedHour;
@@ -1991,64 +1799,31 @@
                     hour24 = 0;
                 }
                 
-                // Create date object for validation
-                const selectedDate = new Date(selectedYear, selectedMonth, selectedDay, hour24, selectedMinute);
+                // Set time on selected date
+                selectedDate.setHours(hour24, selectedMinute, 0, 0);
                 
-                // Format for display
-                const monthName = months[selectedMonth];
-                const day = selectedDay;
-                const year = selectedYear;
+                // Format selected date/time for display
+                const monthNames = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+                
+                const day = selectedDate.getDate();
+                const month = monthNames[selectedDate.getMonth()];
+                const year = selectedDate.getFullYear();
                 const hour = selectedHour < 10 ? `0${selectedHour}` : selectedHour;
                 const minute = selectedMinute < 10 ? `0${selectedMinute}` : selectedMinute;
-                const ampm = selectedAmPm;
                 
-                return `${monthName} ${day}, ${year} at ${hour}:${minute} ${ampm}`;
-            }
-            
-            // Open iPhone picker modal
-            datetimeBtn.addEventListener('click', function() {
-                iphonePickerModal.classList.add('active');
-                backdrop.classList.add('active');
+                selectedDateTime = `${month} ${day}, ${year} at ${hour}:${minute} ${selectedAmPm}`;
                 
-                // Prevent body scrolling when picker is open
-                document.body.style.overflow = 'hidden';
-            });
-            
-            // Close iPhone picker modal
-            closePickerBtn.addEventListener('click', closeiPhonePicker);
-            
-            // Close picker when clicking backdrop
-            backdrop.addEventListener('click', function() {
-                if (iphonePickerModal.classList.contains('active')) {
-                    closeiPhonePicker();
-                } else {
-                    collapseBookingForm();
-                }
-            });
-            
-            function closeiPhonePicker() {
-                iphonePickerModal.classList.remove('active');
-                backdrop.classList.remove('active');
-                
-                // Re-enable body scrolling
-                document.body.style.overflow = 'auto';
-            }
-            
-            // Confirm date/time selection
-            confirmDatetimeBtn.addEventListener('click', function() {
-                selectedDateTime = formatDateTime();
+                // Update display
                 datetimeText.textContent = selectedDateTime;
                 datetimeText.classList.add('has-selection');
                 datetimeBtn.classList.add('selected');
                 datetimeBtn.innerHTML = '<i class="far fa-calendar-check"></i>';
                 datetimeBtn.title = selectedDateTime;
                 
-                // Haptic feedback on confirmation
-                if (vibrationSupported) {
-                    vibrate([30, 20, 30]);
-                }
-                
-                closeiPhonePicker();
+                closeSimplePicker();
                 
                 // Show passenger container when date is selected
                 passengerContainer.classList.add('active');
@@ -2177,11 +1952,6 @@
                                         datetimeContainer.classList.add('active');
                                     }
                                     
-                                    // Haptic feedback on success
-                                    if (vibrationSupported) {
-                                        vibrate([20, 10, 20]);
-                                    }
-                                    
                                     // Check field completion
                                     checkAllFieldsComplete();
                                 })
@@ -2189,11 +1959,6 @@
                                     // Fallback to coordinates
                                     pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
-                                    
-                                    // Haptic feedback
-                                    if (vibrationSupported) {
-                                        vibrate(30);
-                                    }
                                     
                                     // Check field completion
                                     checkAllFieldsComplete();
@@ -2206,10 +1971,6 @@
                         },
                         function(error) {
                             console.error("Geolocation error:", error);
-                            // Haptic feedback on error
-                            if (vibrationSupported) {
-                                vibrate([50, 100, 50]);
-                            }
                             // Reset button
                             currentLocationBtn.innerHTML = originalIcon;
                             currentLocationBtn.disabled = false;
@@ -2341,11 +2102,6 @@
                     passengerBtn.title = `${selectedPassengerCount} Passenger${selectedPassengerCount > 1 ? 's' : ''}`;
                     passengerBtn.classList.add('selected');
                     
-                    // Haptic feedback
-                    if (vibrationSupported) {
-                        vibrate(20);
-                    }
-                    
                     // Show pets container when passenger count is selected
                     petsContainer.classList.add('active');
                     
@@ -2373,11 +2129,6 @@
                     // Update button title and icon
                     petsBtn.title = `Pets: ${selectedPets === 'yes' ? 'Yes' : 'No'}`;
                     petsBtn.classList.add('selected');
-                    
-                    // Haptic feedback
-                    if (vibrationSupported) {
-                        vibrate(20);
-                    }
                     
                     // Show passenger name container when pets is selected
                     passengerNameContainer.classList.add('active');
@@ -2511,11 +2262,6 @@
                 if (completedCount === totalFields) {
                     submitBtn.classList.add('active');
                     submitBtn.disabled = false;
-                    
-                    // Haptic feedback when all fields complete
-                    if (vibrationSupported) {
-                        vibrate([30, 50, 30]);
-                    }
                 } else {
                     submitBtn.classList.remove('active');
                     submitBtn.disabled = true;
@@ -2524,7 +2270,7 @@
                 return completedCount === totalFields;
             }
             
-            // Function to highlight missing field with vibration
+            // Function to highlight missing field
             function highlightMissingField(field) {
                 // Remove any existing highlights
                 removeHighlights();
@@ -2533,11 +2279,6 @@
                 if (field.classList.contains('form-input') || field.classList.contains('icon-input')) {
                     field.classList.add('missing-field');
                     
-                    // Haptic feedback
-                    if (vibrationSupported) {
-                        vibrate([100, 50, 100]);
-                    }
-                    
                     // Remove highlight after 3 seconds
                     setTimeout(() => {
                         field.classList.remove('missing-field');
@@ -2545,11 +2286,6 @@
                 } else if (field.classList.contains('icon-btn') || field.classList.contains('pets-btn')) {
                     // For icon buttons, highlight the button
                     field.classList.add('missing-field-btn');
-                    
-                    // Haptic feedback
-                    if (vibrationSupported) {
-                        vibrate([100, 50, 100]);
-                    }
                     
                     // Remove highlight after 3 seconds
                     setTimeout(() => {
@@ -2582,11 +2318,6 @@
                     <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
                     ${message}
                 `;
-                
-                // Haptic feedback for error
-                if (vibrationSupported) {
-                    vibrate([150, 100, 150]);
-                }
                 
                 // Insert after form title
                 const formTitle = document.querySelector('.form-title');
@@ -2696,11 +2427,6 @@
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> PROCESSING...';
                 submitBtn.disabled = true;
                 
-                // Haptic feedback on submission
-                if (vibrationSupported) {
-                    vibrate([50, 100, 50]);
-                }
-                
                 // Simulate API call
                 setTimeout(() => {
                     // Reset button
@@ -2765,11 +2491,6 @@
                         </div>
                     </div>
                 `;
-                
-                // Haptic feedback for success
-                if (vibrationSupported) {
-                    vibrate([100, 150, 100]);
-                }
                 
                 // Insert after booking card
                 bookingCard.insertAdjacentHTML('afterend', confirmationHTML);
