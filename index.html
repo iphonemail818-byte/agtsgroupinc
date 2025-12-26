@@ -255,7 +255,7 @@
 
         .form-input:focus {
             outline: none;
-            border-color = 'var(--neon-cyan)';
+            border-color: var(--neon-cyan);
             box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
         }
 
@@ -426,22 +426,27 @@
             margin: 0 auto;
         }
 
-        /* Hidden datetime input for Flatpickr */
-        #pickup-datetime {
-            display: none;
+        /* Hidden datetime input for Flatpickr - COMPLETELY INVISIBLE */
+        #pickup-datetime,
+        .flatpickr-input,
+        .flatpickr-calendar input[type="text"] {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            position: absolute !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            display: none !important;
         }
 
-        /* COMPLETE CUSTOM FLATPICKR THEME - HIDE WHITE INPUT */
+        /* COMPLETE CUSTOM FLATPICKR THEME - NO WHITE INPUTS */
         .flatpickr-calendar {
             background: var(--card-dark) !important;
             border: 1px solid rgba(0, 243, 255, 0.3) !important;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 243, 255, 0.2) !important;
             border-radius: 12px !important;
-        }
-
-        /* HIDE THE WHITE INPUT FIELD IN CALENDAR */
-        .flatpickr-calendar .flatpickr-input {
-            display: none !important;
         }
 
         .flatpickr-months {
@@ -807,7 +812,7 @@
         </footer>
     </div>
 
-    <!-- Google Maps API with YOUR API Key -->
+    <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places&callback=initGoogleMaps" async defer></script>
     
     <!-- Flatpickr for Date/Time Selection -->
@@ -864,7 +869,7 @@
                     minDate: "today",
                     defaultHour: 12,
                     minuteIncrement: 15,
-                    disableMobile: true, // Use custom picker on mobile
+                    disableMobile: true,
                     inline: false,
                     clickOpens: true,
                     onReady: function(selectedDates, dateStr, instance) {
@@ -874,23 +879,24 @@
                             // Add custom class for styling
                             calendar.classList.add('agts-flatpickr');
                             
-                            // Hide the default input field completely
-                            const inputField = calendar.querySelector('.flatpickr-input');
-                            if (inputField) {
-                                inputField.style.display = 'none';
-                                inputField.style.opacity = '0';
-                                inputField.style.height = '0';
-                                inputField.style.padding = '0';
-                                inputField.style.border = 'none';
-                            }
+                            // Hide ALL input fields in the calendar
+                            const allInputs = calendar.querySelectorAll('input');
+                            allInputs.forEach(input => {
+                                input.style.display = 'none';
+                                input.style.visibility = 'hidden';
+                                input.style.opacity = '0';
+                                input.style.height = '0';
+                                input.style.width = '0';
+                                input.style.padding = '0';
+                                input.style.margin = '0';
+                                input.style.border = 'none';
+                            });
                             
                             // Also hide the time input if it's visible
                             const timeInputs = calendar.querySelectorAll('.flatpickr-time input');
                             timeInputs.forEach(input => {
-                                input.style.color = 'var(--neon-cyan)';
-                                input.style.background = 'transparent';
-                                input.style.border = '1px solid rgba(0, 243, 255, 0.2)';
-                                input.style.borderRadius = '6px';
+                                input.style.display = 'none';
+                                input.style.visibility = 'hidden';
                             });
                         }
                     },
@@ -910,11 +916,12 @@
                         setTimeout(() => {
                             const calendar = instance.calendarContainer;
                             if (calendar) {
-                                // Hide the input field
-                                const inputField = calendar.querySelector('.flatpickr-input');
-                                if (inputField) {
-                                    inputField.style.display = 'none';
-                                }
+                                // Hide ALL input fields again
+                                const allInputs = calendar.querySelectorAll('input');
+                                allInputs.forEach(input => {
+                                    input.style.display = 'none';
+                                    input.style.visibility = 'hidden';
+                                });
                             }
                         }, 10);
                     },
