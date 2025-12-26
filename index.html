@@ -3,1348 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AGTS Group Inc | Luxury SUV Transportation</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <title>Book Your Luxury SUV</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* CSS Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
-
-        :root {
-            --primary-dark: #0b0b10;
-            --card-dark: #1b1c26;
-            --card-darker: #111;
-            --neon-cyan: #00f3ff;
-            --neon-glow: 0 0 10px rgba(0, 243, 255, 0.7);
-            --text-light: #f0f0f0;
-            --text-muted: #aaa;
-            --border-radius: 22px;
-            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            --backdrop-blur: blur(8px);
-        }
-
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'San Francisco', sans-serif;
-            background-color: var(--primary-dark);
-            color: var(--text-light);
+            background-color: #f5f5f7;
             min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.5;
-        }
-
-        /* Loading Screen */
-        #loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--primary-dark);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            opacity: 1;
-            transition: opacity 0.5s ease;
+            padding: 20px;
         }
-
-        #loading-screen.fade-out {
-            opacity: 0;
-            pointer-events: none;
+        
+        .booking-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: #1a1a1a;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            color: white;
         }
-
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 1.8rem;
-            letter-spacing: 1.5px;
-            color: var(--neon-cyan);
-            text-shadow: var(--neon-glow);
-            text-align: center;
-            margin-bottom: 2.5rem;
-            animation: pulse 2s infinite;
+        
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
         }
-
-        .loading-bar-container {
-            width: 220px;
-            height: 4px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
+        
+        .form-group {
+            margin-bottom: 25px;
         }
-
-        .loading-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #0b0b10, var(--neon-cyan), #0b0b10);
-            background-size: 200% 100%;
-            animation: loading 3s forwards, shimmer 2s infinite;
-        }
-
-        @keyframes loading {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { text-shadow: 0 0 10px rgba(0, 243, 255, 0.7); }
-            50% { text-shadow: 0 0 20px rgba(0, 243, 255, 0.9), 0 0 30px rgba(0, 243, 255, 0.5); }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        /* Main Content */
-        #main-content {
-            opacity: 0;
-            transition: opacity 0.5s ease 0.3s;
-        }
-
-        #main-content.fade-in {
-            opacity: 1;
-        }
-
-        .header {
-            padding: 1.5rem 1rem 1rem;
-            text-align: center;
-        }
-
-        .main-logo {
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 900;
-            font-size: 1.5rem;
-            letter-spacing: 1.2px;
-            color: var(--neon-cyan);
-            text-shadow: var(--neon-glow);
-            margin-bottom: 0.5rem;
-        }
-
-        .tagline {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 300;
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #aaaaaa;
+            margin-bottom: 8px;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-
-        /* Backdrop */
-        .backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: var(--backdrop-blur);
-            z-index: 99;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-        }
-
-        .backdrop.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Booking Card */
-        .booking-card {
-            max-width: 500px;
-            margin: 1rem auto;
-            background: linear-gradient(180deg, var(--card-dark), var(--card-darker));
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            transition: var(--transition);
+        
+        .input-container {
             position: relative;
-            z-index: 100;
+            display: flex;
+            align-items: center;
         }
-
-        @media (min-width: 768px) {
-            .booking-card {
-                margin: 2rem auto;
-            }
-            .booking-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-            }
+        
+        .location-icon {
+            position: absolute;
+            left: 15px;
+            color: #aaaaaa;
+            font-size: 18px;
         }
-
-        /* Collapsed Search Input */
-        .collapsed-search {
+        
+        .location-input {
+            width: 100%;
+            padding: 18px 18px 18px 50px;
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .location-input:focus {
+            border-color: #5a5a5a;
+            background-color: #333333;
+        }
+        
+        .location-input::placeholder {
+            color: #777777;
+        }
+        
+        .plus-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        
+        .plus-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #2a2a2a;
+            border: 2px solid #3a3a3a;
+            color: #aaaaaa;
+            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .search-pill {
-            width: 100%;
-            max-width: 400px;
-            background-color: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-            padding: 1.2rem 1.5rem;
-            font-size: 1rem;
-            color: var(--text-light);
             cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
+            transition: all 0.3s;
         }
-
-        .search-pill:hover {
-            background-color: rgba(255, 255, 255, 0.12);
-            border-color: rgba(0, 243, 255, 0.3);
+        
+        .plus-button:hover {
+            background-color: #333333;
+            color: white;
         }
-
-        /* Expanded Booking Form */
-        .booking-form {
-            display: none;
+        
+        .datetime-container {
+            background-color: #2a2a2a;
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
         }
-
-        .booking-form.active {
-            display: block;
+        
+        .datetime-icon {
+            font-size: 20px;
+            margin-right: 15px;
+            color: #aaaaaa;
         }
-
-        .form-title {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-            text-align: center;
-            color: var(--text-light);
-        }
-
-        .input-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .input-label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
+        
+        .datetime-text {
+            font-size: 16px;
+            color: white;
             font-weight: 500;
         }
-
-        /* Input Wrapper with Button */
-        .input-with-button {
-            position: relative;
+        
+        .book-button {
             width: 100%;
-        }
-
-        .form-input {
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 1rem 3.5rem 1rem 1.2rem;
-            font-size: 1rem;
-            color: var(--text-light);
-            transition: var(--transition);
-            font-family: inherit;
-            height: 52px;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
-        }
-
-        /* Current Location Button - PERFECTLY CENTERED */
-        .current-location-btn {
-            position: absolute;
-            right: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 243, 255, 0.1);
-            color: var(--neon-cyan);
-            border: none;
-            border-radius: 8px;
-            padding: 0;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            z-index: 2;
-        }
-
-        .current-location-btn:hover {
-            background: rgba(0, 243, 255, 0.2);
-            transform: translateY(-50%) scale(1.05);
-        }
-
-        .current-location-btn:active {
-            transform: translateY(-50%) scale(0.95);
-        }
-
-        /* Destination field doesn't have button, adjust padding */
-        #destination {
-            padding-right: 1.2rem;
-        }
-
-        /* Stops Container */
-        .stops-container {
-            margin-top: 1rem;
-        }
-
-        .stop-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .stop-number {
-            width: 28px;
-            height: 28px;
-            background-color: rgba(0, 243, 255, 0.2);
-            color: var(--neon-cyan);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            margin-right: 0.8rem;
-            flex-shrink: 0;
-        }
-
-        .stop-input {
-            flex-grow: 1;
-            position: relative;
-        }
-
-        .remove-stop {
-            background: none;
-            border: none;
-            color: #ff4757;
-            font-size: 1.5rem;
-            cursor: pointer;
-            margin-left: 0.5rem;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: var(--transition);
-            flex-shrink: 0;
-        }
-
-        .remove-stop:hover {
-            background-color: rgba(255, 71, 87, 0.1);
-        }
-
-        .add-stop-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 243, 255, 0.1);
-            color: var(--neon-cyan);
-            border: 1px dashed rgba(0, 243, 255, 0.3);
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            margin: 0.5rem auto;
-            transition: var(--transition);
-        }
-
-        .add-stop-btn:hover {
-            background-color: rgba(0, 243, 255, 0.2);
-            transform: scale(1.05);
-        }
-
-        /* Date & Time Picker - CLEAN ICON ONLY (No text field) */
-        .datetime-container {
-            display: none;
-            margin-top: 1.5rem;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .datetime-container.active {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .datetime-icon-only {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 243, 255, 0.1);
-            color: var(--neon-cyan);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 12px;
-            width: 60px;
-            height: 60px;
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .datetime-icon-only:hover {
-            background-color: rgba(0, 243, 255, 0.2);
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-        }
-
-        .datetime-icon-only.selected {
-            background-color: rgba(0, 243, 255, 0.2);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-            border-color: var(--neon-cyan);
-        }
-
-        /* Hidden datetime input for Flatpickr */
-        #pickup-datetime {
-            display: none;
-        }
-
-        /* Submit Button */
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(90deg, rgba(0, 243, 255, 0.9), rgba(0, 200, 255, 0.9));
+            padding: 20px;
+            background-color: #007aff;
+            color: white;
             border: none;
             border-radius: 12px;
-            padding: 1.2rem;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-dark);
+            font-size: 18px;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 1.5rem;
-            transition: var(--transition);
-            letter-spacing: 0.5px;
-            font-family: 'Orbitron', sans-serif;
+            transition: background-color 0.3s;
+            margin-top: 10px;
         }
-
-        .submit-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 5px 15px rgba(0, 243, 255, 0.4);
+        
+        .book-button:hover {
+            background-color: #0056cc;
         }
-
-        .submit-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Footer */
-        .footer {
+        
+        .note {
+            font-size: 12px;
+            color: #777777;
             text-align: center;
-            padding: 2rem 1rem;
-            color: var(--text-muted);
-            font-size: 0.85rem;
+            margin-top: 20px;
+            line-height: 1.5;
         }
-
-        .luxury-features {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .feature {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: 120px;
-        }
-
-        .feature-icon {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0, 243, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.5rem;
-            color: var(--neon-cyan);
-        }
-
-        .feature-text {
-            font-size: 0.8rem;
-            text-align: center;
-        }
-
-        /* Autocomplete Suggestions */
-        .autocomplete-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--card-dark);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            margin-top: 4px;
-            z-index: 1000;
-            max-height: 250px;
-            overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .autocomplete-suggestion {
-            padding: 12px 15px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-        }
-
-        .autocomplete-suggestion:last-child {
-            border-bottom: none;
-        }
-
-        .autocomplete-suggestion:hover {
-            background: rgba(0, 243, 255, 0.1);
-        }
-
-        .suggestion-icon {
-            margin-right: 10px;
-            color: var(--neon-cyan);
-            font-size: 0.9rem;
-            width: 20px;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Utility Classes */
-        .hidden {
-            display: none !important;
-        }
-
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
+        
+        .pac-container {
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            margin-top: 5px;
             overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
+        }
+        
+        .pac-item {
+            color: white;
+            padding: 10px 15px;
+            border-top: 1px solid #3a3a3a;
+            font-size: 14px;
+        }
+        
+        .pac-item:hover {
+            background-color: #333333;
+        }
+        
+        .pac-icon {
+            margin-right: 10px;
+        }
+        
+        .pac-item-query {
+            color: white;
+            font-size: 14px;
+        }
+        
+        .pac-matched {
+            color: #007aff;
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-        <div class="logo">AGTS GROUP INC</div>
-        <div class="loading-bar-container">
-            <div class="loading-bar"></div>
-        </div>
-    </div>
-
-    <!-- Backdrop -->
-    <div class="backdrop" id="backdrop"></div>
-
-    <!-- Main Content -->
-    <div id="main-content">
-        <header class="header">
-            <div class="main-logo">AGTS GROUP INC</div>
-            <div class="tagline">Luxury SUV Transportation | Executive Travel</div>
-        </header>
-
-        <main>
-            <!-- Booking Card -->
-            <div class="booking-card" id="booking-card">
-                <!-- Collapsed Search Input -->
-                <div class="collapsed-search" id="collapsed-search">
-                    <div class="search-pill" id="search-pill">
-                        <i class="fas fa-map-marker-alt" style="margin-right: 8px;"></i>
-                        Where are you going?
-                    </div>
-                </div>
-
-                <!-- Expanded Booking Form -->
-                <div class="booking-form" id="booking-form">
-                    <h2 class="form-title">Book Your Luxury SUV</h2>
-                    
-                    <!-- Pickup Location -->
-                    <div class="input-group">
-                        <label class="input-label" for="pickup">Pickup Location</label>
-                        <div class="input-with-button">
-                            <input type="text" 
-                                   class="form-input" 
-                                   id="pickup" 
-                                   placeholder="Enter pickup location"
-                                   autocomplete="off">
-                            <button class="current-location-btn" id="current-location" title="Use Current Location">
-                                <i class="fas fa-location-arrow"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Destination -->
-                    <div class="input-group">
-                        <label class="input-label" for="destination">Destination</label>
-                        <div class="input-with-button">
-                            <input type="text" 
-                                   class="form-input" 
-                                   id="destination" 
-                                   placeholder="Enter destination address"
-                                   autocomplete="off">
-                        </div>
-                    </div>
-                    
-                    <!-- Additional Stops Container -->
-                    <div class="stops-container" id="stops-container">
-                        <!-- Additional stops will be added here dynamically -->
-                    </div>
-                    
-                    <!-- Add Stop Button -->
-                    <button class="add-stop-btn" id="add-stop-btn" title="Add Stop">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    
-                    <!-- Date & Time Picker (Icon Only - No Text Field) -->
-                    <div class="datetime-container" id="datetime-container">
-                        <label class="input-label">Pickup Date & Time</label>
-                        <button class="datetime-icon-only" id="datetime-btn" title="Select date and time">
-                            <i class="far fa-calendar-alt"></i>
-                        </button>
-                        <input type="text" 
-                               id="pickup-datetime" 
-                               placeholder="Select date and time"
-                               readonly>
-                    </div>
-                    
-                    <!-- Submit Button -->
-                    <button class="submit-btn" id="submit-btn">
-                        <i class="fas fa-car" style="margin-right: 10px;"></i>
-                        CONFIRM BOOKING
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Luxury Features -->
-            <div class="luxury-features">
-                <div class="feature">
-                    <div class="feature-icon"><i class="fas fa-star"></i></div>
-                    <div class="feature-text">Premium SUVs</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon"><i class="fas fa-user-tie"></i></div>
-                    <div class="feature-text">Professional Chauffeurs</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon"><i class="fas fa-clock"></i></div>
-                    <div class="feature-text">Punctual Service</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                    <div class="feature-text">Secure & Private</div>
-                </div>
-            </div>
-        </main>
+    <div class="booking-container">
+        <h1 class="title">Book Your Luxury SUV</h1>
         
-        <footer class="footer">
-            <p>© 2023 AGTS Group Inc. Luxury SUV Transportation Services.</p>
-            <p>Available 24/7 for executive travel needs.</p>
-        </footer>
+        <form id="booking-form">
+            <div class="form-group">
+                <label class="form-label">Pickup Location</label>
+                <div class="input-container">
+                    <i class="fas fa-map-marker-alt location-icon"></i>
+                    <input type="text" id="pickup-location" class="location-input" placeholder="Enter pickup location" value="9933 Saloma Avenue, Los Angeles, California">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Destination</label>
+                <div class="input-container">
+                    <i class="fas fa-flag-checkered location-icon"></i>
+                    <input type="text" id="destination" class="location-input" placeholder="Enter destination" value="H">
+                </div>
+            </div>
+            
+            <div class="plus-container">
+                <div class="plus-button">
+                    <i class="fas fa-plus"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Pickup Date & Time</label>
+                <div class="datetime-container">
+                    <i class="fas fa-calendar-alt datetime-icon"></i>
+                    <div class="datetime-text">Dec 26, 2025 at 1:12 AM</div>
+                </div>
+            </div>
+            
+            <button type="button" class="book-button">Book Now</button>
+            
+            <div class="note">
+                Luxury SUV service with professional drivers. 24/7 availability.<br>
+                Cancel up to 1 hour before pickup for full refund.
+            </div>
+        </form>
     </div>
 
-    <!-- Flatpickr for Date/Time Selection -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
     <script>
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elements
-            const loadingScreen = document.getElementById('loading-screen');
-            const mainContent = document.getElementById('main-content');
-            const searchPill = document.getElementById('search-pill');
-            const bookingForm = document.getElementById('booking-form');
-            const collapsedSearch = document.getElementById('collapsed-search');
-            const backdrop = document.getElementById('backdrop');
-            const pickupInput = document.getElementById('pickup');
-            const destinationInput = document.getElementById('destination');
-            const currentLocationBtn = document.getElementById('current-location');
-            const addStopBtn = document.getElementById('add-stop-btn');
-            const stopsContainer = document.getElementById('stops-container');
-            const datetimeContainer = document.getElementById('datetime-container');
-            const datetimeBtn = document.getElementById('datetime-btn');
-            const pickupDatetimeInput = document.getElementById('pickup-datetime');
-            const submitBtn = document.getElementById('submit-btn');
-            const bookingCard = document.getElementById('booking-card');
-            
-            // Global variables
-            let stopCount = 0;
-            let selectedDateTime = null;
-            let autocompleteTimeout = null;
-            
-            // Simulate loading screen for 3 seconds
-            setTimeout(() => {
-                loadingScreen.classList.add('fade-out');
-                mainContent.classList.add('fade-in');
-                
-                // Initialize date and time pickers after loading
-                initializeDateTimePicker();
-                
-                // Initialize autocomplete for inputs
-                initializeAutocomplete();
-                
-                // After loading screen fades out, remove it from DOM
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 500);
-            }, 3000);
-            
-            // Initialize combined date and time picker
-            function initializeDateTimePicker() {
-                flatpickr(pickupDatetimeInput, {
-                    enableTime: true,
-                    dateFormat: "F j, Y at h:i K",
-                    minDate: "today",
-                    defaultHour: 12,
-                    minuteIncrement: 15,
-                    onChange: function(selectedDates, dateStr, instance) {
-                        selectedDateTime = dateStr;
-                        // Update button title for tooltip
-                        datetimeBtn.title = dateStr;
-                        // Add visual indication that date is selected
-                        datetimeBtn.classList.add('selected');
-                        // Update button text to show selected date
-                        datetimeBtn.innerHTML = '<i class="far fa-calendar-check"></i>';
-                    },
-                    onClose: function(selectedDates, dateStr, instance) {
-                        if (!dateStr) {
-                            datetimeBtn.classList.remove('selected');
-                            datetimeBtn.title = "Select date and time";
-                            datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
-                        }
-                    }
-                });
-                
-                // Trigger Flatpickr when button is clicked
-                datetimeBtn.addEventListener('click', function() {
-                    pickupDatetimeInput._flatpickr.open();
-                });
-            }
-            
-            // Initialize autocomplete for both fields using OpenStreetMap API
-            function initializeAutocomplete() {
-                setupAutocomplete(pickupInput, true);
-                setupAutocomplete(destinationInput, false);
-            }
-            
-            // Setup autocomplete using OpenStreetMap Nominatim API
-            function setupAutocomplete(inputElement, isPickup) {
-                let suggestionsContainer = null;
-                let currentFocus = -1;
-                
-                inputElement.addEventListener('focus', function() {
-                    this.style.borderColor = 'var(--neon-cyan)';
-                    this.style.boxShadow = '0 0 0 2px rgba(0, 243, 255, 0.2)';
-                });
-                
-                inputElement.addEventListener('blur', function() {
-                    this.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                    this.style.boxShadow = 'none';
-                    
-                    // Small delay to allow clicking on suggestions
-                    setTimeout(() => {
-                        if (suggestionsContainer) {
-                            suggestionsContainer.remove();
-                            suggestionsContainer = null;
-                        }
-                        currentFocus = -1;
-                    }, 200);
-                });
-                
-                inputElement.addEventListener('input', function(e) {
-                    const value = e.target.value.trim();
-                    
-                    // Clear previous timeout
-                    if (autocompleteTimeout) {
-                        clearTimeout(autocompleteTimeout);
-                    }
-                    
-                    // Clear previous suggestions
-                    if (suggestionsContainer) {
-                        suggestionsContainer.remove();
-                        suggestionsContainer = null;
-                    }
-                    currentFocus = -1;
-                    
-                    if (value.length > 2) {
-                        // Debounce API call
-                        autocompleteTimeout = setTimeout(() => {
-                            fetchAutocompleteSuggestions(value, inputElement);
-                        }, 300);
-                    }
-                });
-                
-                // Keyboard navigation for autocomplete
-                inputElement.addEventListener('keydown', function(e) {
-                    if (!suggestionsContainer) return;
-                    
-                    const items = suggestionsContainer.querySelectorAll('.autocomplete-suggestion');
-                    
-                    // Arrow down
-                    if (e.key === 'ArrowDown') {
-                        e.preventDefault();
-                        currentFocus = Math.min(currentFocus + 1, items.length - 1);
-                        highlightSuggestion(items);
-                    }
-                    // Arrow up
-                    else if (e.key === 'ArrowUp') {
-                        e.preventDefault();
-                        currentFocus = Math.max(currentFocus - 1, -1);
-                        highlightSuggestion(items);
-                    }
-                    // Enter key
-                    else if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (currentFocus > -1 && items[currentFocus]) {
-                            items[currentFocus].click();
-                        }
-                    }
-                });
-                
-                // Fetch autocomplete suggestions from OpenStreetMap
-                function fetchAutocompleteSuggestions(query, inputElement) {
-                    // Using OpenStreetMap Nominatim API
-                    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1`;
-                    
-                    fetch(url)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data && data.length > 0) {
-                                showSuggestions(inputElement, data);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Autocomplete error:', error);
-                            // Fallback to mock suggestions if API fails
-                            showMockSuggestions(inputElement, query);
-                        });
-                }
-                
-                // Show mock suggestions as fallback
-                function showMockSuggestions(inputElement, query) {
-                    const mockSuggestions = [
-                        {display_name: "123 Main Street, New York, NY", type: "house"},
-                        {display_name: "456 Park Avenue, New York, NY", type: "house"},
-                        {display_name: "JFK International Airport, Queens, NY", type: "airport"},
-                        {display_name: "Grand Central Terminal, New York, NY", type: "station"},
-                        {display_name: "Times Square, New York, NY", type: "tourism"},
-                        {display_name: "Central Park, New York, NY", type: "park"},
-                        {display_name: "Empire State Building, New York, NY", type: "tourism"},
-                        {display_name: "Wall Street, New York, NY", type: "road"}
-                    ];
-                    
-                    const filtered = mockSuggestions.filter(item => 
-                        item.display_name.toLowerCase().includes(query.toLowerCase())
-                    );
-                    
-                    if (filtered.length > 0) {
-                        showSuggestions(inputElement, filtered);
-                    }
-                }
-                
-                // Show autocomplete suggestions
-                function showSuggestions(inputElement, suggestions) {
-                    // Create suggestions container
-                    suggestionsContainer = document.createElement('div');
-                    suggestionsContainer.className = 'autocomplete-suggestions';
-                    
-                    // Add each suggestion
-                    suggestions.forEach(suggestion => {
-                        const suggestionItem = document.createElement('div');
-                        suggestionItem.className = 'autocomplete-suggestion';
-                        
-                        // Get icon based on type
-                        const icon = getSuggestionIcon(suggestion.type || suggestion.class);
-                        
-                        suggestionItem.innerHTML = `
-                            <div class="suggestion-icon">${icon}</div>
-                            <div class="suggestion-text">${suggestion.display_name}</div>
-                        `;
-                        
-                        suggestionItem.addEventListener('click', function() {
-                            inputElement.value = suggestion.display_name;
-                            inputElement.style.borderColor = 'var(--neon-cyan)';
-                            
-                            if (suggestionsContainer) {
-                                suggestionsContainer.remove();
-                                suggestionsContainer = null;
-                            }
-                            currentFocus = -1;
-                            
-                            // Show date/time picker if destination is being filled
-                            if (!isPickup && inputElement.value.trim().length > 0) {
-                                datetimeContainer.classList.add('active');
-                            }
-                        });
-                        
-                        suggestionsContainer.appendChild(suggestionItem);
-                    });
-                    
-                    // Position relative to input
-                    inputElement.parentNode.style.position = 'relative';
-                    inputElement.parentNode.appendChild(suggestionsContainer);
-                }
-                
-                // Get icon based on suggestion type
-                function getSuggestionIcon(type) {
-                    if (!type) return '<i class="fas fa-map-marker-alt"></i>';
-                    
-                    const icons = {
-                        'house': '<i class="fas fa-home"></i>',
-                        'building': '<i class="fas fa-building"></i>',
-                        'airport': '<i class="fas fa-plane"></i>',
-                        'station': '<i class="fas fa-train"></i>',
-                        'tourism': '<i class="fas fa-landmark"></i>',
-                        'park': '<i class="fas fa-tree"></i>',
-                        'road': '<i class="fas fa-road"></i>',
-                        'hotel': '<i class="fas fa-hotel"></i>',
-                        'restaurant': '<i class="fas fa-utensils"></i>',
-                        'shop': '<i class="fas fa-shopping-bag"></i>'
-                    };
-                    
-                    return icons[type] || '<i class="fas fa-map-marker-alt"></i>';
-                }
-                
-                // Highlight current suggestion
-                function highlightSuggestion(items) {
-                    // Remove highlight from all items
-                    items.forEach(item => {
-                        item.style.background = 'transparent';
-                    });
-                    
-                    // Add highlight to current item
-                    if (currentFocus > -1 && items[currentFocus]) {
-                        items[currentFocus].style.background = 'rgba(0, 243, 255, 0.1)';
-                        items[currentFocus].scrollIntoView({block: 'nearest'});
-                    }
-                }
-            }
-            
-            // Expand booking form when search pill is clicked
-            searchPill.addEventListener('click', expandBookingForm);
-            
-            // Collapse booking form when backdrop is clicked
-            backdrop.addEventListener('click', collapseBookingForm);
-            
-            // Expand booking form function
-            function expandBookingForm() {
-                collapsedSearch.classList.add('hidden');
-                bookingForm.classList.add('active');
-                backdrop.classList.add('active');
-                bookingCard.style.zIndex = '101';
-                
-                // Focus on pickup input after animation
-                setTimeout(() => {
-                    pickupInput.focus();
-                }, 300);
-            }
-            
-            // Collapse booking form function
-            function collapseBookingForm() {
-                collapsedSearch.classList.remove('hidden');
-                bookingForm.classList.remove('active');
-                backdrop.classList.remove('active');
-                bookingCard.style.zIndex = '100';
-            }
-            
-            // Use current location for pickup
-            currentLocationBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Show loading state
-                const originalIcon = currentLocationBtn.innerHTML;
-                currentLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                currentLocationBtn.disabled = true;
-                
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        function(position) {
-                            // Success - set the pickup location
-                            const latitude = position.coords.latitude;
-                            const longitude = position.coords.longitude;
-                            
-                            // Use actual geocoding to get address
-                            getAddressFromCoordinates(latitude, longitude)
-                                .then(address => {
-                                    pickupInput.value = address;
-                                    pickupInput.style.borderColor = 'var(--neon-cyan)';
-                                    pickupInput.style.color = 'var(--neon-cyan)';
-                                    
-                                    // Show success message
-                                    showTemporaryMessage(pickupInput, "✓ Location detected", true);
-                                    
-                                    // Reset to normal state after 2 seconds
-                                    setTimeout(() => {
-                                        pickupInput.style.color = 'var(--text-light)';
-                                    }, 2000);
-                                })
-                                .catch(error => {
-                                    // Fallback to coordinates
-                                    pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
-                                    pickupInput.style.borderColor = 'var(--neon-cyan)';
-                                    showTemporaryMessage(pickupInput, "Using your coordinates", true);
-                                    
-                                    // Reset to normal state after 2 seconds
-                                    setTimeout(() => {
-                                        pickupInput.style.color = 'var(--text-light)';
-                                    }, 2000);
-                                })
-                                .finally(() => {
-                                    // Reset button
-                                    currentLocationBtn.innerHTML = originalIcon;
-                                    currentLocationBtn.disabled = false;
-                                });
-                        },
-                        function(error) {
-                            // Error - handle permission denied or other errors
-                            console.error("Geolocation error:", error);
-                            
-                            let errorMessage = "Location access denied";
-                            if (error.code === error.TIMEOUT) {
-                                errorMessage = "Location request timed out";
-                            } else if (error.code === error.POSITION_UNAVAILABLE) {
-                                errorMessage = "Location unavailable";
-                            }
-                            
-                            showTemporaryMessage(pickupInput, errorMessage, false);
-                            pickupInput.style.borderColor = '#ff4757';
-                            
-                            // Reset to normal state after 2 seconds
-                            setTimeout(() => {
-                                pickupInput.style.color = 'var(--text-light)';
-                                pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                            }, 2000);
-                            
-                            // Reset button
-                            currentLocationBtn.innerHTML = originalIcon;
-                            currentLocationBtn.disabled = false;
-                        },
-                        { 
-                            timeout: 10000,
-                            enableHighAccuracy: true 
-                        }
-                    );
-                } else {
-                    // Browser doesn't support geolocation
-                    showTemporaryMessage(pickupInput, "Geolocation not supported", false);
-                    pickupInput.style.borderColor = '#ff4757';
-                    
-                    // Reset to normal state after 2 seconds
-                    setTimeout(() => {
-                        pickupInput.style.color = 'var(--text-light)';
-                        pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                    }, 2000);
-                    
-                    // Reset button
-                    currentLocationBtn.innerHTML = originalIcon;
-                    currentLocationBtn.disabled = false;
-                }
+        // REPLACE 'YOUR_API_KEY' with your actual Google API key above
+        
+        // Initialize autocomplete for pickup location
+        const pickupInput = document.getElementById('pickup-location');
+        const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, {
+            types: ['geocode', 'establishment'],
+            componentRestrictions: { country: 'us' }
+        });
+        
+        // Initialize autocomplete for destination
+        const destinationInput = document.getElementById('destination');
+        const destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput, {
+            types: ['geocode', 'establishment'],
+            componentRestrictions: { country: 'us' }
+        });
+        
+        // Style the autocomplete dropdown to match our dark theme
+        const styleAutocomplete = () => {
+            const pacContainers = document.querySelectorAll('.pac-container');
+            pacContainers.forEach(container => {
+                container.style.backgroundColor = '#2a2a2a';
+                container.style.borderColor = '#3a3a3a';
+                container.style.color = 'white';
+                container.style.borderRadius = '12px';
+                container.style.marginTop = '5px';
+                container.style.overflow = 'hidden';
             });
             
-            // Get address from coordinates using Nominatim (OpenStreetMap)
-            function getAddressFromCoordinates(lat, lng) {
-                return new Promise((resolve, reject) => {
-                    // Using OpenStreetMap Nominatim API
-                    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data && data.display_name) {
-                                // Format the address nicely
-                                const address = formatAddress(data);
-                                resolve(address);
-                            } else {
-                                reject(new Error('No address found'));
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Geocoding error:', error);
-                            reject(error);
-                        });
-                });
-            }
-            
-            // Format the address from Nominatim response
-            function formatAddress(data) {
-                const address = data.address;
-                let formattedAddress = '';
-                
-                // Try to create a nice address format
-                if (address.road) {
-                    if (address.house_number) {
-                        formattedAddress = address.house_number + ' ';
-                    }
-                    formattedAddress += address.road;
-                    if (address.city || address.town || address.village) {
-                        formattedAddress += ', ' + (address.city || address.town || address.village);
-                    }
-                    if (address.state && formattedAddress) {
-                        formattedAddress += ', ' + address.state;
-                    }
-                } else {
-                    // Fallback to display name
-                    formattedAddress = data.display_name.split(',')[0];
-                }
-                
-                return formattedAddress || "Current Location";
-            }
-            
-            // Show temporary message in input field
-            function showTemporaryMessage(inputElement, message, isSuccess) {
-                const originalPlaceholder = inputElement.placeholder;
-                const originalValue = inputElement.value;
-                
-                inputElement.value = "";
-                inputElement.placeholder = message;
-                inputElement.style.borderColor = isSuccess ? 'var(--neon-cyan)' : '#ff4757';
-                inputElement.style.color = isSuccess ? 'var(--neon-cyan)' : '#ff4757';
-                
-                setTimeout(() => {
-                    inputElement.placeholder = originalPlaceholder;
-                    inputElement.value = originalValue;
-                    inputElement.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-                    inputElement.style.color = 'var(--text-light)';
-                }, 2000);
-            }
-            
-            // Show date/time field when destination input starts
-            destinationInput.addEventListener('input', function() {
-                if (destinationInput.value.trim().length > 0) {
-                    datetimeContainer.classList.add('active');
-                } else {
-                    datetimeContainer.classList.remove('active');
-                }
+            const pacItems = document.querySelectorAll('.pac-item');
+            pacItems.forEach(item => {
+                item.style.color = 'white';
+                item.style.padding = '10px 15px';
+                item.style.borderTopColor = '#3a3a3a';
+                item.style.fontSize = '14px';
             });
             
-            // Also show date/time when pickup is filled
-            pickupInput.addEventListener('input', function() {
-                if (destinationInput.value.trim().length > 0 || pickupInput.value.trim().length > 0) {
-                    datetimeContainer.classList.add('active');
-                }
+            const pacItemQueries = document.querySelectorAll('.pac-item-query');
+            pacItemQueries.forEach(query => {
+                query.style.color = 'white';
+                query.style.fontSize = '14px';
             });
+        };
+        
+        // Apply styling when autocomplete opens
+        pickupAutocomplete.addListener('place_changed', styleAutocomplete);
+        destinationAutocomplete.addListener('place_changed', styleAutocomplete);
+        
+        // Also apply styling on input focus (when dropdown might appear)
+        pickupInput.addEventListener('focus', styleAutocomplete);
+        destinationInput.addEventListener('focus', styleAutocomplete);
+        
+        // Simple form submission handler
+        document.querySelector('.book-button').addEventListener('click', function() {
+            const pickup = pickupInput.value;
+            const destination = destinationInput.value;
             
-            // Add additional stop
-            addStopBtn.addEventListener('click', function() {
-                stopCount++;
-                
-                const stopItem = document.createElement('div');
-                stopItem.className = 'stop-item';
-                stopItem.innerHTML = `
-                    <div class="stop-number">${stopCount}</div>
-                    <div class="stop-input">
-                        <input type="text" 
-                               class="form-input stop-location" 
-                               placeholder="Additional stop ${stopCount}"
-                               autocomplete="off">
-                    </div>
-                    <button class="remove-stop" type="button" title="Remove Stop">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                
-                stopsContainer.appendChild(stopItem);
-                
-                // Add event listener to remove button
-                const removeBtn = stopItem.querySelector('.remove-stop');
-                removeBtn.addEventListener('click', function() {
-                    // Add fade out animation
-                    stopItem.style.opacity = '0';
-                    stopItem.style.transform = 'translateX(-10px)';
-                    stopItem.style.transition = 'opacity 0.3s, transform 0.3s';
-                    
-                    setTimeout(() => {
-                        stopItem.remove();
-                        updateStopNumbers();
-                    }, 300);
-                });
-                
-                // Setup autocomplete for the new stop
-                const stopInput = stopItem.querySelector('.stop-location');
-                setupAutocomplete(stopInput, false);
-                
-                // Focus on the new stop input
-                setTimeout(() => {
-                    stopInput.focus();
-                }, 100);
-            });
-            
-            // Update stop numbers after removal
-            function updateStopNumbers() {
-                const stopNumbers = stopsContainer.querySelectorAll('.stop-number');
-                stopNumbers.forEach((number, index) => {
-                    number.textContent = index + 1;
-                });
-                stopCount = stopNumbers.length;
+            if (!pickup || !destination) {
+                alert('Please enter both pickup location and destination');
+                return;
             }
             
-            // Handle form submission
-            submitBtn.addEventListener('click', function() {
-                // Get form values
-                const pickup = pickupInput.value.trim();
-                const destination = destinationInput.value.trim();
-                const datetime = selectedDateTime;
-                
-                // Get additional stops
-                const stopInputs = document.querySelectorAll('.stop-location');
-                const stops = Array.from(stopInputs)
-                    .map(input => input.value.trim())
-                    .filter(stop => stop.length > 0);
-                
-                // Basic validation
-                let errors = [];
-                if (!pickup) errors.push("Pickup location");
-                if (!destination) errors.push("Destination");
-                if (!datetime) errors.push("Date and time");
-                
-                if (errors.length > 0) {
-                    showValidationError(`Please fill in: ${errors.join(', ')}`);
-                    return;
-                }
-                
-                // Show loading state on button
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> PROCESSING...';
-                submitBtn.disabled = true;
-                
-                // Simulate API call
-                setTimeout(() => {
-                    // Reset button
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                    
-                    // Show success message
-                    showBookingConfirmation(pickup, destination, datetime, stops);
-                    
-                    // Reset form
-                    collapseBookingForm();
-                    resetForm();
-                }, 1500);
-            });
-            
-            // Show validation error
-            function showValidationError(message) {
-                // Create temporary error message
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = `
-                    background: rgba(255, 71, 87, 0.1);
-                    color: #ff4757;
-                    border: 1px solid #ff4757;
-                    border-radius: 8px;
-                    padding: 12px;
-                    margin-bottom: 1rem;
-                    text-align: center;
-                    font-size: 0.9rem;
-                    animation: fadeIn 0.3s ease;
-                `;
-                errorDiv.textContent = message;
-                
-                // Insert after form title
-                const formTitle = document.querySelector('.form-title');
-                formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
-                
-                // Remove after 3 seconds
-                setTimeout(() => {
-                    errorDiv.style.opacity = '0';
-                    errorDiv.style.transition = 'opacity 0.3s';
-                    setTimeout(() => {
-                        if (errorDiv.parentNode) {
-                            errorDiv.parentNode.removeChild(errorDiv);
-                        }
-                    }, 300);
-                }, 3000);
-            }
-            
-            // Show booking confirmation
-            function showBookingConfirmation(pickup, destination, datetime, stops) {
-                const confirmationHTML = `
-                    <div style="
-                        background: rgba(0, 243, 255, 0.1);
-                        border: 1px solid var(--neon-cyan);
-                        border-radius: 12px;
-                        padding: 20px;
-                        margin-top: 20px;
-                        animation: fadeIn 0.5s ease;
-                    ">
-                        <h3 style="color: var(--neon-cyan); margin-bottom: 15px; text-align: center;">
-                            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
-                            Booking Confirmed!
-                        </h3>
-                        <div style="font-size: 0.9rem; line-height: 1.6;">
-                            <p><strong>Pickup:</strong> ${pickup}</p>
-                            <p><strong>Destination:</strong> ${destination}</p>
-                            <p><strong>Date & Time:</strong> ${datetime}</p>
-                            ${stops.length > 0 ? `<p><strong>Additional Stops:</strong> ${stops.join(', ')}</p>` : ''}
-                            <p style="margin-top: 15px; color: var(--neon-cyan);">
-                                Your luxury SUV will arrive promptly. A confirmation has been sent to your email.
-                            </p>
-                        </div>
-                    </div>
-                `;
-                
-                // Insert after booking card
-                bookingCard.insertAdjacentHTML('afterend', confirmationHTML);
-                
-                // Remove after 8 seconds
-                setTimeout(() => {
-                    const confirmationDiv = document.querySelector('[style*="background: rgba(0, 243, 255, 0.1)"]');
-                    if (confirmationDiv) {
-                        confirmationDiv.style.opacity = '0';
-                        confirmationDiv.style.transition = 'opacity 0.5s';
-                        setTimeout(() => {
-                            if (confirmationDiv.parentNode) {
-                                confirmationDiv.parentNode.removeChild(confirmationDiv);
-                            }
-                        }, 500);
-                    }
-                }, 8000);
-            }
-            
-            // Reset form to initial state
-            function resetForm() {
-                pickupInput.value = '';
-                destinationInput.value = '';
-                selectedDateTime = null;
-                datetimeBtn.classList.remove('selected');
-                datetimeBtn.title = "Select date and time";
-                datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
-                datetimeContainer.classList.remove('active');
-                
-                // Clear additional stops
-                stopsContainer.innerHTML = '';
-                stopCount = 0;
-            }
+            alert(`Booking confirmed!\n\nPickup: ${pickup}\nDestination: ${destination}\nDate & Time: Dec 26, 2025 at 1:12 AM\n\nYour luxury SUV is on the way!`);
+        });
+        
+        // Plus button functionality (add another stop)
+        document.querySelector('.plus-button').addEventListener('click', function() {
+            alert('Additional stop feature would be implemented here');
         });
     </script>
 </body>
