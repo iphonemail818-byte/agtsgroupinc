@@ -390,7 +390,7 @@
             justify-content: flex-start; /* Left align */
         }
 
-        /* NEW: Passenger Count Container */
+        /* Passenger Count Container */
         .passenger-container {
             display: none;
             margin-top: 1.5rem;
@@ -409,7 +409,7 @@
             justify-content: flex-start;
         }
 
-        /* NEW: Pets Container */
+        /* Pets Container */
         .pets-container {
             display: none;
             margin-top: 1.5rem;
@@ -428,7 +428,64 @@
             justify-content: flex-start;
         }
 
-        /* NEW: Notes Container */
+        /* NEW: Passenger Name Container */
+        .passenger-name-container {
+            display: none;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .passenger-name-container.active {
+            display: block;
+        }
+
+        .passenger-name-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+            justify-content: flex-start;
+        }
+
+        /* NEW: Phone Container */
+        .phone-container {
+            display: none;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .phone-container.active {
+            display: block;
+        }
+
+        .phone-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+            justify-content: flex-start;
+        }
+
+        /* NEW: Email Container */
+        .email-container {
+            display: none;
+            margin-top: 1.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .email-container.active {
+            display: block;
+        }
+
+        .email-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1rem;
+            justify-content: flex-start;
+        }
+
+        /* Notes Container */
         .notes-container {
             display: none;
             margin-top: 1.5rem;
@@ -474,6 +531,31 @@
             background-color: rgba(0, 243, 255, 0.2);
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
             border-color: var(--neon-cyan);
+        }
+
+        /* Universal Input Field Style for new fields */
+        .icon-input-wrapper {
+            flex-grow: 1;
+            position: relative;
+        }
+
+        .icon-input {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            font-size: 1rem;
+            color: var(--text-light);
+            transition: var(--transition);
+            font-family: inherit;
+            height: 60px; /* Same height as icon button */
+        }
+
+        .icon-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
         }
 
         /* Passenger selector styles */
@@ -884,6 +966,22 @@
             color: #ff4757;
             margin-left: 3px;
         }
+
+        /* Character counter for notes */
+        .char-counter {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .char-counter.warning {
+            color: #ffa500;
+        }
+
+        .char-counter.error {
+            color: #ff4757;
+        }
     </style>
 </head>
 <body>
@@ -976,7 +1074,7 @@
                         </div>
                     </div>
                     
-                    <!-- Passenger Count - NEW -->
+                    <!-- Passenger Count -->
                     <div class="passenger-container" id="passenger-container">
                         <div class="input-group">
                             <label class="input-label">Passenger Count<span class="required-star">*</span></label>
@@ -997,7 +1095,7 @@
                         </div>
                     </div>
                     
-                    <!-- Pets - NEW -->
+                    <!-- Pets -->
                     <div class="pets-container" id="pets-container">
                         <div class="input-group">
                             <label class="input-label">Traveling with Pets?<span class="required-star">*</span></label>
@@ -1013,7 +1111,64 @@
                         </div>
                     </div>
                     
-                    <!-- Notes - NEW -->
+                    <!-- Passenger Name - NEW -->
+                    <div class="passenger-name-container" id="passenger-name-container">
+                        <div class="input-group">
+                            <label class="input-label">Passenger Name<span class="required-star">*</span></label>
+                            <div class="passenger-name-wrapper">
+                                <button class="icon-btn" id="passenger-name-btn" title="Passenger name">
+                                    <i class="fas fa-user"></i>
+                                </button>
+                                <div class="icon-input-wrapper">
+                                    <input type="text" 
+                                           class="icon-input" 
+                                           id="passenger-name-input" 
+                                           placeholder="Full name of primary passenger"
+                                           autocomplete="name">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Phone Number - NEW -->
+                    <div class="phone-container" id="phone-container">
+                        <div class="input-group">
+                            <label class="input-label">Phone Number<span class="required-star">*</span></label>
+                            <div class="phone-wrapper">
+                                <button class="icon-btn" id="phone-btn" title="Phone number">
+                                    <i class="fas fa-phone"></i>
+                                </button>
+                                <div class="icon-input-wrapper">
+                                    <input type="tel" 
+                                           class="icon-input" 
+                                           id="phone-input" 
+                                           placeholder="(123) 456-7890"
+                                           autocomplete="tel">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Email - NEW -->
+                    <div class="email-container" id="email-container">
+                        <div class="input-group">
+                            <label class="input-label">Email Address<span class="required-star">*</span></label>
+                            <div class="email-wrapper">
+                                <button class="icon-btn" id="email-btn" title="Email address">
+                                    <i class="fas fa-envelope"></i>
+                                </button>
+                                <div class="icon-input-wrapper">
+                                    <input type="email" 
+                                           class="icon-input" 
+                                           id="email-input" 
+                                           placeholder="email@example.com"
+                                           autocomplete="email">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notes -->
                     <div class="notes-container" id="notes-container">
                         <div class="input-group">
                             <label class="input-label">Special Notes for Driver (Optional)</label>
@@ -1026,9 +1181,7 @@
                                               id="notes-input" 
                                               placeholder="Any special instructions for the driver? (e.g., extra luggage, accessibility needs, child seats, etc.)"
                                               maxlength="500"></textarea>
-                                    <div style="text-align: right; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem;">
-                                        <span id="notes-chars">0</span>/500 characters
-                                    </div>
+                                    <div class="char-counter" id="notes-chars">0/500 characters</div>
                                 </div>
                             </div>
                         </div>
@@ -1095,16 +1248,33 @@
             const datetimeText = document.getElementById('datetime-text');
             const pickupDatetimeInput = document.getElementById('pickup-datetime');
             
-            // NEW ELEMENTS
+            // Passenger Count Elements
             const passengerContainer = document.getElementById('passenger-container');
             const passengerBtns = document.querySelectorAll('.passenger-btn');
             const passengerCountDisplay = document.getElementById('passenger-count');
             const passengerBtn = document.getElementById('passenger-btn');
             
+            // Pets Elements
             const petsContainer = document.getElementById('pets-container');
             const petsBtns = document.querySelectorAll('.pets-btn');
             const petsBtn = document.getElementById('pets-btn');
             
+            // NEW: Passenger Name Elements
+            const passengerNameContainer = document.getElementById('passenger-name-container');
+            const passengerNameInput = document.getElementById('passenger-name-input');
+            const passengerNameBtn = document.getElementById('passenger-name-btn');
+            
+            // NEW: Phone Elements
+            const phoneContainer = document.getElementById('phone-container');
+            const phoneInput = document.getElementById('phone-input');
+            const phoneBtn = document.getElementById('phone-btn');
+            
+            // NEW: Email Elements
+            const emailContainer = document.getElementById('email-container');
+            const emailInput = document.getElementById('email-input');
+            const emailBtn = document.getElementById('email-btn');
+            
+            // Notes Elements
             const notesContainer = document.getElementById('notes-container');
             const notesInput = document.getElementById('notes-input');
             const notesChars = document.getElementById('notes-chars');
@@ -1207,9 +1377,12 @@
                             datetimeBtn.title = "Select date and time";
                             datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
                             datetimeText.textContent = '';
-                            // Hide passenger container if date is cleared
+                            // Hide all subsequent containers if date is cleared
                             passengerContainer.classList.remove('active');
                             petsContainer.classList.remove('active');
+                            passengerNameContainer.classList.remove('active');
+                            phoneContainer.classList.remove('active');
+                            emailContainer.classList.remove('active');
                             notesContainer.classList.remove('active');
                         }
                     }
@@ -1574,15 +1747,80 @@
                         petsBtn.innerHTML = '<i class="fas fa-times-circle"></i>';
                     }
                     
-                    // Show notes container when pets is selected
-                    notesContainer.classList.add('active');
+                    // Show passenger name container when pets is selected
+                    passengerNameContainer.classList.add('active');
                 });
+            });
+            
+            // NEW: Handle passenger name input
+            passengerNameInput.addEventListener('input', function() {
+                const name = this.value.trim();
+                
+                if (name.length > 0) {
+                    passengerNameBtn.title = `Name: ${name}`;
+                    passengerNameBtn.classList.add('selected');
+                    
+                    // Show phone container when name is entered
+                    phoneContainer.classList.add('active');
+                } else {
+                    passengerNameBtn.title = "Passenger name";
+                    passengerNameBtn.classList.remove('selected');
+                    phoneContainer.classList.remove('active');
+                    emailContainer.classList.remove('active');
+                    notesContainer.classList.remove('active');
+                }
+            });
+            
+            // NEW: Handle phone input
+            phoneInput.addEventListener('input', function() {
+                const phone = this.value.trim();
+                
+                if (phone.length > 0) {
+                    phoneBtn.title = `Phone: ${phone}`;
+                    phoneBtn.classList.add('selected');
+                    
+                    // Show email container when phone is entered
+                    emailContainer.classList.add('active');
+                } else {
+                    phoneBtn.title = "Phone number";
+                    phoneBtn.classList.remove('selected');
+                    emailContainer.classList.remove('active');
+                    notesContainer.classList.remove('active');
+                }
+            });
+            
+            // NEW: Handle email input
+            emailInput.addEventListener('input', function() {
+                const email = this.value.trim();
+                
+                if (email.length > 0) {
+                    emailBtn.title = `Email: ${email}`;
+                    emailBtn.classList.add('selected');
+                    
+                    // Show notes container when email is entered
+                    notesContainer.classList.add('active');
+                } else {
+                    emailBtn.title = "Email address";
+                    emailBtn.classList.remove('selected');
+                    notesContainer.classList.remove('active');
+                }
             });
             
             // Handle notes character count
             notesInput.addEventListener('input', function() {
                 const length = this.value.length;
-                notesChars.textContent = length;
+                notesChars.textContent = `${length}/500 characters`;
+                
+                // Update character counter color
+                if (length > 450) {
+                    notesChars.classList.add('error');
+                    notesChars.classList.remove('warning');
+                } else if (length > 400) {
+                    notesChars.classList.add('warning');
+                    notesChars.classList.remove('error');
+                } else {
+                    notesChars.classList.remove('warning', 'error');
+                }
                 
                 // Update button title if there's content
                 if (length > 0) {
@@ -1591,15 +1829,6 @@
                 } else {
                     notesBtn.title = "Add special notes";
                     notesBtn.classList.remove('selected');
-                }
-                
-                // Optional: Change color when approaching limit
-                if (length > 450) {
-                    notesChars.style.color = '#ff4757';
-                } else if (length > 0) {
-                    notesChars.style.color = 'var(--neon-cyan)';
-                } else {
-                    notesChars.style.color = 'var(--text-muted)';
                 }
             });
             
@@ -1611,6 +1840,9 @@
                 const datetime = selectedDateTime;
                 const passengerCount = selectedPassengerCount;
                 const pets = selectedPets;
+                const passengerName = passengerNameInput.value.trim();
+                const phone = phoneInput.value.trim();
+                const email = emailInput.value.trim();
                 const notes = notesInput.value.trim();
                 
                 // Get additional stops
@@ -1626,6 +1858,15 @@
                 if (!datetime) errors.push("Date and time");
                 if (!passengerCount || passengerCount < 1 || passengerCount > 6) errors.push("Passenger count (1-6)");
                 if (!pets) errors.push("Pet information (Yes/No)");
+                if (!passengerName) errors.push("Passenger name");
+                if (!phone) errors.push("Phone number");
+                if (!email) errors.push("Email address");
+                
+                // Email format validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (email && !emailRegex.test(email)) {
+                    errors.push("Valid email address");
+                }
                 
                 if (errors.length > 0) {
                     showValidationError(`Please fill in: ${errors.join(', ')}`);
@@ -1644,7 +1885,7 @@
                     submitBtn.disabled = false;
                     
                     // Show success message with all details
-                    showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, notes, stops);
+                    showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops);
                     
                     // Reset form
                     collapseBookingForm();
@@ -1686,7 +1927,7 @@
             }
             
             // Show booking confirmation (updated with new fields)
-            function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, notes, stops) {
+            function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops) {
                 const confirmationHTML = `
                     <div style="
                         background: rgba(0, 243, 255, 0.1);
@@ -1706,6 +1947,9 @@
                             <p><strong>Date & Time:</strong> ${datetime}</p>
                             <p><strong>Passengers:</strong> ${passengerCount}</p>
                             <p><strong>Traveling with Pets:</strong> ${pets === 'yes' ? 'Yes' : 'No'}</p>
+                            <p><strong>Passenger Name:</strong> ${passengerName}</p>
+                            <p><strong>Phone:</strong> ${phone}</p>
+                            <p><strong>Email:</strong> ${email}</p>
                             ${notes ? `<p><strong>Special Notes:</strong> ${notes}</p>` : ''}
                             ${stops.length > 0 ? `<p><strong>Additional Stops:</strong> ${stops.join(', ')}</p>` : ''}
                             <p style="margin-top: 15px; color: var(--neon-cyan);">
@@ -1762,10 +2006,28 @@
                 petsBtn.innerHTML = '<i class="fas fa-paw"></i>';
                 petsContainer.classList.remove('active');
                 
+                // Reset passenger name
+                passengerNameInput.value = '';
+                passengerNameBtn.title = "Passenger name";
+                passengerNameBtn.classList.remove('selected');
+                passengerNameContainer.classList.remove('active');
+                
+                // Reset phone
+                phoneInput.value = '';
+                phoneBtn.title = "Phone number";
+                phoneBtn.classList.remove('selected');
+                phoneContainer.classList.remove('active');
+                
+                // Reset email
+                emailInput.value = '';
+                emailBtn.title = "Email address";
+                emailBtn.classList.remove('selected');
+                emailContainer.classList.remove('active');
+                
                 // Reset notes
                 notesInput.value = '';
-                notesChars.textContent = '0';
-                notesChars.style.color = 'var(--text-muted)';
+                notesChars.textContent = '0/500 characters';
+                notesChars.classList.remove('warning', 'error');
                 notesBtn.title = "Add special notes";
                 notesBtn.classList.remove('selected');
                 notesBtn.innerHTML = '<i class="fas fa-sticky-note"></i>';
