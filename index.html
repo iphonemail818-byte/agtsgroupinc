@@ -224,7 +224,6 @@
 
         .input-group {
             margin-bottom: 1.2rem;
-            position: relative;
         }
 
         .input-label {
@@ -233,6 +232,12 @@
             color: var(--text-muted);
             margin-bottom: 0.5rem;
             font-weight: 500;
+        }
+
+        /* Input Wrapper with Button */
+        .input-with-button {
+            position: relative;
+            width: 100%;
         }
 
         .form-input {
@@ -254,7 +259,7 @@
             box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
         }
 
-        /* Current Location Button - FIXED VERTICAL CENTERING */
+        /* Current Location Button - FIXED POSITIONING */
         .current-location-btn {
             position: absolute;
             right: 0.75rem;
@@ -273,7 +278,6 @@
             justify-content: center;
             width: 36px;
             height: 36px;
-            margin-top: 0;
             z-index: 2;
         }
 
@@ -284,6 +288,11 @@
 
         .current-location-btn:active {
             transform: translateY(-50%) scale(0.95);
+        }
+
+        /* Destination field doesn't have button, adjust padding */
+        #destination {
+            padding-right: 1.2rem;
         }
 
         /* Stops Container */
@@ -359,7 +368,7 @@
             transform: scale(1.05);
         }
 
-        /* Date & Time Picker - ICON ONLY (No field) */
+        /* Date & Time Picker - ICON ONLY */
         .datetime-container {
             display: none;
             margin-top: 1.5rem;
@@ -565,24 +574,28 @@
                     <!-- Pickup Location -->
                     <div class="input-group">
                         <label class="input-label" for="pickup">Pickup Location</label>
-                        <input type="text" 
-                               class="form-input" 
-                               id="pickup" 
-                               placeholder="Enter pickup location"
-                               autocomplete="off">
-                        <button class="current-location-btn" id="current-location" title="Use Current Location">
-                            <i class="fas fa-location-arrow"></i>
-                        </button>
+                        <div class="input-with-button">
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="pickup" 
+                                   placeholder="Enter pickup location"
+                                   autocomplete="off">
+                            <button class="current-location-btn" id="current-location" title="Use Current Location">
+                                <i class="fas fa-location-arrow"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <!-- Destination -->
                     <div class="input-group">
                         <label class="input-label" for="destination">Destination</label>
-                        <input type="text" 
-                               class="form-input" 
-                               id="destination" 
-                               placeholder="Enter destination address"
-                               autocomplete="off">
+                        <div class="input-with-button">
+                            <input type="text" 
+                                   class="form-input" 
+                                   id="destination" 
+                                   placeholder="Enter destination address"
+                                   autocomplete="off">
+                        </div>
                     </div>
                     
                     <!-- Additional Stops Container -->
@@ -683,8 +696,7 @@
                 initializeDateTimePicker();
                 
                 // Initialize autocomplete for inputs
-                setupAutocomplete(pickupInput);
-                setupAutocomplete(destinationInput);
+                initializeAutocomplete();
                 
                 // After loading screen fades out, remove it from DOM
                 setTimeout(() => {
@@ -721,26 +733,28 @@
                 });
             }
             
-            // Setup autocomplete for input fields (using mock data for demo)
-            function setupAutocomplete(inputElement) {
+            // Initialize autocomplete for both fields
+            function initializeAutocomplete() {
+                setupAutocomplete(pickupInput, true);
+                setupAutocomplete(destinationInput, false);
+            }
+            
+            // Setup autocomplete for input fields
+            function setupAutocomplete(inputElement, isPickup) {
                 const mockSuggestions = [
                     "123 Main Street, New York, NY",
                     "456 Park Avenue, New York, NY",
                     "789 Broadway, New York, NY",
-                    "101 Lexington Avenue, New York, NY",
-                    "202 Madison Avenue, New York, NY",
                     "JFK International Airport, Queens, NY",
                     "LaGuardia Airport, Queens, NY",
                     "Grand Central Terminal, New York, NY",
                     "Times Square, New York, NY",
                     "Central Park, New York, NY",
+                    "Empire State Building, New York, NY",
                     "Wall Street, New York, NY",
-                    "Brooklyn Bridge, New York, NY",
-                    "Statue of Liberty, New York, NY",
-                    "Empire State Building, New York, NY"
+                    "Brooklyn Bridge, New York, NY"
                 ];
                 
-                // Create suggestions container
                 let suggestionsContainer = null;
                 
                 inputElement.addEventListener('focus', function() {
@@ -749,6 +763,9 @@
                 });
                 
                 inputElement.addEventListener('blur', function() {
+                    this.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                    this.style.boxShadow = 'none';
+                    
                     // Small delay to allow clicking on suggestions
                     setTimeout(() => {
                         if (suggestionsContainer) {
@@ -791,18 +808,9 @@
                         suggestionItem.className = 'autocomplete-suggestion';
                         suggestionItem.textContent = suggestion;
                         
-                        suggestionItem.addEventListener('mouseenter', function() {
-                            this.style.background = 'rgba(0, 243, 255, 0.1)';
-                        });
-                        
-                        suggestionItem.addEventListener('mouseleave', function() {
-                            this.style.background = 'transparent';
-                        });
-                        
                         suggestionItem.addEventListener('click', function() {
                             inputElement.value = suggestion;
                             inputElement.style.borderColor = 'var(--neon-cyan)';
-                            inputElement.style.color = 'var(--neon-cyan)';
                             
                             if (suggestionsContainer) {
                                 suggestionsContainer.remove();
@@ -810,7 +818,7 @@
                             }
                             
                             // Show date/time picker if destination is being filled
-                            if (inputElement.id === 'destination' && inputElement.value.trim().length > 0) {
+                            if (!isPickup && inputElement.value.trim().length > 0) {
                                 datetimeContainer.classList.add('active');
                             }
                         });
@@ -876,12 +884,11 @@
                                     pickupInput.style.color = 'var(--neon-cyan)';
                                     
                                     // Show success message
-                                    showTemporaryMessage(pickupInput, "Location detected ✓", true);
+                                    showTemporaryMessage(pickupInput, "✓ Location detected", true);
                                     
-                                    // Reset input to normal after success
+                                    // Reset to normal state after 2 seconds
                                     setTimeout(() => {
                                         pickupInput.style.color = 'var(--text-light)';
-                                        pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
                                     }, 2000);
                                 })
                                 .catch(error => {
@@ -890,10 +897,9 @@
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
                                     showTemporaryMessage(pickupInput, "Using your coordinates", true);
                                     
-                                    // Reset input to normal after success
+                                    // Reset to normal state after 2 seconds
                                     setTimeout(() => {
                                         pickupInput.style.color = 'var(--text-light)';
-                                        pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
                                     }, 2000);
                                 })
                                 .finally(() => {
@@ -916,7 +922,7 @@
                             showTemporaryMessage(pickupInput, errorMessage, false);
                             pickupInput.style.borderColor = '#ff4757';
                             
-                            // Reset input to normal after error
+                            // Reset to normal state after 2 seconds
                             setTimeout(() => {
                                 pickupInput.style.color = 'var(--text-light)';
                                 pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
@@ -936,7 +942,7 @@
                     showTemporaryMessage(pickupInput, "Geolocation not supported", false);
                     pickupInput.style.borderColor = '#ff4757';
                     
-                    // Reset input to normal after error
+                    // Reset to normal state after 2 seconds
                     setTimeout(() => {
                         pickupInput.style.color = 'var(--text-light)';
                         pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
@@ -982,10 +988,10 @@
                 
                 // Try to create a nice address format
                 if (address.road) {
-                    formattedAddress += address.road;
                     if (address.house_number) {
-                        formattedAddress = address.house_number + ' ' + formattedAddress;
+                        formattedAddress = address.house_number + ' ';
                     }
+                    formattedAddress += address.road;
                     if (address.city || address.town || address.village) {
                         formattedAddress += ', ' + (address.city || address.town || address.village);
                     }
@@ -1071,7 +1077,7 @@
                 
                 // Setup autocomplete for the new stop
                 const stopInput = stopItem.querySelector('.stop-location');
-                setupAutocomplete(stopInput);
+                setupAutocomplete(stopInput, false);
                 
                 // Focus on the new stop input
                 setTimeout(() => {
