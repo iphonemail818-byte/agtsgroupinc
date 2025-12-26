@@ -30,6 +30,7 @@
             --backdrop-blur: blur(8px);
             --success-green: #00ff9d;
             --warning-orange: #ffa500;
+            --error-red: #ff4757;
         }
 
         body {
@@ -104,6 +105,28 @@
         @keyframes shimmer {
             0% { background-position: -200% 0; }
             100% { background-position: 200% 0; }
+        }
+
+        /* Shake animation for missing fields */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Pulse animation for missing buttons */
+        @keyframes pulseMissing {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); 
+            }
+            50% { 
+                box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); 
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-5px); }
         }
 
         /* Main Content */
@@ -428,7 +451,7 @@
             justify-content: flex-start;
         }
 
-        /* NEW: Passenger Name Container */
+        /* Passenger Name Container */
         .passenger-name-container {
             display: none;
             margin-top: 1.5rem;
@@ -447,7 +470,7 @@
             justify-content: flex-start;
         }
 
-        /* NEW: Phone Container */
+        /* Phone Container */
         .phone-container {
             display: none;
             margin-top: 1.5rem;
@@ -466,7 +489,7 @@
             justify-content: flex-start;
         }
 
-        /* NEW: Email Container */
+        /* Email Container */
         .email-container {
             display: none;
             margin-top: 1.5rem;
@@ -963,7 +986,7 @@
 
         /* Mandatory field indicator */
         .required-star {
-            color: #ff4757;
+            color: var(--error-red);
             margin-left: 3px;
         }
 
@@ -976,11 +999,54 @@
         }
 
         .char-counter.warning {
-            color: #ffa500;
+            color: var(--warning-orange);
         }
 
         .char-counter.error {
-            color: #ff4757;
+            color: var(--error-red);
+        }
+
+        /* Highlight styles for missing fields */
+        .missing-field {
+            border-color: var(--error-red) !important;
+            background-color: rgba(255, 71, 87, 0.05) !important;
+            box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.2) !important;
+        }
+
+        .missing-field-btn {
+            border-color: var(--error-red) !important;
+            background-color: rgba(255, 71, 87, 0.1) !important;
+            color: var(--error-red) !important;
+        }
+
+        /* Make sure the calendar icon shows error state */
+        .missing-field-btn i {
+            color: var(--error-red) !important;
+        }
+
+        /* Also add a class for validation error message */
+        .validation-error {
+            position: relative;
+            background: rgba(255, 71, 87, 0.1) !important;
+            color: var(--error-red) !important;
+            border: 1px solid var(--error-red) !important;
+            border-radius: 8px !important;
+            padding: 12px !important;
+            margin-bottom: 1rem !important;
+            text-align: center !important;
+            font-size: 0.9rem !important;
+            animation: fadeIn 0.3s ease !important;
+        }
+
+        .validation-error:before {
+            content: '↑';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--error-red);
+            font-size: 1.2rem;
+            animation: bounce 1s infinite;
         }
     </style>
 </head>
@@ -1020,7 +1086,7 @@
                     
                     <!-- Pickup Location -->
                     <div class="input-group">
-                        <label class="input-label" for="pickup">Pickup Location</label>
+                        <label class="input-label" for="pickup">Pickup Location<span class="required-star">*</span></label>
                         <div class="input-with-button">
                             <input type="text" 
                                    class="form-input" 
@@ -1035,7 +1101,7 @@
                     
                     <!-- Destination -->
                     <div class="input-group">
-                        <label class="input-label" for="destination">Destination</label>
+                        <label class="input-label" for="destination">Destination<span class="required-star">*</span></label>
                         <div class="input-with-button">
                             <input type="text" 
                                    class="form-input" 
@@ -1111,7 +1177,7 @@
                         </div>
                     </div>
                     
-                    <!-- Passenger Name - NEW -->
+                    <!-- Passenger Name -->
                     <div class="passenger-name-container" id="passenger-name-container">
                         <div class="input-group">
                             <label class="input-label">Passenger Name<span class="required-star">*</span></label>
@@ -1130,7 +1196,7 @@
                         </div>
                     </div>
                     
-                    <!-- Phone Number - NEW -->
+                    <!-- Phone Number -->
                     <div class="phone-container" id="phone-container">
                         <div class="input-group">
                             <label class="input-label">Phone Number<span class="required-star">*</span></label>
@@ -1149,7 +1215,7 @@
                         </div>
                     </div>
                     
-                    <!-- Email - NEW -->
+                    <!-- Email -->
                     <div class="email-container" id="email-container">
                         <div class="input-group">
                             <label class="input-label">Email Address<span class="required-star">*</span></label>
@@ -1259,17 +1325,17 @@
             const petsBtns = document.querySelectorAll('.pets-btn');
             const petsBtn = document.getElementById('pets-btn');
             
-            // NEW: Passenger Name Elements
+            // Passenger Name Elements
             const passengerNameContainer = document.getElementById('passenger-name-container');
             const passengerNameInput = document.getElementById('passenger-name-input');
             const passengerNameBtn = document.getElementById('passenger-name-btn');
             
-            // NEW: Phone Elements
+            // Phone Elements
             const phoneContainer = document.getElementById('phone-container');
             const phoneInput = document.getElementById('phone-input');
             const phoneBtn = document.getElementById('phone-btn');
             
-            // NEW: Email Elements
+            // Email Elements
             const emailContainer = document.getElementById('email-container');
             const emailInput = document.getElementById('email-input');
             const emailBtn = document.getElementById('email-btn');
@@ -1752,7 +1818,7 @@
                 });
             });
             
-            // NEW: Handle passenger name input
+            // Handle passenger name input
             passengerNameInput.addEventListener('input', function() {
                 const name = this.value.trim();
                 
@@ -1771,7 +1837,7 @@
                 }
             });
             
-            // NEW: Handle phone input
+            // Handle phone input
             phoneInput.addEventListener('input', function() {
                 const phone = this.value.trim();
                 
@@ -1789,7 +1855,7 @@
                 }
             });
             
-            // NEW: Handle email input
+            // Handle email input
             emailInput.addEventListener('input', function() {
                 const email = this.value.trim();
                 
@@ -1832,6 +1898,98 @@
                 }
             });
             
+            // Function to highlight missing field
+            function highlightMissingField(field) {
+                // Remove any existing highlights
+                removeHighlights();
+                
+                // Add highlight class based on field type
+                if (field.classList.contains('form-input') || field.classList.contains('icon-input')) {
+                    field.classList.add('missing-field');
+                    
+                    // Add shake animation
+                    field.style.animation = 'shake 0.5s ease-in-out';
+                    
+                    // Remove animation after it completes
+                    setTimeout(() => {
+                        field.style.animation = '';
+                    }, 500);
+                } else if (field.classList.contains('icon-btn') || field.classList.contains('pets-btn')) {
+                    // For icon buttons, highlight the button
+                    field.classList.add('missing-field-btn');
+                    
+                    // Add pulse animation
+                    field.style.animation = 'pulseMissing 1s ease-in-out';
+                    
+                    // Remove animation after it completes
+                    setTimeout(() => {
+                        field.style.animation = '';
+                    }, 1000);
+                }
+                
+                // Remove highlight after 3 seconds
+                setTimeout(() => {
+                    if (field.classList.contains('missing-field')) {
+                        field.classList.remove('missing-field');
+                    }
+                    if (field.classList.contains('missing-field-btn')) {
+                        field.classList.remove('missing-field-btn');
+                    }
+                }, 3000);
+            }
+            
+            // Function to remove all highlights
+            function removeHighlights() {
+                const highlightedFields = document.querySelectorAll('.missing-field, .missing-field-btn');
+                highlightedFields.forEach(field => {
+                    field.classList.remove('missing-field');
+                    field.classList.remove('missing-field-btn');
+                    field.style.animation = '';
+                });
+            }
+            
+            // Function to show validation error
+            function showValidationError(message) {
+                // Remove any existing error message
+                const existingError = document.querySelector('.validation-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Create error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'validation-error';
+                errorDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                    ${message}
+                `;
+                
+                // Insert after form title
+                const formTitle = document.querySelector('.form-title');
+                formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
+                
+                // Scroll error into view
+                setTimeout(() => {
+                    errorDiv.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start'
+                    });
+                }, 100);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.style.opacity = '0';
+                        errorDiv.style.transition = 'opacity 0.3s';
+                        setTimeout(() => {
+                            if (errorDiv.parentNode) {
+                                errorDiv.parentNode.removeChild(errorDiv);
+                            }
+                        }, 300);
+                    }
+                }, 5000);
+            }
+            
             // Handle form submission
             submitBtn.addEventListener('click', function() {
                 // Get form values
@@ -1851,25 +2009,66 @@
                     .map(input => input.value.trim())
                     .filter(stop => stop.length > 0);
                 
-                // Basic validation
-                let errors = [];
-                if (!pickup) errors.push("Pickup location");
-                if (!destination) errors.push("Destination");
-                if (!datetime) errors.push("Date and time");
-                if (!passengerCount || passengerCount < 1 || passengerCount > 6) errors.push("Passenger count (1-6)");
-                if (!pets) errors.push("Pet information (Yes/No)");
-                if (!passengerName) errors.push("Passenger name");
-                if (!phone) errors.push("Phone number");
-                if (!email) errors.push("Email address");
+                // Check for missing mandatory fields and focus on the first one
+                let firstMissingField = null;
+                let errorMessage = "";
                 
-                // Email format validation
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (email && !emailRegex.test(email)) {
-                    errors.push("Valid email address");
+                if (!pickup) {
+                    firstMissingField = pickupInput;
+                    errorMessage = "Pickup location is required";
+                } else if (!destination) {
+                    firstMissingField = destinationInput;
+                    errorMessage = "Destination is required";
+                } else if (!datetime) {
+                    firstMissingField = datetimeBtn;
+                    errorMessage = "Date and time is required";
+                } else if (!passengerCount || passengerCount < 1 || passengerCount > 6) {
+                    firstMissingField = passengerBtn;
+                    errorMessage = "Please select passenger count (1-6)";
+                } else if (!pets) {
+                    firstMissingField = document.querySelector('.pets-btn');
+                    errorMessage = "Please indicate if traveling with pets";
+                } else if (!passengerName) {
+                    firstMissingField = passengerNameInput;
+                    errorMessage = "Passenger name is required";
+                } else if (!phone) {
+                    firstMissingField = phoneInput;
+                    errorMessage = "Phone number is required";
+                } else if (!email) {
+                    firstMissingField = emailInput;
+                    errorMessage = "Email address is required";
+                } else if (email && !email.includes('@')) {
+                    firstMissingField = emailInput;
+                    errorMessage = "Please enter a valid email address";
                 }
                 
-                if (errors.length > 0) {
-                    showValidationError(`Please fill in: ${errors.join(', ')}`);
+                // If there's a missing field, focus on it and show error
+                if (firstMissingField) {
+                    showValidationError(errorMessage);
+                    
+                    // Ensure form is expanded so user can see the field
+                    expandBookingForm();
+                    
+                    // Add visual highlight to the missing field
+                    highlightMissingField(firstMissingField);
+                    
+                    // Focus on the field or button
+                    setTimeout(() => {
+                        if (firstMissingField.tagName === 'BUTTON') {
+                            // For buttons, we can focus on them
+                            firstMissingField.focus();
+                        } else {
+                            firstMissingField.focus();
+                            
+                            // Scroll the field into view with some padding
+                            firstMissingField.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'center',
+                                inline: 'nearest'
+                            });
+                        }
+                    }, 100);
+                    
                     return;
                 }
                 
@@ -1892,39 +2091,6 @@
                     resetForm();
                 }, 1500);
             });
-            
-            // Show validation error
-            function showValidationError(message) {
-                // Create temporary error message
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = `
-                    background: rgba(255, 71, 87, 0.1);
-                    color: #ff4757;
-                    border: 1px solid #ff4757;
-                    border-radius: 8px;
-                    padding: 12px;
-                    margin-bottom: 1rem;
-                    text-align: center;
-                    font-size: 0.9rem;
-                    animation: fadeIn 0.3s ease;
-                `;
-                errorDiv.textContent = message;
-                
-                // Insert after form title
-                const formTitle = document.querySelector('.form-title');
-                formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
-                
-                // Remove after 3 seconds
-                setTimeout(() => {
-                    errorDiv.style.opacity = '0';
-                    errorDiv.style.transition = 'opacity 0.3s';
-                    setTimeout(() => {
-                        if (errorDiv.parentNode) {
-                            errorDiv.parentNode.removeChild(errorDiv);
-                        }
-                    }, 300);
-                }, 3000);
-            }
             
             // Show booking confirmation (updated with new fields)
             function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops) {
