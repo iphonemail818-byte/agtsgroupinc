@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* CSS Reset and Base Styles */
@@ -256,7 +255,7 @@
 
         .form-input:focus {
             outline: none;
-            border-color: var(--neon-cyan);
+            border-color = 'var(--neon-cyan)';
             box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
         }
 
@@ -369,7 +368,7 @@
             transform: scale(1.05);
         }
 
-        /* Date & Time Picker - Custom Dark Theme */
+        /* Date & Time Picker - COMPLETELY HIDDEN WHITE FIELD */
         .datetime-container {
             display: none;
             margin-top: 1.5rem;
@@ -432,53 +431,107 @@
             display: none;
         }
 
-        /* Custom Flatpickr Dark Theme Overrides */
+        /* COMPLETE CUSTOM FLATPICKR THEME - HIDE WHITE INPUT */
         .flatpickr-calendar {
             background: var(--card-dark) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+            border: 1px solid rgba(0, 243, 255, 0.3) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(0, 243, 255, 0.2) !important;
+            border-radius: 12px !important;
+        }
+
+        /* HIDE THE WHITE INPUT FIELD IN CALENDAR */
+        .flatpickr-calendar .flatpickr-input {
+            display: none !important;
         }
 
         .flatpickr-months {
             background: var(--card-darker) !important;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2) !important;
+            border-radius: 12px 12px 0 0 !important;
+            padding: 10px 0 !important;
         }
 
         .flatpickr-month {
-            color: var(--text-light) !important;
+            color: var(--neon-cyan) !important;
+        }
+
+        .flatpickr-current-month {
+            color: var(--neon-cyan) !important;
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year {
+            color: var(--neon-cyan) !important;
+            background: transparent !important;
+            border: 1px solid rgba(0, 243, 255, 0.2) !important;
+            border-radius: 6px !important;
+            padding: 4px 8px !important;
         }
 
         .flatpickr-weekdays {
-            background: var(--card-dark) !important;
+            background: var(--card-darker) !important;
+            padding: 8px 0 !important;
         }
 
         .flatpickr-weekday {
             color: var(--text-muted) !important;
+            font-weight: 600 !important;
         }
 
         .flatpickr-day {
             color: var(--text-light) !important;
             border: 1px solid transparent !important;
+            border-radius: 6px !important;
+            margin: 2px !important;
         }
 
         .flatpickr-day:hover {
             background: rgba(0, 243, 255, 0.1) !important;
             border-color: var(--neon-cyan) !important;
+            color: var(--neon-cyan) !important;
         }
 
         .flatpickr-day.selected {
             background: var(--neon-cyan) !important;
             color: var(--primary-dark) !important;
             border-color: var(--neon-cyan) !important;
+            font-weight: bold !important;
         }
 
         .flatpickr-day.today {
             border-color: var(--neon-cyan) !important;
+            color: var(--neon-cyan) !important;
+        }
+
+        .flatpickr-time {
+            background: var(--card-darker) !important;
+            border-top: 1px solid rgba(0, 243, 255, 0.2) !important;
+            padding: 10px 0 !important;
+        }
+
+        .flatpickr-time .numInputWrapper {
+            background: var(--card-dark) !important;
+            border: 1px solid rgba(0, 243, 255, 0.2) !important;
+            border-radius: 6px !important;
+            margin: 0 5px !important;
         }
 
         .flatpickr-time input {
-            color: var(--text-light) !important;
+            color: var(--neon-cyan) !important;
+            background: transparent !important;
+            font-weight: bold !important;
+        }
+
+        .flatpickr-time .flatpickr-am-pm {
+            color: var(--neon-cyan) !important;
             background: var(--card-dark) !important;
+            border: 1px solid rgba(0, 243, 255, 0.2) !important;
+            border-radius: 6px !important;
+            padding: 4px 8px !important;
+        }
+
+        .flatpickr-time .flatpickr-am-pm:hover {
+            background: rgba(0, 243, 255, 0.1) !important;
         }
 
         .flatpickr-time .numInputWrapper span.arrowUp:after {
@@ -487,6 +540,14 @@
 
         .flatpickr-time .numInputWrapper span.arrowDown:after {
             border-top-color: var(--neon-cyan) !important;
+        }
+
+        .flatpickr-time .numInputWrapper span.arrowUp:hover:after {
+            border-bottom-color: var(--text-light) !important;
+        }
+
+        .flatpickr-time .numInputWrapper span.arrowDown:hover:after {
+            border-top-color: var(--text-light) !important;
         }
 
         /* Submit Button */
@@ -794,22 +855,43 @@
                 }, 500);
             }, 3000);
             
-            // Initialize combined date and time picker with custom theme
+            // Initialize combined date and time picker with COMPLETE CUSTOM THEME
             function initializeDateTimePicker() {
-                flatpickr(pickupDatetimeInput, {
+                // Create custom instance
+                const fp = flatpickr(pickupDatetimeInput, {
                     enableTime: true,
                     dateFormat: "F j, Y at h:i K",
                     minDate: "today",
                     defaultHour: 12,
                     minuteIncrement: 15,
-                    theme: "dark", // Use dark theme
+                    disableMobile: true, // Use custom picker on mobile
+                    inline: false,
+                    clickOpens: true,
                     onReady: function(selectedDates, dateStr, instance) {
-                        // Apply additional custom styling
+                        // Apply additional custom styling when calendar is ready
                         const calendar = instance.calendarContainer;
                         if (calendar) {
-                            calendar.style.background = 'var(--card-dark)';
-                            calendar.style.border = '1px solid rgba(255, 255, 255, 0.15)';
-                            calendar.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.7)';
+                            // Add custom class for styling
+                            calendar.classList.add('agts-flatpickr');
+                            
+                            // Hide the default input field completely
+                            const inputField = calendar.querySelector('.flatpickr-input');
+                            if (inputField) {
+                                inputField.style.display = 'none';
+                                inputField.style.opacity = '0';
+                                inputField.style.height = '0';
+                                inputField.style.padding = '0';
+                                inputField.style.border = 'none';
+                            }
+                            
+                            // Also hide the time input if it's visible
+                            const timeInputs = calendar.querySelectorAll('.flatpickr-time input');
+                            timeInputs.forEach(input => {
+                                input.style.color = 'var(--neon-cyan)';
+                                input.style.background = 'transparent';
+                                input.style.border = '1px solid rgba(0, 243, 255, 0.2)';
+                                input.style.borderRadius = '6px';
+                            });
                         }
                     },
                     onChange: function(selectedDates, dateStr, instance) {
@@ -823,6 +905,19 @@
                         // Update button icon
                         datetimeBtn.innerHTML = '<i class="far fa-calendar-check"></i>';
                     },
+                    onOpen: function(selectedDates, dateStr, instance) {
+                        // When calendar opens, ensure styling is applied
+                        setTimeout(() => {
+                            const calendar = instance.calendarContainer;
+                            if (calendar) {
+                                // Hide the input field
+                                const inputField = calendar.querySelector('.flatpickr-input');
+                                if (inputField) {
+                                    inputField.style.display = 'none';
+                                }
+                            }
+                        }, 10);
+                    },
                     onClose: function(selectedDates, dateStr, instance) {
                         if (!dateStr) {
                             datetimeBtn.classList.remove('selected');
@@ -835,7 +930,7 @@
                 
                 // Trigger Flatpickr when button is clicked
                 datetimeBtn.addEventListener('click', function() {
-                    pickupDatetimeInput._flatpickr.open();
+                    fp.open();
                 });
             }
             
