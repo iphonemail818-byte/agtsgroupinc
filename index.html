@@ -254,7 +254,7 @@
             box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
         }
 
-        /* Current Location Button - FIXED POSITION */
+        /* Current Location Button - FIXED VERTICAL CENTERING */
         .current-location-btn {
             position: absolute;
             right: 0.75rem;
@@ -273,7 +273,8 @@
             justify-content: center;
             width: 36px;
             height: 36px;
-            margin-top: 0.5rem;
+            margin-top: 0;
+            z-index: 2;
         }
 
         .current-location-btn:hover {
@@ -567,7 +568,8 @@
                         <input type="text" 
                                class="form-input" 
                                id="pickup" 
-                               placeholder="Enter pickup location">
+                               placeholder="Enter pickup location"
+                               autocomplete="off">
                         <button class="current-location-btn" id="current-location" title="Use Current Location">
                             <i class="fas fa-location-arrow"></i>
                         </button>
@@ -643,9 +645,6 @@
         </footer>
     </div>
 
-    <!-- Google Maps API (Replace with your own API key in production) -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5uKjF1lq5R1pOe6K7_8v6wJ2wQYcX7V4&libraries=places&callback=initGoogleMaps" async defer></script>
-    
     <!-- Flatpickr for Date/Time Selection -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -674,8 +673,6 @@
             // Global variables
             let stopCount = 0;
             let selectedDateTime = null;
-            let autocompletePickup = null;
-            let autocompleteDestination = null;
             
             // Simulate loading screen for 3 seconds
             setTimeout(() => {
@@ -684,6 +681,10 @@
                 
                 // Initialize date and time pickers after loading
                 initializeDateTimePicker();
+                
+                // Initialize autocomplete for inputs
+                setupAutocomplete(pickupInput);
+                setupAutocomplete(destinationInput);
                 
                 // After loading screen fades out, remove it from DOM
                 setTimeout(() => {
@@ -720,52 +721,8 @@
                 });
             }
             
-            // Initialize Google Maps Autocomplete
-            function initGoogleMaps() {
-                // Create autocomplete for pickup
-                if (google.maps.places) {
-                    autocompletePickup = new google.maps.places.Autocomplete(pickupInput, {
-                        types: ['address'],
-                        componentRestrictions: {country: 'us'}
-                    });
-                    
-                    autocompletePickup.addListener('place_changed', function() {
-                        const place = autocompletePickup.getPlace();
-                        if (place.formatted_address) {
-                            pickupInput.value = place.formatted_address;
-                            pickupInput.style.borderColor = 'var(--neon-cyan)';
-                            pickupInput.style.color = 'var(--neon-cyan)';
-                        }
-                    });
-                    
-                    // Create autocomplete for destination
-                    autocompleteDestination = new google.maps.places.Autocomplete(destinationInput, {
-                        types: ['address'],
-                        componentRestrictions: {country: 'us'}
-                    });
-                    
-                    autocompleteDestination.addListener('place_changed', function() {
-                        const place = autocompleteDestination.getPlace();
-                        if (place.formatted_address) {
-                            destinationInput.value = place.formatted_address;
-                            destinationInput.style.borderColor = 'var(--neon-cyan)';
-                            destinationInput.style.color = 'var(--neon-cyan)';
-                            // Show date/time picker
-                            datetimeContainer.classList.add('active');
-                        }
-                    });
-                    
-                    console.log("Google Maps Autocomplete initialized");
-                } else {
-                    console.error("Google Maps Places API not available");
-                    // Fallback to mock autocomplete
-                    setupMockAutocomplete(pickupInput);
-                    setupMockAutocomplete(destinationInput);
-                }
-            }
-            
-            // Mock autocomplete fallback
-            function setupMockAutocomplete(inputElement) {
+            // Setup autocomplete for input fields (using mock data for demo)
+            function setupAutocomplete(inputElement) {
                 const mockSuggestions = [
                     "123 Main Street, New York, NY",
                     "456 Park Avenue, New York, NY",
@@ -776,14 +733,39 @@
                     "LaGuardia Airport, Queens, NY",
                     "Grand Central Terminal, New York, NY",
                     "Times Square, New York, NY",
-                    "Central Park, New York, NY"
+                    "Central Park, New York, NY",
+                    "Wall Street, New York, NY",
+                    "Brooklyn Bridge, New York, NY",
+                    "Statue of Liberty, New York, NY",
+                    "Empire State Building, New York, NY"
                 ];
+                
+                // Create suggestions container
+                let suggestionsContainer = null;
+                
+                inputElement.addEventListener('focus', function() {
+                    this.style.borderColor = 'var(--neon-cyan)';
+                    this.style.boxShadow = '0 0 0 2px rgba(0, 243, 255, 0.2)';
+                });
+                
+                inputElement.addEventListener('blur', function() {
+                    // Small delay to allow clicking on suggestions
+                    setTimeout(() => {
+                        if (suggestionsContainer) {
+                            suggestionsContainer.remove();
+                            suggestionsContainer = null;
+                        }
+                    }, 200);
+                });
                 
                 inputElement.addEventListener('input', function(e) {
                     const value = e.target.value.toLowerCase();
                     
                     // Clear previous suggestions
-                    clearSuggestions(inputElement);
+                    if (suggestionsContainer) {
+                        suggestionsContainer.remove();
+                        suggestionsContainer = null;
+                    }
                     
                     if (value.length > 1) {
                         // Filter mock suggestions
@@ -797,53 +779,48 @@
                     }
                 });
                 
-                inputElement.addEventListener('blur', function() {
-                    // Small delay to allow clicking on suggestions
-                    setTimeout(() => {
-                        clearSuggestions(inputElement);
-                    }, 200);
-                });
-            }
-            
-            // Show autocomplete suggestions
-            function showSuggestions(inputElement, suggestions) {
-                // Remove any existing suggestions
-                clearSuggestions(inputElement);
-                
-                // Create suggestions container
-                const suggestionsDiv = document.createElement('div');
-                suggestionsDiv.className = 'autocomplete-suggestions';
-                
-                // Add each suggestion
-                suggestions.forEach(suggestion => {
-                    const suggestionItem = document.createElement('div');
-                    suggestionItem.className = 'autocomplete-suggestion';
-                    suggestionItem.textContent = suggestion;
+                // Show autocomplete suggestions
+                function showSuggestions(inputElement, suggestions) {
+                    // Create suggestions container
+                    suggestionsContainer = document.createElement('div');
+                    suggestionsContainer.className = 'autocomplete-suggestions';
                     
-                    suggestionItem.addEventListener('click', function() {
-                        inputElement.value = suggestion;
-                        inputElement.style.borderColor = 'var(--neon-cyan)';
-                        clearSuggestions(inputElement);
+                    // Add each suggestion
+                    suggestions.forEach(suggestion => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.className = 'autocomplete-suggestion';
+                        suggestionItem.textContent = suggestion;
                         
-                        // Trigger input event to show date/time picker if destination
-                        if (inputElement.id === 'destination') {
-                            datetimeContainer.classList.add('active');
-                        }
+                        suggestionItem.addEventListener('mouseenter', function() {
+                            this.style.background = 'rgba(0, 243, 255, 0.1)';
+                        });
+                        
+                        suggestionItem.addEventListener('mouseleave', function() {
+                            this.style.background = 'transparent';
+                        });
+                        
+                        suggestionItem.addEventListener('click', function() {
+                            inputElement.value = suggestion;
+                            inputElement.style.borderColor = 'var(--neon-cyan)';
+                            inputElement.style.color = 'var(--neon-cyan)';
+                            
+                            if (suggestionsContainer) {
+                                suggestionsContainer.remove();
+                                suggestionsContainer = null;
+                            }
+                            
+                            // Show date/time picker if destination is being filled
+                            if (inputElement.id === 'destination' && inputElement.value.trim().length > 0) {
+                                datetimeContainer.classList.add('active');
+                            }
+                        });
+                        
+                        suggestionsContainer.appendChild(suggestionItem);
                     });
                     
-                    suggestionsDiv.appendChild(suggestionItem);
-                });
-                
-                // Position relative to input
-                inputElement.parentNode.style.position = 'relative';
-                inputElement.parentNode.appendChild(suggestionsDiv);
-            }
-            
-            // Clear autocomplete suggestions
-            function clearSuggestions(inputElement) {
-                const existing = inputElement.parentNode.querySelector('.autocomplete-suggestions');
-                if (existing) {
-                    existing.remove();
+                    // Position relative to input
+                    inputElement.parentNode.style.position = 'relative';
+                    inputElement.parentNode.appendChild(suggestionsContainer);
                 }
             }
             
@@ -900,12 +877,24 @@
                                     
                                     // Show success message
                                     showTemporaryMessage(pickupInput, "Location detected ✓", true);
+                                    
+                                    // Reset input to normal after success
+                                    setTimeout(() => {
+                                        pickupInput.style.color = 'var(--text-light)';
+                                        pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                                    }, 2000);
                                 })
                                 .catch(error => {
                                     // Fallback to coordinates
-                                    pickupInput.value = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+                                    pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
                                     showTemporaryMessage(pickupInput, "Using your coordinates", true);
+                                    
+                                    // Reset input to normal after success
+                                    setTimeout(() => {
+                                        pickupInput.style.color = 'var(--text-light)';
+                                        pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                                    }, 2000);
                                 })
                                 .finally(() => {
                                     // Reset button
@@ -927,6 +916,12 @@
                             showTemporaryMessage(pickupInput, errorMessage, false);
                             pickupInput.style.borderColor = '#ff4757';
                             
+                            // Reset input to normal after error
+                            setTimeout(() => {
+                                pickupInput.style.color = 'var(--text-light)';
+                                pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                            }, 2000);
+                            
                             // Reset button
                             currentLocationBtn.innerHTML = originalIcon;
                             currentLocationBtn.disabled = false;
@@ -940,6 +935,12 @@
                     // Browser doesn't support geolocation
                     showTemporaryMessage(pickupInput, "Geolocation not supported", false);
                     pickupInput.style.borderColor = '#ff4757';
+                    
+                    // Reset input to normal after error
+                    setTimeout(() => {
+                        pickupInput.style.color = 'var(--text-light)';
+                        pickupInput.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                    }, 2000);
                     
                     // Reset button
                     currentLocationBtn.innerHTML = originalIcon;
@@ -1012,8 +1013,8 @@
                 setTimeout(() => {
                     inputElement.placeholder = originalPlaceholder;
                     inputElement.value = originalValue;
-                    inputElement.style.borderColor = '';
-                    inputElement.style.color = '';
+                    inputElement.style.borderColor = 'rgba(255, 255, 255, 0.15)';
+                    inputElement.style.color = 'var(--text-light)';
                 }, 2000);
             }
             
@@ -1070,14 +1071,7 @@
                 
                 // Setup autocomplete for the new stop
                 const stopInput = stopItem.querySelector('.stop-location');
-                if (google && google.maps && google.maps.places) {
-                    new google.maps.places.Autocomplete(stopInput, {
-                        types: ['address'],
-                        componentRestrictions: {country: 'us'}
-                    });
-                } else {
-                    setupMockAutocomplete(stopInput);
-                }
+                setupAutocomplete(stopInput);
                 
                 // Focus on the new stop input
                 setTimeout(() => {
@@ -1230,9 +1224,6 @@
                 stopsContainer.innerHTML = '';
                 stopCount = 0;
             }
-            
-            // Make initGoogleMaps globally accessible for Google Maps callback
-            window.initGoogleMaps = initGoogleMaps;
         });
     </script>
 </body>
