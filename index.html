@@ -42,6 +42,9 @@
             min-height: 100vh;
             overflow-x: hidden;
             line-height: 1.5;
+            position: relative;
+            height: 100vh;
+            overflow-y: auto;
         }
 
         /* Loading Screen */
@@ -114,6 +117,13 @@
             0%, 100% { transform: translateX(0); }
             10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
             20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Vibration animation */
+        @keyframes vibrate {
+            0%, 100% { transform: translate(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translate(-1px, -1px); }
+            20%, 40%, 60%, 80% { transform: translate(1px, 1px); }
         }
 
         /* Main Content */
@@ -400,7 +410,7 @@
             justify-content: flex-start;
         }
 
-        /* iPhone Style Date/Time Picker Modal */
+        /* iPhone Style Date/Time Picker Modal - FIXED SCROLLING */
         .iphone-picker-modal {
             display: none;
             position: fixed;
@@ -413,20 +423,25 @@
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.3s ease;
+            overflow: hidden;
         }
 
         .iphone-picker-modal.active {
             display: flex;
+            overflow: hidden;
         }
 
         .iphone-picker-container {
             width: 90%;
             max-width: 400px;
+            max-height: 90vh;
             background-color: var(--iphone-gray);
             border-radius: 18px;
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.4s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         @keyframes slideUp {
@@ -441,6 +456,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
         }
 
         .iphone-picker-header h3 {
@@ -470,9 +486,13 @@
 
         .iphone-picker-body {
             padding: 1.5rem;
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* iPhone Style Wheel Picker */
+        /* iPhone Style Wheel Picker - FIXED SCROLLING */
         .iphone-wheel-picker {
             display: flex;
             justify-content: center;
@@ -481,6 +501,8 @@
             position: relative;
             overflow: hidden;
             margin-bottom: 1.5rem;
+            flex-shrink: 0;
+            touch-action: none; /* Prevent default touch behaviors */
         }
 
         .wheel-container {
@@ -490,6 +512,7 @@
             overflow: hidden;
             background-color: var(--iphone-light);
             border-radius: 12px;
+            touch-action: none; /* Prevent default touch behaviors */
         }
 
         .wheel {
@@ -497,12 +520,16 @@
             height: 200px;
             overflow: hidden;
             padding-top: 80px;
+            user-select: none; /* Prevent text selection */
+            -webkit-user-select: none;
+            touch-action: none; /* Prevent default touch behaviors */
         }
 
         .wheel-items {
             list-style: none;
             transform: translateY(0);
             transition: transform 0.3s ease-out;
+            user-select: none;
         }
 
         .wheel-item {
@@ -515,6 +542,7 @@
             opacity: 0.4;
             transition: all 0.2s ease;
             user-select: none;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
 
         .wheel-item.selected {
@@ -1037,12 +1065,14 @@
             border-color: var(--error-red) !important;
             background-color: rgba(255, 71, 87, 0.05) !important;
             box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.2) !important;
+            animation: shake 0.5s ease-in-out, vibrate 0.3s ease-in-out !important;
         }
 
         .missing-field-btn {
             border-color: var(--error-red) !important;
             background-color: rgba(255, 71, 87, 0.1) !important;
             color: var(--error-red) !important;
+            animation: shake 0.5s ease-in-out, vibrate 0.3s ease-in-out !important;
         }
 
         /* Make sure the calendar icon shows error state */
@@ -1113,6 +1143,26 @@
             width: 0%;
             transition: width 0.5s ease;
         }
+
+        /* Vibration indicator */
+        .vibration-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-dark);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--neon-cyan);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            display: none;
+        }
+
+        .vibration-indicator.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -1126,6 +1176,12 @@
 
     <!-- Backdrop -->
     <div class="backdrop" id="backdrop"></div>
+
+    <!-- Vibration Indicator -->
+    <div class="vibration-indicator" id="vibration-indicator">
+        <i class="fas fa-vibrate" style="margin-right: 8px;"></i>
+        Vibration Feedback Enabled
+    </div>
 
     <!-- iPhone Style Date/Time Picker Modal -->
     <div class="iphone-picker-modal" id="iphone-picker-modal">
@@ -1463,6 +1519,7 @@
             const datetimeText = document.getElementById('datetime-text');
             const submitBtn = document.getElementById('submit-btn');
             const bookingCard = document.getElementById('booking-card');
+            const vibrationIndicator = document.getElementById('vibration-indicator');
             
             // iPhone Picker Elements
             const iphonePickerModal = document.getElementById('iphone-picker-modal');
@@ -1529,10 +1586,46 @@
             let selectedMinute = 0;
             let selectedAmPm = "PM";
             
+            // Vibration support check
+            let vibrationSupported = false;
+            
+            // Check for vibration API support
+            function checkVibrationSupport() {
+                if ('vibrate' in navigator) {
+                    vibrationSupported = true;
+                    console.log("Vibration API is supported");
+                    
+                    // Show vibration indicator
+                    vibrationIndicator.classList.add('active');
+                    setTimeout(() => {
+                        vibrationIndicator.classList.remove('active');
+                    }, 3000);
+                    
+                    return true;
+                } else {
+                    console.log("Vibration API is not supported");
+                    return false;
+                }
+            }
+            
+            // Vibrate function
+            function vibrate(pattern) {
+                if (vibrationSupported) {
+                    try {
+                        navigator.vibrate(pattern);
+                    } catch (e) {
+                        console.log("Vibration failed:", e);
+                    }
+                }
+            }
+            
             // Simulate loading screen for 3 seconds
             setTimeout(() => {
                 loadingScreen.classList.add('fade-out');
                 mainContent.classList.add('fade-in');
+                
+                // Check vibration support
+                vibrationSupported = checkVibrationSupport();
                 
                 // Initialize iPhone wheel picker after loading
                 initializeiPhonePicker();
@@ -1646,7 +1739,7 @@
                 });
             }
             
-            // Setup wheel interactions
+            // Setup wheel interactions - FIXED SCROLLING ISSUE
             function setupWheelInteractions() {
                 const wheels = document.querySelectorAll('.wheel');
                 
@@ -1721,13 +1814,25 @@
                         animationFrameId = requestAnimationFrame(animate);
                     }
                     
+                    // Prevent wheel scrolling on the entire modal
+                    function preventDefaultScroll(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
+                    
+                    // Add touch action none and prevent default behaviors
+                    wheel.style.touchAction = 'none';
+                    
+                    // Prevent wheel event on the wheel
+                    wheel.addEventListener('wheel', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, { passive: false });
+                    
                     // Mouse/touch event handlers
                     wheel.addEventListener('mousedown', startDrag);
-                    wheel.addEventListener('touchstart', startDrag);
-                    document.addEventListener('mousemove', drag);
-                    document.addEventListener('touchmove', drag);
-                    document.addEventListener('mouseup', endDrag);
-                    document.addEventListener('touchend', endDrag);
+                    wheel.addEventListener('touchstart', startDrag, { passive: false });
                     
                     function startDrag(e) {
                         isDragging = true;
@@ -1740,12 +1845,23 @@
                         
                         cancelAnimationFrame(animationFrameId);
                         wheel.style.cursor = 'grabbing';
+                        
+                        // Prevent text selection
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Add document-level listeners
+                        document.addEventListener('mousemove', drag);
+                        document.addEventListener('touchmove', drag, { passive: false });
+                        document.addEventListener('mouseup', endDrag);
+                        document.addEventListener('touchend', endDrag);
                     }
                     
                     function drag(e) {
                         if (!isDragging) return;
                         
                         e.preventDefault();
+                        e.stopPropagation();
                         
                         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
                         const deltaY = clientY - currentY;
@@ -1763,13 +1879,24 @@
                         // Update position
                         currentTranslate += deltaY;
                         setTranslateY(wheelItems, currentTranslate);
+                        
+                        // Provide haptic feedback on mobile
+                        if (vibrationSupported && (e.type === 'touchmove') && Math.abs(deltaY) > 5) {
+                            vibrate(5); // Very short vibration
+                        }
                     }
                     
-                    function endDrag() {
+                    function endDrag(e) {
                         if (!isDragging) return;
                         
                         isDragging = false;
                         wheel.style.cursor = '';
+                        
+                        // Remove document-level listeners
+                        document.removeEventListener('mousemove', drag);
+                        document.removeEventListener('touchmove', drag);
+                        document.removeEventListener('mouseup', endDrag);
+                        document.removeEventListener('touchend', endDrag);
                         
                         // Apply momentum
                         const momentum = velocity * 100;
@@ -1777,6 +1904,11 @@
                         
                         // Snap to nearest item
                         snapToItem();
+                        
+                        // Provide haptic feedback on mobile
+                        if (vibrationSupported && e.type === 'touchend') {
+                            vibrate([10, 20, 10]);
+                        }
                     }
                     
                     // Also allow click selection
@@ -1790,8 +1922,31 @@
                             item.classList.add('selected');
                             
                             updateSelectedValue(wheel.id.replace('-wheel', ''), item);
+                            
+                            // Haptic feedback
+                            if (vibrationSupported) {
+                                vibrate(20);
+                            }
                         });
                     });
+                });
+                
+                // Prevent page scrolling when picker is open
+                const wheelContainers = document.querySelectorAll('.wheel-container');
+                wheelContainers.forEach(container => {
+                    container.addEventListener('touchmove', function(e) {
+                        if (iphonePickerModal.classList.contains('active')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+                    }, { passive: false });
+                    
+                    container.addEventListener('wheel', function(e) {
+                        if (iphonePickerModal.classList.contains('active')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+                    }, { passive: false });
                 });
             }
             
@@ -1854,6 +2009,9 @@
             datetimeBtn.addEventListener('click', function() {
                 iphonePickerModal.classList.add('active');
                 backdrop.classList.add('active');
+                
+                // Prevent body scrolling when picker is open
+                document.body.style.overflow = 'hidden';
             });
             
             // Close iPhone picker modal
@@ -1871,6 +2029,9 @@
             function closeiPhonePicker() {
                 iphonePickerModal.classList.remove('active');
                 backdrop.classList.remove('active');
+                
+                // Re-enable body scrolling
+                document.body.style.overflow = 'auto';
             }
             
             // Confirm date/time selection
@@ -1881,6 +2042,11 @@
                 datetimeBtn.classList.add('selected');
                 datetimeBtn.innerHTML = '<i class="far fa-calendar-check"></i>';
                 datetimeBtn.title = selectedDateTime;
+                
+                // Haptic feedback on confirmation
+                if (vibrationSupported) {
+                    vibrate([30, 20, 30]);
+                }
                 
                 closeiPhonePicker();
                 
@@ -2011,6 +2177,11 @@
                                         datetimeContainer.classList.add('active');
                                     }
                                     
+                                    // Haptic feedback on success
+                                    if (vibrationSupported) {
+                                        vibrate([20, 10, 20]);
+                                    }
+                                    
                                     // Check field completion
                                     checkAllFieldsComplete();
                                 })
@@ -2018,6 +2189,11 @@
                                     // Fallback to coordinates
                                     pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
+                                    
+                                    // Haptic feedback
+                                    if (vibrationSupported) {
+                                        vibrate(30);
+                                    }
                                     
                                     // Check field completion
                                     checkAllFieldsComplete();
@@ -2030,6 +2206,10 @@
                         },
                         function(error) {
                             console.error("Geolocation error:", error);
+                            // Haptic feedback on error
+                            if (vibrationSupported) {
+                                vibrate([50, 100, 50]);
+                            }
                             // Reset button
                             currentLocationBtn.innerHTML = originalIcon;
                             currentLocationBtn.disabled = false;
@@ -2161,6 +2341,11 @@
                     passengerBtn.title = `${selectedPassengerCount} Passenger${selectedPassengerCount > 1 ? 's' : ''}`;
                     passengerBtn.classList.add('selected');
                     
+                    // Haptic feedback
+                    if (vibrationSupported) {
+                        vibrate(20);
+                    }
+                    
                     // Show pets container when passenger count is selected
                     petsContainer.classList.add('active');
                     
@@ -2188,6 +2373,11 @@
                     // Update button title and icon
                     petsBtn.title = `Pets: ${selectedPets === 'yes' ? 'Yes' : 'No'}`;
                     petsBtn.classList.add('selected');
+                    
+                    // Haptic feedback
+                    if (vibrationSupported) {
+                        vibrate(20);
+                    }
                     
                     // Show passenger name container when pets is selected
                     passengerNameContainer.classList.add('active');
@@ -2321,6 +2511,11 @@
                 if (completedCount === totalFields) {
                     submitBtn.classList.add('active');
                     submitBtn.disabled = false;
+                    
+                    // Haptic feedback when all fields complete
+                    if (vibrationSupported) {
+                        vibrate([30, 50, 30]);
+                    }
                 } else {
                     submitBtn.classList.remove('active');
                     submitBtn.disabled = true;
@@ -2329,41 +2524,205 @@
                 return completedCount === totalFields;
             }
             
+            // Function to highlight missing field with vibration
+            function highlightMissingField(field) {
+                // Remove any existing highlights
+                removeHighlights();
+                
+                // Add highlight class based on field type
+                if (field.classList.contains('form-input') || field.classList.contains('icon-input')) {
+                    field.classList.add('missing-field');
+                    
+                    // Haptic feedback
+                    if (vibrationSupported) {
+                        vibrate([100, 50, 100]);
+                    }
+                    
+                    // Remove highlight after 3 seconds
+                    setTimeout(() => {
+                        field.classList.remove('missing-field');
+                    }, 3000);
+                } else if (field.classList.contains('icon-btn') || field.classList.contains('pets-btn')) {
+                    // For icon buttons, highlight the button
+                    field.classList.add('missing-field-btn');
+                    
+                    // Haptic feedback
+                    if (vibrationSupported) {
+                        vibrate([100, 50, 100]);
+                    }
+                    
+                    // Remove highlight after 3 seconds
+                    setTimeout(() => {
+                        field.classList.remove('missing-field-btn');
+                    }, 3000);
+                }
+            }
+            
+            // Function to remove all highlights
+            function removeHighlights() {
+                const highlightedFields = document.querySelectorAll('.missing-field, .missing-field-btn');
+                highlightedFields.forEach(field => {
+                    field.classList.remove('missing-field');
+                    field.classList.remove('missing-field-btn');
+                });
+            }
+            
+            // Show validation error
+            function showValidationError(message) {
+                // Remove any existing error message
+                const existingError = document.querySelector('.validation-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Create error message
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'validation-error';
+                errorDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
+                    ${message}
+                `;
+                
+                // Haptic feedback for error
+                if (vibrationSupported) {
+                    vibrate([150, 100, 150]);
+                }
+                
+                // Insert after form title
+                const formTitle = document.querySelector('.form-title');
+                formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
+                
+                // Scroll error into view
+                setTimeout(() => {
+                    errorDiv.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start'
+                    });
+                }, 100);
+                
+                // Remove after 5 seconds
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.style.opacity = '0';
+                        errorDiv.style.transition = 'opacity 0.3s';
+                        setTimeout(() => {
+                            if (errorDiv.parentNode) {
+                                errorDiv.parentNode.removeChild(errorDiv);
+                            }
+                        }, 300);
+                    }
+                }, 5000);
+            }
+            
             // Handle form submission
             submitBtn.addEventListener('click', function() {
                 // Double-check all fields are complete
                 if (!checkAllFieldsComplete()) {
-                    showValidationError("Please complete all required fields");
+                    // Get form values to find first missing field
+                    const pickup = pickupInput.value.trim();
+                    const destination = destinationInput.value.trim();
+                    const datetime = selectedDateTime;
+                    const passengerCount = selectedPassengerCount;
+                    const pets = selectedPets;
+                    const passengerName = passengerNameInput.value.trim();
+                    const phone = phoneInput.value.trim();
+                    const email = emailInput.value.trim();
+                    
+                    // Find first missing field
+                    let firstMissingField = null;
+                    let errorMessage = "";
+                    
+                    if (!pickup) {
+                        firstMissingField = pickupInput;
+                        errorMessage = "Pickup location is required";
+                    } else if (!destination) {
+                        firstMissingField = destinationInput;
+                        errorMessage = "Destination is required";
+                    } else if (!datetime) {
+                        firstMissingField = datetimeBtn;
+                        errorMessage = "Date and time is required";
+                    } else if (!passengerCount) {
+                        firstMissingField = passengerBtn;
+                        errorMessage = "Please select passenger count";
+                    } else if (!pets) {
+                        firstMissingField = document.querySelector('.pets-btn');
+                        errorMessage = "Please indicate if traveling with pets";
+                    } else if (!passengerName) {
+                        firstMissingField = passengerNameInput;
+                        errorMessage = "Passenger name is required";
+                    } else if (!phone) {
+                        firstMissingField = phoneInput;
+                        errorMessage = "Phone number is required";
+                    } else if (!email) {
+                        firstMissingField = emailInput;
+                        errorMessage = "Email address is required";
+                    } else if (email && !email.includes('@')) {
+                        firstMissingField = emailInput;
+                        errorMessage = "Please enter a valid email address";
+                    }
+                    
+                    showValidationError(errorMessage);
+                    
+                    // Ensure form is expanded so user can see the field
+                    expandBookingForm();
+                    
+                    // Add visual highlight to the missing field
+                    if (firstMissingField) {
+                        highlightMissingField(firstMissingField);
+                        
+                        // Focus on the field or button
+                        setTimeout(() => {
+                            if (firstMissingField.tagName === 'BUTTON') {
+                                // For buttons, we can focus on them
+                                firstMissingField.focus();
+                            } else {
+                                firstMissingField.focus();
+                                
+                                // Scroll the field into view with some padding
+                                firstMissingField.scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'center',
+                                    inline: 'nearest'
+                                });
+                            }
+                        }, 100);
+                    }
+                    
                     return;
                 }
-                
-                // Get form values
-                const pickup = pickupInput.value.trim();
-                const destination = destinationInput.value.trim();
-                const datetime = selectedDateTime;
-                const passengerCount = selectedPassengerCount;
-                const pets = selectedPets;
-                const passengerName = passengerNameInput.value.trim();
-                const phone = phoneInput.value.trim();
-                const email = emailInput.value.trim();
-                const notes = notesInput.value.trim();
-                
-                // Get additional stops
-                const stopInputs = document.querySelectorAll('.stop-location');
-                const stops = Array.from(stopInputs)
-                    .map(input => input.value.trim())
-                    .filter(stop => stop.length > 0);
                 
                 // Show loading state on button
                 const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> PROCESSING...';
                 submitBtn.disabled = true;
                 
+                // Haptic feedback on submission
+                if (vibrationSupported) {
+                    vibrate([50, 100, 50]);
+                }
+                
                 // Simulate API call
                 setTimeout(() => {
                     // Reset button
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
+                    
+                    // Get form values
+                    const pickup = pickupInput.value.trim();
+                    const destination = destinationInput.value.trim();
+                    const datetime = selectedDateTime;
+                    const passengerCount = selectedPassengerCount;
+                    const pets = selectedPets;
+                    const passengerName = passengerNameInput.value.trim();
+                    const phone = phoneInput.value.trim();
+                    const email = emailInput.value.trim();
+                    const notes = notesInput.value.trim();
+                    
+                    // Get additional stops
+                    const stopInputs = document.querySelectorAll('.stop-location');
+                    const stops = Array.from(stopInputs)
+                        .map(input => input.value.trim())
+                        .filter(stop => stop.length > 0);
                     
                     // Show success message with all details
                     showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops);
@@ -2406,6 +2765,11 @@
                         </div>
                     </div>
                 `;
+                
+                // Haptic feedback for success
+                if (vibrationSupported) {
+                    vibrate([100, 150, 100]);
+                }
                 
                 // Insert after booking card
                 bookingCard.insertAdjacentHTML('afterend', confirmationHTML);
@@ -2495,48 +2859,6 @@
                 // Hide submit button
                 submitBtn.classList.remove('active');
                 submitBtn.disabled = true;
-            }
-            
-            // Show validation error
-            function showValidationError(message) {
-                // Remove any existing error message
-                const existingError = document.querySelector('.validation-error');
-                if (existingError) {
-                    existingError.remove();
-                }
-                
-                // Create error message
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'validation-error';
-                errorDiv.innerHTML = `
-                    <i class="fas fa-exclamation-circle" style="margin-right: 8px;"></i>
-                    ${message}
-                `;
-                
-                // Insert after form title
-                const formTitle = document.querySelector('.form-title');
-                formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
-                
-                // Scroll error into view
-                setTimeout(() => {
-                    errorDiv.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start'
-                    });
-                }, 100);
-                
-                // Remove after 5 seconds
-                setTimeout(() => {
-                    if (errorDiv.parentNode) {
-                        errorDiv.style.opacity = '0';
-                        errorDiv.style.transition = 'opacity 0.3s';
-                        setTimeout(() => {
-                            if (errorDiv.parentNode) {
-                                errorDiv.parentNode.removeChild(errorDiv);
-                            }
-                        }, 300);
-                    }
-                }, 5000);
             }
             
             // Make initGoogleMaps globally accessible for Google Maps callback
