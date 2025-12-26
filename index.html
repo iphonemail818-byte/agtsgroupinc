@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* CSS Reset and Base Styles */
         * {
@@ -239,17 +240,29 @@
             background-color: rgba(255, 255, 255, 0.07);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
-            padding: 1rem 1.2rem;
+            padding: 1rem 1.2rem 1rem 2.8rem;
             font-size: 1rem;
             color: var(--text-light);
             transition: var(--transition);
             font-family: inherit;
+            height: 52px;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--neon-cyan);
             box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+        }
+
+        /* Input Icons */
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neon-cyan);
+            font-size: 1.1rem;
+            z-index: 1;
         }
 
         .current-location-btn {
@@ -261,14 +274,24 @@
             color: var(--neon-cyan);
             border: none;
             border-radius: 6px;
-            padding: 0.4rem 0.8rem;
-            font-size: 0.8rem;
+            padding: 0.5rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
         }
 
         .current-location-btn:hover {
             background: rgba(0, 243, 255, 0.2);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .current-location-btn:active {
+            transform: translateY(-50%) scale(0.95);
         }
 
         /* Stops Container */
@@ -284,8 +307,8 @@
         }
 
         .stop-number {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             background-color: rgba(0, 243, 255, 0.2);
             color: var(--neon-cyan);
             border-radius: 50%;
@@ -299,6 +322,15 @@
 
         .stop-input {
             flex-grow: 1;
+            position: relative;
+        }
+
+        .stop-input .form-input {
+            padding-left: 2.8rem;
+        }
+
+        .stop-input .input-icon {
+            left: 1rem;
         }
 
         .remove-stop {
@@ -308,8 +340,8 @@
             font-size: 1.5rem;
             cursor: pointer;
             margin-left: 0.5rem;
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -343,23 +375,15 @@
             transform: scale(1.05);
         }
 
-        /* Date & Time Fields */
+        /* Combined Date & Time Field */
         .datetime-container {
             display: none;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
             margin-top: 1.5rem;
             animation: fadeIn 0.5s ease;
         }
 
         .datetime-container.active {
-            display: grid;
-        }
-
-        @media (max-width: 480px) {
-            .datetime-container {
-                grid-template-columns: 1fr;
-            }
+            display: block;
         }
 
         /* Submit Button */
@@ -382,6 +406,10 @@
         .submit-btn:hover {
             transform: scale(1.02);
             box-shadow: 0 5px 15px rgba(0, 243, 255, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
         }
 
         /* Footer */
@@ -479,6 +507,7 @@
                 <!-- Collapsed Search Input -->
                 <div class="collapsed-search" id="collapsed-search">
                     <div class="search-pill" id="search-pill">
+                        <i class="fas fa-map-marker-alt" style="margin-right: 8px;"></i>
                         Where are you going?
                     </div>
                 </div>
@@ -487,24 +516,31 @@
                 <div class="booking-form" id="booking-form">
                     <h2 class="form-title">Book Your Luxury SUV</h2>
                     
+                    <!-- Pickup Location -->
                     <div class="input-group">
                         <label class="input-label" for="pickup">Pickup Location</label>
+                        <div class="input-icon">
+                            <i class="fas fa-circle" style="font-size: 0.8rem;"></i>
+                        </div>
                         <input type="text" 
                                class="form-input" 
                                id="pickup" 
-                               placeholder="Enter pickup location">
-                        <button class="current-location-btn" id="current-location">
-                            <span class="sr-only">Use Current Location</span>
-                            📍
+                               placeholder="Enter pickup location or use current location">
+                        <button class="current-location-btn" id="current-location" title="Use Current Location">
+                            <i class="fas fa-location-arrow"></i>
                         </button>
                     </div>
                     
+                    <!-- Destination -->
                     <div class="input-group">
                         <label class="input-label" for="destination">Destination</label>
+                        <div class="input-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
                         <input type="text" 
                                class="form-input" 
                                id="destination" 
-                               placeholder="Enter destination"
+                               placeholder="Enter destination address"
                                autocomplete="off">
                     </div>
                     
@@ -514,33 +550,28 @@
                     </div>
                     
                     <!-- Add Stop Button -->
-                    <button class="add-stop-btn" id="add-stop-btn">
-                        +
+                    <button class="add-stop-btn" id="add-stop-btn" title="Add Stop">
+                        <i class="fas fa-plus"></i>
                     </button>
                     
-                    <!-- Date & Time Fields -->
+                    <!-- Combined Date & Time Field -->
                     <div class="datetime-container" id="datetime-container">
                         <div class="input-group">
-                            <label class="input-label" for="pickup-date">Pickup Date</label>
+                            <label class="input-label" for="pickup-datetime">Pickup Date & Time</label>
+                            <div class="input-icon">
+                                <i class="far fa-calendar-alt"></i>
+                            </div>
                             <input type="text" 
                                    class="form-input" 
-                                   id="pickup-date" 
-                                   placeholder="Select date"
-                                   readonly>
-                        </div>
-                        
-                        <div class="input-group">
-                            <label class="input-label" for="pickup-time">Pickup Time</label>
-                            <input type="text" 
-                                   class="form-input" 
-                                   id="pickup-time" 
-                                   placeholder="Select time"
+                                   id="pickup-datetime" 
+                                   placeholder="Select date and time"
                                    readonly>
                         </div>
                     </div>
                     
                     <!-- Submit Button -->
                     <button class="submit-btn" id="submit-btn">
+                        <i class="fas fa-car" style="margin-right: 10px;"></i>
                         CONFIRM BOOKING
                     </button>
                 </div>
@@ -549,19 +580,19 @@
             <!-- Luxury Features -->
             <div class="luxury-features">
                 <div class="feature">
-                    <div class="feature-icon">⭐</div>
+                    <div class="feature-icon"><i class="fas fa-star"></i></div>
                     <div class="feature-text">Premium SUVs</div>
                 </div>
                 <div class="feature">
-                    <div class="feature-icon">👔</div>
+                    <div class="feature-icon"><i class="fas fa-user-tie"></i></div>
                     <div class="feature-text">Professional Chauffeurs</div>
                 </div>
                 <div class="feature">
-                    <div class="feature-icon">⏱️</div>
+                    <div class="feature-icon"><i class="fas fa-clock"></i></div>
                     <div class="feature-text">Punctual Service</div>
                 </div>
                 <div class="feature">
-                    <div class="feature-icon">🔒</div>
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                     <div class="feature-text">Secure & Private</div>
                 </div>
             </div>
@@ -595,8 +626,7 @@
             const addStopBtn = document.getElementById('add-stop-btn');
             const stopsContainer = document.getElementById('stops-container');
             const datetimeContainer = document.getElementById('datetime-container');
-            const pickupDateInput = document.getElementById('pickup-date');
-            const pickupTimeInput = document.getElementById('pickup-time');
+            const pickupDatetimeInput = document.getElementById('pickup-datetime');
             const submitBtn = document.getElementById('submit-btn');
             const bookingCard = document.getElementById('booking-card');
             
@@ -604,7 +634,6 @@
             let autocompleteService;
             let placesService;
             let stopCount = 0;
-            let map;
             
             // Simulate loading screen for 3 seconds
             setTimeout(() => {
@@ -612,7 +641,7 @@
                 mainContent.classList.add('fade-in');
                 
                 // Initialize date and time pickers after loading
-                initializeDateTimePickers();
+                initializeDateTimePicker();
                 
                 // After loading screen fades out, remove it from DOM
                 setTimeout(() => {
@@ -620,29 +649,23 @@
                 }, 500);
             }, 3000);
             
-            // Initialize date and time pickers
-            function initializeDateTimePickers() {
-                // Date picker
-                flatpickr(pickupDateInput, {
-                    dateFormat: "Y-m-d",
-                    minDate: "today",
-                    onChange: function(selectedDates, dateStr, instance) {
-                        // Add some visual feedback when date is selected
-                        pickupDateInput.style.borderColor = 'var(--neon-cyan)';
-                    }
-                });
-                
-                // Time picker
-                flatpickr(pickupTimeInput, {
+            // Initialize combined date and time picker
+            function initializeDateTimePicker() {
+                flatpickr(pickupDatetimeInput, {
                     enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    minuteIncrement: 15,
+                    dateFormat: "F j, Y at h:i K",
+                    minDate: "today",
                     defaultHour: 12,
+                    minuteIncrement: 15,
                     onChange: function(selectedDates, dateStr, instance) {
-                        // Add some visual feedback when time is selected
-                        pickupTimeInput.style.borderColor = 'var(--neon-cyan)';
+                        pickupDatetimeInput.style.borderColor = 'var(--neon-cyan)';
+                        pickupDatetimeInput.style.color = 'var(--neon-cyan)';
+                    },
+                    onClose: function(selectedDates, dateStr, instance) {
+                        if (!dateStr) {
+                            pickupDatetimeInput.style.borderColor = '';
+                            pickupDatetimeInput.style.color = 'var(--text-light)';
+                        }
                     }
                 });
             }
@@ -675,60 +698,130 @@
             }
             
             // Use current location for pickup
-            currentLocationBtn.addEventListener('click', function() {
+            currentLocationBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Show loading state
+                const originalIcon = currentLocationBtn.innerHTML;
+                currentLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                currentLocationBtn.style.pointerEvents = 'none';
+                
                 if (navigator.geolocation) {
-                    // Show loading state
-                    currentLocationBtn.textContent = 'Locating...';
-                    currentLocationBtn.style.opacity = '0.7';
-                    
                     navigator.geolocation.getCurrentPosition(
                         function(position) {
                             // Success - set the pickup location
-                            pickupInput.value = "Current location";
-                            pickupInput.style.borderColor = 'var(--neon-cyan)';
-                            currentLocationBtn.textContent = '📍';
-                            currentLocationBtn.style.opacity = '1';
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
                             
-                            // Show success message briefly
-                            const originalText = pickupInput.placeholder;
-                            pickupInput.placeholder = "Location detected ✓";
-                            setTimeout(() => {
-                                pickupInput.placeholder = originalText;
-                            }, 2000);
+                            // In a real implementation, you would reverse geocode here
+                            // For now, we'll simulate getting an address
+                            simulateReverseGeocode(latitude, longitude)
+                                .then(address => {
+                                    pickupInput.value = address;
+                                    pickupInput.style.borderColor = 'var(--neon-cyan)';
+                                    pickupInput.style.color = 'var(--neon-cyan)';
+                                    
+                                    // Show success message
+                                    showTemporaryMessage(pickupInput, "Location detected ✓", true);
+                                })
+                                .catch(error => {
+                                    pickupInput.value = "Current Location";
+                                    pickupInput.style.borderColor = 'var(--neon-cyan)';
+                                    showTemporaryMessage(pickupInput, "Using your current location", true);
+                                })
+                                .finally(() => {
+                                    // Reset button
+                                    currentLocationBtn.innerHTML = originalIcon;
+                                    currentLocationBtn.style.pointerEvents = 'auto';
+                                });
                         },
                         function(error) {
                             // Error - handle permission denied or other errors
                             console.error("Geolocation error:", error);
-                            currentLocationBtn.textContent = '📍';
-                            currentLocationBtn.style.opacity = '1';
                             
-                            // Show error message
-                            pickupInput.placeholder = "Location access denied";
+                            let errorMessage = "Location access denied";
+                            if (error.code === error.TIMEOUT) {
+                                errorMessage = "Location request timed out";
+                            } else if (error.code === error.POSITION_UNAVAILABLE) {
+                                errorMessage = "Location unavailable";
+                            }
+                            
+                            showTemporaryMessage(pickupInput, errorMessage, false);
                             pickupInput.style.borderColor = '#ff4757';
-                            setTimeout(() => {
-                                pickupInput.placeholder = "Enter pickup location";
-                                pickupInput.style.borderColor = '';
-                            }, 3000);
+                            
+                            // Reset button
+                            currentLocationBtn.innerHTML = originalIcon;
+                            currentLocationBtn.style.pointerEvents = 'auto';
                         },
-                        { timeout: 10000 }
+                        { 
+                            timeout: 10000,
+                            enableHighAccuracy: true 
+                        }
                     );
                 } else {
                     // Browser doesn't support geolocation
-                    pickupInput.placeholder = "Geolocation not supported";
+                    showTemporaryMessage(pickupInput, "Geolocation not supported", false);
                     pickupInput.style.borderColor = '#ff4757';
-                    setTimeout(() => {
-                        pickupInput.placeholder = "Enter pickup location";
-                        pickupInput.style.borderColor = '';
-                    }, 3000);
+                    
+                    // Reset button
+                    currentLocationBtn.innerHTML = originalIcon;
+                    currentLocationBtn.style.pointerEvents = 'auto';
                 }
             });
             
-            // Show date/time fields when destination input starts
+            // Simulate reverse geocoding (in real app, use Google Geocoding API)
+            function simulateReverseGeocode(lat, lng) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        // Mock addresses based on coordinates
+                        const mockAddresses = [
+                            "Your Current Location",
+                            `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+                            "Current GPS Location"
+                        ];
+                        
+                        // Randomly succeed or fail for demo
+                        if (Math.random() > 0.3) {
+                            resolve(mockAddresses[Math.floor(Math.random() * mockAddresses.length)]);
+                        } else {
+                            reject(new Error("Geocoding failed"));
+                        }
+                    }, 800);
+                });
+            }
+            
+            // Show temporary message in input field
+            function showTemporaryMessage(inputElement, message, isSuccess) {
+                const originalPlaceholder = inputElement.placeholder;
+                const originalValue = inputElement.value;
+                
+                inputElement.value = "";
+                inputElement.placeholder = message;
+                inputElement.style.borderColor = isSuccess ? 'var(--neon-cyan)' : '#ff4757';
+                inputElement.style.color = isSuccess ? 'var(--neon-cyan)' : '#ff4757';
+                
+                setTimeout(() => {
+                    inputElement.placeholder = originalPlaceholder;
+                    inputElement.value = originalValue;
+                    inputElement.style.borderColor = '';
+                    inputElement.style.color = '';
+                }, 2000);
+            }
+            
+            // Show date/time field when destination input starts
             destinationInput.addEventListener('input', function() {
                 if (destinationInput.value.trim().length > 0) {
                     datetimeContainer.classList.add('active');
                 } else {
                     datetimeContainer.classList.remove('active');
+                }
+            });
+            
+            // Also show date/time when pickup is filled
+            pickupInput.addEventListener('input', function() {
+                if (destinationInput.value.trim().length > 0 || pickupInput.value.trim().length > 0) {
+                    datetimeContainer.classList.add('active');
                 }
             });
             
@@ -741,12 +834,17 @@
                 stopItem.innerHTML = `
                     <div class="stop-number">${stopCount}</div>
                     <div class="stop-input">
+                        <div class="input-icon">
+                            <i class="fas fa-map-pin"></i>
+                        </div>
                         <input type="text" 
                                class="form-input stop-location" 
                                placeholder="Additional stop ${stopCount}"
                                autocomplete="off">
                     </div>
-                    <button class="remove-stop" type="button">×</button>
+                    <button class="remove-stop" type="button" title="Remove Stop">
+                        <i class="fas fa-times"></i>
+                    </button>
                 `;
                 
                 stopsContainer.appendChild(stopItem);
@@ -754,16 +852,21 @@
                 // Add event listener to remove button
                 const removeBtn = stopItem.querySelector('.remove-stop');
                 removeBtn.addEventListener('click', function() {
-                    stopItem.remove();
-                    updateStopNumbers();
+                    stopItem.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => {
+                        stopItem.remove();
+                        updateStopNumbers();
+                    }, 300);
                 });
                 
                 // Initialize autocomplete for the new stop input
                 const stopInput = stopItem.querySelector('.stop-location');
                 initAutocompleteInput(stopInput);
                 
-                // Animate the new stop
-                stopItem.style.animation = 'fadeIn 0.3s ease';
+                // Focus on the new stop input
+                setTimeout(() => {
+                    stopInput.focus();
+                }, 100);
             });
             
             // Update stop numbers after removal
@@ -781,17 +884,12 @@
                 initAutocompleteInput(pickupInput);
                 initAutocompleteInput(destinationInput);
                 
-                // Note: In a real implementation, you would initialize the
-                // autocompleteService and placesService here with your API key
                 console.log("Google Maps API loaded - autocomplete initialized");
             }
             
             // Initialize autocomplete for an input element
             function initAutocompleteInput(inputElement) {
-                // Create autocomplete functionality
-                // Note: In a real implementation, this would use the Google Places API
-                // For this demo, we'll simulate it with a simple dropdown
-                
+                // For demo purposes, we'll simulate autocomplete
                 inputElement.addEventListener('focus', function() {
                     this.style.borderColor = 'var(--neon-cyan)';
                     this.style.boxShadow = '0 0 0 2px rgba(0, 243, 255, 0.2)';
@@ -802,10 +900,8 @@
                     this.style.boxShadow = '';
                 });
                 
-                // Simulate autocomplete suggestions on input
+                // Simulate autocomplete suggestions
                 inputElement.addEventListener('input', function() {
-                    // In a real implementation, this would call the Google Places API
-                    // For this demo, we'll just show a subtle visual effect
                     if (this.value.length > 2) {
                         this.style.background = 'rgba(255, 255, 255, 0.09)';
                     } else {
@@ -819,12 +915,16 @@
                 // Get form values
                 const pickup = pickupInput.value.trim();
                 const destination = destinationInput.value.trim();
-                const date = pickupDateInput.value;
-                const time = pickupTimeInput.value;
+                const datetime = pickupDatetimeInput.value;
                 
                 // Basic validation
                 if (!pickup || !destination) {
-                    alert("Please enter both pickup and destination locations.");
+                    showValidationError("Please enter both pickup and destination locations.");
+                    return;
+                }
+                
+                if (!datetime) {
+                    showValidationError("Please select pickup date and time.");
                     return;
                 }
                 
@@ -835,18 +935,20 @@
                     .filter(stop => stop.length > 0);
                 
                 // Show loading state on button
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = "PROCESSING...";
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> PROCESSING...';
                 submitBtn.style.opacity = "0.8";
+                submitBtn.disabled = true;
                 
                 // Simulate API call
                 setTimeout(() => {
                     // Reset button
-                    submitBtn.textContent = originalText;
+                    submitBtn.innerHTML = originalText;
                     submitBtn.style.opacity = "1";
+                    submitBtn.disabled = false;
                     
                     // Show success message
-                    alert(`Booking confirmed!\n\nPickup: ${pickup}\nDestination: ${destination}\nDate: ${date}\nTime: ${time}\n\nAdditional stops: ${stops.length > 0 ? stops.join(', ') : 'None'}\n\nYour luxury SUV will arrive promptly.`);
+                    showBookingConfirmation(pickup, destination, datetime, stops);
                     
                     // Reset form
                     collapseBookingForm();
@@ -854,18 +956,103 @@
                 }, 1500);
             });
             
+            // Show validation error
+            function showValidationError(message) {
+                // Create temporary error message
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    background: rgba(255, 71, 87, 0.1);
+                    color: #ff4757;
+                    border: 1px solid #ff4757;
+                    border-radius: 8px;
+                    padding: 12px;
+                    margin-bottom: 1rem;
+                    text-align: center;
+                    font-size: 0.9rem;
+                    animation: fadeIn 0.3s ease;
+                `;
+                errorDiv.textContent = message;
+                
+                // Insert after form title
+                const formTitle = document.querySelector('.form-title');
+                formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    errorDiv.style.animation = 'fadeOut 0.3s ease';
+                    setTimeout(() => {
+                        if (errorDiv.parentNode) {
+                            errorDiv.parentNode.removeChild(errorDiv);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Show booking confirmation
+            function showBookingConfirmation(pickup, destination, datetime, stops) {
+                const confirmationHTML = `
+                    <div style="
+                        background: rgba(0, 243, 255, 0.1);
+                        border: 1px solid var(--neon-cyan);
+                        border-radius: 12px;
+                        padding: 20px;
+                        margin-top: 20px;
+                        animation: fadeIn 0.5s ease;
+                    ">
+                        <h3 style="color: var(--neon-cyan); margin-bottom: 15px; text-align: center;">
+                            <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                            Booking Confirmed!
+                        </h3>
+                        <div style="font-size: 0.9rem; line-height: 1.6;">
+                            <p><strong>Pickup:</strong> ${pickup}</p>
+                            <p><strong>Destination:</strong> ${destination}</p>
+                            <p><strong>Date & Time:</strong> ${datetime}</p>
+                            ${stops.length > 0 ? `<p><strong>Additional Stops:</strong> ${stops.join(', ')}</p>` : ''}
+                            <p style="margin-top: 15px; color: var(--neon-cyan);">
+                                Your luxury SUV will arrive promptly. A confirmation has been sent to your email.
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                // Insert after booking card
+                bookingCard.insertAdjacentHTML('afterend', confirmationHTML);
+                
+                // Remove after 8 seconds
+                setTimeout(() => {
+                    const confirmationDiv = document.querySelector('[style*="background: rgba(0, 243, 255, 0.1)"]');
+                    if (confirmationDiv) {
+                        confirmationDiv.style.animation = 'fadeOut 0.5s ease';
+                        setTimeout(() => {
+                            if (confirmationDiv.parentNode) {
+                                confirmationDiv.parentNode.removeChild(confirmationDiv);
+                            }
+                        }, 500);
+                    }
+                }, 8000);
+            }
+            
             // Reset form to initial state
             function resetForm() {
                 pickupInput.value = '';
                 destinationInput.value = '';
-                pickupDateInput.value = '';
-                pickupTimeInput.value = '';
+                pickupDatetimeInput.value = '';
                 datetimeContainer.classList.remove('active');
                 
                 // Clear additional stops
                 stopsContainer.innerHTML = '';
                 stopCount = 0;
             }
+            
+            // Add fadeOut animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translateY(0); }
+                    to { opacity: 0; transform: translateY(-10px); }
+                }
+            `;
+            document.head.appendChild(style);
             
             // Make initAutocomplete globally accessible for Google Maps callback
             window.initAutocomplete = initAutocomplete;
