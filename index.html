@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* CSS Reset and Base Styles */
@@ -368,7 +369,7 @@
             transform: scale(1.05);
         }
 
-        /* Date & Time Picker - FIXED: No white box, just icon and text below */
+        /* Date & Time Picker - Custom Dark Theme */
         .datetime-container {
             display: none;
             margin-top: 1.5rem;
@@ -429,6 +430,63 @@
         /* Hidden datetime input for Flatpickr */
         #pickup-datetime {
             display: none;
+        }
+
+        /* Custom Flatpickr Dark Theme Overrides */
+        .flatpickr-calendar {
+            background: var(--card-dark) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+        }
+
+        .flatpickr-months {
+            background: var(--card-darker) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+        }
+
+        .flatpickr-month {
+            color: var(--text-light) !important;
+        }
+
+        .flatpickr-weekdays {
+            background: var(--card-dark) !important;
+        }
+
+        .flatpickr-weekday {
+            color: var(--text-muted) !important;
+        }
+
+        .flatpickr-day {
+            color: var(--text-light) !important;
+            border: 1px solid transparent !important;
+        }
+
+        .flatpickr-day:hover {
+            background: rgba(0, 243, 255, 0.1) !important;
+            border-color: var(--neon-cyan) !important;
+        }
+
+        .flatpickr-day.selected {
+            background: var(--neon-cyan) !important;
+            color: var(--primary-dark) !important;
+            border-color: var(--neon-cyan) !important;
+        }
+
+        .flatpickr-day.today {
+            border-color: var(--neon-cyan) !important;
+        }
+
+        .flatpickr-time input {
+            color: var(--text-light) !important;
+            background: var(--card-dark) !important;
+        }
+
+        .flatpickr-time .numInputWrapper span.arrowUp:after {
+            border-bottom-color: var(--neon-cyan) !important;
+        }
+
+        .flatpickr-time .numInputWrapper span.arrowDown:after {
+            border-top-color: var(--neon-cyan) !important;
         }
 
         /* Submit Button */
@@ -634,7 +692,7 @@
                         <i class="fas fa-plus"></i>
                     </button>
                     
-                    <!-- Date & Time Picker - Fixed: No white box -->
+                    <!-- Date & Time Picker - Custom Dark Theme -->
                     <div class="datetime-container" id="datetime-container">
                         <div class="input-group">
                             <label class="input-label">Pickup Date & Time</label>
@@ -736,7 +794,7 @@
                 }, 500);
             }, 3000);
             
-            // Initialize combined date and time picker
+            // Initialize combined date and time picker with custom theme
             function initializeDateTimePicker() {
                 flatpickr(pickupDatetimeInput, {
                     enableTime: true,
@@ -744,6 +802,16 @@
                     minDate: "today",
                     defaultHour: 12,
                     minuteIncrement: 15,
+                    theme: "dark", // Use dark theme
+                    onReady: function(selectedDates, dateStr, instance) {
+                        // Apply additional custom styling
+                        const calendar = instance.calendarContainer;
+                        if (calendar) {
+                            calendar.style.background = 'var(--card-dark)';
+                            calendar.style.border = '1px solid rgba(255, 255, 255, 0.15)';
+                            calendar.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.7)';
+                        }
+                    },
                     onChange: function(selectedDates, dateStr, instance) {
                         selectedDateTime = dateStr;
                         // Update the text display below the icon
