@@ -1,65 +1,71 @@
-// ULTRA-SIMPLE MAIN.JS FOR IPHONE
-console.log('main.js loading on iPhone...');
+// iPhone-Compatible Main.js
+console.log('AGTS Main.js loading on iPhone');
 
-// Global error handler
-window.addEventListener('error', function(e) {
-    console.error('iPhone Error:', e.message);
-    forceShowContent();
-    return true;
-});
-
-// When DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM ready on iPhone');
-    
+// 1. First, hide loading screen IMMEDIATELY
+try {
     const loadingScreen = document.getElementById('loading-screen');
-    const mainContent = document.getElementById('main-content');
-    
-    // Always hide loading after 3 seconds
-    setTimeout(function() {
-        console.log('Auto-hiding loading screen');
-        
-        if (loadingScreen) {
-            loadingScreen.style.opacity = '0';
-            loadingScreen.style.transition = 'opacity 0.5s';
-        }
-        
-        if (mainContent) {
-            mainContent.style.opacity = '1';
-            mainContent.style.transition = 'opacity 0.5s';
-        }
-        
-        // Remove loading screen after fade
-        setTimeout(function() {
-            if (loadingScreen) {
-                loadingScreen.style.display = 'none';
-            }
-        }, 500);
-        
-    }, 3000); // 3 second delay
-});
-
-// Backup: if everything else fails
-setTimeout(function() {
-    forceShowContent();
-}, 5000); // 5 second absolute timeout
-
-function forceShowContent() {
-    console.log('Force showing content');
-    const loadingScreen = document.getElementById('loading-screen');
-    const mainContent = document.getElementById('main-content');
-    
     if (loadingScreen) {
-        loadingScreen.style.display = 'none';
+        loadingScreen.style.cssText = `
+            opacity: 0 !important;
+            visibility: hidden !important;
+            display: none !important;
+            transition: none !important;
+        `;
+        console.log('Loading screen hidden immediately');
+    }
+} catch(e) {}
+
+// 2. Show main content IMMEDIATELY
+try {
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+        mainContent.style.cssText = `
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: block !important;
+        `;
+        console.log('Main content shown immediately');
+    }
+} catch(e) {}
+
+// 3. When DOM loads, do more setup
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded on iPhone');
+    
+    // Final cleanup of loading screen
+    setTimeout(function() {
+        const ls = document.getElementById('loading-screen');
+        if (ls && ls.parentNode) {
+            ls.parentNode.removeChild(ls);
+            console.log('Loading screen removed from DOM');
+        }
+    }, 100);
+    
+    // Add basic functionality
+    const bookBtn = document.getElementById('submit-btn');
+    if (bookBtn) {
+        bookBtn.onclick = function() {
+            alert('Booking would be processed');
+        };
+    }
+});
+
+// 4. Absolute fallback - if nothing else works
+setTimeout(function() {
+    console.log('Fallback timeout executing');
+    
+    // Remove ALL loading elements
+    const elements = document.getElementsByTagName('*');
+    for (let i = 0; i < elements.length; i++) {
+        const el = elements[i];
+        if (el.id && el.id.includes('loading')) {
+            el.style.display = 'none';
+        }
+        if (el.className && typeof el.className === 'string' && el.className.includes('loading')) {
+            el.style.display = 'none';
+        }
     }
     
-    if (mainContent) {
-        mainContent.style.display = 'block';
-        mainContent.style.opacity = '1';
-    }
-}
-
-// Make sure window.onload also triggers
-window.onload = function() {
-    console.log('Window fully loaded on iPhone');
-};
+    // Show everything else
+    document.body.style.visibility = 'visible';
+}, 2000);
