@@ -1,71 +1,106 @@
-// iPhone-Compatible Main.js
-console.log('AGTS Main.js loading on iPhone');
+// iPhone-Safe Main.js - NO ERRORS
+console.log('AGTS Main.js loading...');
 
-// 1. First, hide loading screen IMMEDIATELY
-try {
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen) {
-        loadingScreen.style.cssText = `
-            opacity: 0 !important;
-            visibility: hidden !important;
-            display: none !important;
-            transition: none !important;
-        `;
-        console.log('Loading screen hidden immediately');
-    }
-} catch(e) {}
-
-// 2. Show main content IMMEDIATELY
-try {
-    const mainContent = document.getElementById('main-content');
-    if (mainContent) {
-        mainContent.style.cssText = `
-            opacity: 1 !important;
-            visibility: visible !important;
-            display: block !important;
-        `;
-        console.log('Main content shown immediately');
-    }
-} catch(e) {}
-
-// 3. When DOM loads, do more setup
+// Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded on iPhone');
+    console.log('DOM Content Loaded');
     
-    // Final cleanup of loading screen
+    // Get elements
+    const loadingScreen = document.getElementById('loading-screen');
+    const mainContent = document.getElementById('main-content');
+    
+    // ALWAYS hide loading screen after 3 seconds
     setTimeout(function() {
-        const ls = document.getElementById('loading-screen');
-        if (ls && ls.parentNode) {
-            ls.parentNode.removeChild(ls);
-            console.log('Loading screen removed from DOM');
+        console.log('Hiding loading screen now');
+        
+        // Hide loading screen
+        if (loadingScreen) {
+            loadingScreen.classList.add('fade-out');
+            console.log('Added fade-out class');
         }
-    }, 100);
+        
+        // Show main content
+        if (mainContent) {
+            mainContent.classList.add('fade-in');
+            console.log('Added fade-in class');
+        }
+        
+        // Completely remove loading screen after animation
+        setTimeout(function() {
+            if (loadingScreen && loadingScreen.parentNode) {
+                loadingScreen.style.display = 'none';
+                console.log('Loading screen hidden');
+            }
+        }, 500); // Wait for fade animation
+        
+    }, 3000); // 3 second delay
     
-    // Add basic functionality
-    const bookBtn = document.getElementById('submit-btn');
-    if (bookBtn) {
-        bookBtn.onclick = function() {
-            alert('Booking would be processed');
-        };
-    }
+    // Initialize basic functionality
+    initializeBasicFeatures();
 });
 
-// 4. Absolute fallback - if nothing else works
-setTimeout(function() {
-    console.log('Fallback timeout executing');
+// Initialize basic features (NO Google Maps dependency)
+function initializeBasicFeatures() {
+    console.log('Initializing basic features...');
     
-    // Remove ALL loading elements
-    const elements = document.getElementsByTagName('*');
-    for (let i = 0; i < elements.length; i++) {
-        const el = elements[i];
-        if (el.id && el.id.includes('loading')) {
-            el.style.display = 'none';
-        }
-        if (el.className && typeof el.className === 'string' && el.className.includes('loading')) {
-            el.style.display = 'none';
-        }
+    // Get basic elements
+    const bookButton = document.getElementById('submit-btn');
+    const burgerButton = document.getElementById('burger-btn');
+    
+    // Basic book button functionality
+    if (bookButton) {
+        bookButton.addEventListener('click', function() {
+            alert('Booking feature will be available once all files are loaded correctly.');
+        });
     }
     
-    // Show everything else
-    document.body.style.visibility = 'visible';
-}, 2000);
+    // Basic burger menu functionality
+    if (burgerButton) {
+        burgerButton.addEventListener('click', function() {
+            const menu = document.getElementById('dropdown-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        });
+    }
+    
+    console.log('Basic features initialized');
+}
+
+// Backup: If DOMContentLoaded doesn't fire, use window.onload
+window.onload = function() {
+    console.log('Window loaded - backup trigger');
+    
+    const loadingScreen = document.getElementById('loading-screen');
+    const mainContent = document.getElementById('main-content');
+    
+    // Force hide loading after 4 seconds max
+    setTimeout(function() {
+        if (loadingScreen) {
+            loadingScreen.style.display = 'none';
+        }
+        if (mainContent) {
+            mainContent.style.display = 'block';
+            mainContent.style.opacity = '1';
+        }
+    }, 4000);
+};
+
+// Global error handler
+window.addEventListener('error', function(event) {
+    console.error('JavaScript Error:', event.message, 'at', event.filename, 'line', event.lineno);
+    
+    // Even on error, show the main content
+    setTimeout(function() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const mainContent = document.getElementById('main-content');
+        
+        if (loadingScreen) loadingScreen.style.display = 'none';
+        if (mainContent) {
+            mainContent.style.display = 'block';
+            mainContent.style.opacity = '1';
+        }
+    }, 1000);
+    
+    return true;
+});
