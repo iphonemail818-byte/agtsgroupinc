@@ -119,7 +119,7 @@
         /* IMPROVED BURGER MENU STYLES */
         .burger-menu-container {
             position: fixed;
-            top: 2rem; /* Changed from 1.5rem to 2rem to move it down */
+            top: 2rem;
             left: 1.5rem;
             z-index: 150;
         }
@@ -202,13 +202,13 @@
         /* WIDER DROPDOWN MENU - No Header */
         .dropdown-menu {
             position: fixed;
-            top: 110px; /* Increased from 90px to 110px for more spacing */
+            top: 110px;
             left: 1.5rem;
-            width: 220px; /* Increased from 150px to 220px for better readability */
+            width: 220px;
             background: rgba(27, 28, 38, 0.98);
             backdrop-filter: blur(12px);
             border-radius: 14px;
-            padding: 1rem; /* Increased padding for better spacing */
+            padding: 1rem;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), 
                         0 0 0 1px rgba(0, 243, 255, 0.1),
                         0 0 15px rgba(0, 243, 255, 0.15);
@@ -227,8 +227,6 @@
             transform: translateY(0) scale(1);
         }
 
-        /* Removed .menu-header completely */
-
         .menu-items {
             list-style: none;
             margin: 0;
@@ -236,7 +234,7 @@
         }
 
         .menu-item {
-            margin-bottom: 0.5rem; /* Increased from 0.4rem */
+            margin-bottom: 0.5rem;
             position: relative;
         }
 
@@ -247,7 +245,7 @@
         .menu-link {
             display: flex;
             align-items: center;
-            padding: 0.8rem 1rem; /* Increased padding for better touch targets */
+            padding: 0.8rem 1rem;
             background: transparent;
             border-radius: 10px;
             color: var(--text-light);
@@ -309,15 +307,14 @@
         }
 
         .menu-text {
-            font-size: 0.9rem; /* Increased from 0.8rem for better readability */
+            font-size: 0.9rem;
             font-weight: 500;
             flex: 1;
             white-space: nowrap;
-            overflow: visible; /* Changed from hidden to visible */
-            text-overflow: clip; /* Changed from ellipsis to clip */
+            overflow: visible;
+            text-overflow: clip;
         }
 
-        /* Ensure all text is readable - increased contrast */
         .menu-text {
             color: var(--text-light);
             font-weight: 500;
@@ -356,20 +353,20 @@
             }
             
             .dropdown-menu {
-                top: 95px; /* Adjusted for mobile */
+                top: 95px;
                 left: 1rem;
-                width: 200px; /* Slightly smaller on mobile but still wide enough */
+                width: 200px;
             }
         }
 
         @media (max-width: 480px) {
             .dropdown-menu {
                 top: 85px;
-                width: 180px; /* Minimum width for readability on small screens */
+                width: 180px;
             }
             
             .menu-text {
-                font-size: 0.85rem; /* Slightly smaller on very small screens */
+                font-size: 0.85rem;
             }
             
             .menu-icon-item {
@@ -1437,6 +1434,85 @@
             transition: width 0.5s ease;
         }
 
+        /* Fare Estimate Display */
+        .fare-estimate {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .fare-estimate.active {
+            display: block;
+        }
+
+        .fare-estimate h3 {
+            color: var(--neon-cyan);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .fare-breakdown {
+            font-size: 0.9rem;
+        }
+
+        .fare-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .fare-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .fare-row.total {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--neon-cyan);
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 2px solid rgba(0, 243, 255, 0.3);
+        }
+
+        .fare-row .label {
+            color: var(--text-muted);
+        }
+
+        .fare-row .value {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .fare-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        /* Surge pricing indicator */
+        .surge-badge {
+            background: linear-gradient(90deg, #ff6b6b, #ffa500);
+            color: var(--primary-dark);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-weight: 700;
+            margin-left: 0.5rem;
+            animation: pulse 1.5s infinite;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .burger-menu-container {
@@ -1506,7 +1582,6 @@
                     </a>
                 </li>
                 
-                <!-- ADDED RESERVATIONS ITEM AS THE FOURTH ITEM -->
                 <li class="menu-item">
                     <a href="#" class="menu-link" id="reservations-link">
                         <div class="menu-icon-item">
@@ -1799,6 +1874,17 @@
                         </div>
                     </div>
                     
+                    <!-- Fare Estimate -->
+                    <div class="fare-estimate" id="fare-estimate">
+                        <h3>Fare Estimate <span class="surge-badge" id="surge-badge" style="display: none;">1.5x</span></h3>
+                        <div class="fare-breakdown" id="fare-breakdown">
+                            <!-- Fare breakdown will be populated here -->
+                        </div>
+                        <div class="fare-note">
+                            <p>Prices may vary based on traffic, route, and demand</p>
+                        </div>
+                    </div>
+                    
                     <!-- Submit Button - Hidden until all required fields are filled -->
                     <button class="submit-btn" id="submit-btn">
                         <i class="fas fa-car" style="margin-right: 10px;"></i>
@@ -1835,7 +1921,7 @@
     </div>
 
     <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places&callback=initGoogleMaps" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places,distanceMatrix&callback=initGoogleMaps" async defer></script>
 
     <script>
         // Wait for DOM to be fully loaded
@@ -1857,6 +1943,9 @@
             const datetimeText = document.getElementById('datetime-text');
             const submitBtn = document.getElementById('submit-btn');
             const bookingCard = document.getElementById('booking-card');
+            const fareEstimate = document.getElementById('fare-estimate');
+            const fareBreakdown = document.getElementById('fare-breakdown');
+            const surgeBadge = document.getElementById('surge-badge');
             
             // Fixed Burger Menu Elements
             const burgerBtn = document.getElementById('burger-btn');
@@ -1926,6 +2015,9 @@
             let selectedPets = null;
             let autocompletePickup = null;
             let autocompleteDestination = null;
+            let routeDistance = 0; // in miles
+            let routeDuration = 0; // in minutes
+            let currentSurgeMultiplier = 1.0;
             
             // Date/Time Selection Variables
             let selectedDate = new Date();
@@ -1954,13 +2046,341 @@
                 }, 500);
             }, 3000);
             
-            // Burger Menu Toggle Functionality
+            // ============================================
+            // UBER/LYFT STYLE PRICING LOGIC
+            // ============================================
+            
+            // Pricing configuration similar to Uber Black SUV/Lyft Lux Black
+            const PRICING_CONFIG = {
+                // Base fares (similar to Uber Black)
+                BASE_FARE: 8.00,          // Base booking fee
+                COST_PER_MILE: 4.75,      // Per mile rate (Uber Black is ~$4.50-5.00)
+                COST_PER_MINUTE: 0.85,    // Per minute rate
+                MINIMUM_FARE: 25.00,      // Minimum trip cost
+                CANCELLATION_FEE: 15.00,  // Cancellation fee
+                
+                // Service fees (similar to ride-hailing platforms)
+                BOOKING_FEE: 2.50,        // Platform booking fee
+                SERVICE_FEE_PERCENTAGE: 0.20, // 20% service fee
+                
+                // Additional charges
+                ADDITIONAL_STOP_FEE: 5.00, // Per additional stop
+                PETS_FEE: 20.00,          // Pet cleaning fee
+                AIRPORT_FEE: 5.00,        // Airport pickup/dropoff
+                TIPPING_SUGGESTION: 0.20, // 20% tip suggestion
+                
+                // Peak pricing/surge
+                PEAK_HOURS: {
+                    weekdayMorning: { start: 7, end: 10, multiplier: 1.3 },
+                    weekdayEvening: { start: 16, end: 19, multiplier: 1.4 },
+                    fridayNight: { start: 19, end: 2, multiplier: 1.8 },
+                    saturdayNight: { start: 19, end: 3, multiplier: 2.0 },
+                    sundayBrunch: { start: 10, end: 14, multiplier: 1.3 }
+                },
+                
+                // Vehicle types (for future expansion)
+                VEHICLES: {
+                    LUXURY_SUV: {
+                        name: "Luxury SUV",
+                        baseMultiplier: 1.0,
+                        capacity: 6
+                    },
+                    EXECUTIVE_VAN: {
+                        name: "Executive Van",
+                        baseMultiplier: 1.5,
+                        capacity: 10
+                    },
+                    PREMIUM_SEDAN: {
+                        name: "Premium Sedan",
+                        baseMultiplier: 0.8,
+                        capacity: 4
+                    }
+                }
+            };
+            
+            // Calculate surge pricing based on time and demand
+            function calculateSurgeMultiplier(date) {
+                const hour = date.getHours();
+                const day = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                
+                let multiplier = 1.0;
+                
+                // Check for peak hours
+                for (const [period, config] of Object.entries(PRICING_CONFIG.PEAK_HOURS)) {
+                    let startHour = config.start;
+                    let endHour = config.end;
+                    
+                    // Handle overnight periods
+                    if (endHour < startHour) {
+                        if (hour >= startHour || hour < endHour) {
+                            multiplier = Math.max(multiplier, config.multiplier);
+                        }
+                    } else {
+                        if (hour >= startHour && hour < endHour) {
+                            multiplier = Math.max(multiplier, config.multiplier);
+                        }
+                    }
+                }
+                
+                // Special holiday pricing
+                const holidays = [
+                    '2023-12-24', '2023-12-25', '2023-12-31',
+                    '2024-01-01', '2024-07-04', '2024-11-28'
+                ];
+                const dateStr = date.toISOString().split('T')[0];
+                if (holidays.includes(dateStr)) {
+                    multiplier = Math.max(multiplier, 2.0);
+                }
+                
+                // Random demand simulation (for demo)
+                const randomDemand = Math.random();
+                if (randomDemand > 0.7) {
+                    multiplier += 0.2;
+                }
+                if (randomDemand > 0.9) {
+                    multiplier += 0.3;
+                }
+                
+                // Cap at 3.0x
+                return Math.min(multiplier, 3.0);
+            }
+            
+            // Calculate fare based on Uber/Lyft style pricing
+            function calculateFare() {
+                if (routeDistance === 0 || routeDuration === 0) {
+                    return null;
+                }
+                
+                // Apply surge pricing
+                currentSurgeMultiplier = calculateSurgeMultiplier(selectedDate);
+                
+                // Calculate base fare components
+                const distanceCharge = routeDistance * PRICING_CONFIG.COST_PER_MILE;
+                const timeCharge = routeDuration * PRICING_CONFIG.COST_PER_MINUTE;
+                
+                // Calculate subtotal
+                let subtotal = PRICING_CONFIG.BASE_FARE + distanceCharge + timeCharge;
+                
+                // Apply surge pricing
+                subtotal *= currentSurgeMultiplier;
+                
+                // Add additional stop fees
+                const stopFees = stopCount * PRICING_CONFIG.ADDITIONAL_STOP_FEE;
+                subtotal += stopFees;
+                
+                // Add pets fee if applicable
+                let petsFee = 0;
+                if (selectedPets === 'yes') {
+                    petsFee = PRICING_CONFIG.PETS_FEE;
+                    subtotal += petsFee;
+                }
+                
+                // Check for minimum fare
+                if (subtotal < PRICING_CONFIG.MINIMUM_FARE) {
+                    subtotal = PRICING_CONFIG.MINIMUM_FARE;
+                }
+                
+                // Calculate fees
+                const bookingFee = PRICING_CONFIG.BOOKING_FEE;
+                const serviceFee = subtotal * PRICING_CONFIG.SERVICE_FEE_PERCENTAGE;
+                const suggestedTip = subtotal * PRICING_CONFIG.TIPPING_SUGGESTION;
+                
+                // Calculate total
+                const total = subtotal + bookingFee + serviceFee;
+                const totalWithTip = total + suggestedTip;
+                
+                return {
+                    baseFare: PRICING_CONFIG.BASE_FARE,
+                    distanceCharge: distanceCharge,
+                    timeCharge: timeCharge,
+                    surgeMultiplier: currentSurgeMultiplier,
+                    stopFees: stopFees,
+                    petsFee: petsFee,
+                    subtotal: subtotal,
+                    bookingFee: bookingFee,
+                    serviceFee: serviceFee,
+                    suggestedTip: suggestedTip,
+                    total: total,
+                    totalWithTip: totalWithTip,
+                    estimatedTotal: totalWithTip,
+                    distance: routeDistance,
+                    duration: routeDuration
+                };
+            }
+            
+            // Format currency
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 2
+                }).format(amount);
+            }
+            
+            // Update fare estimate display
+            function updateFareEstimate() {
+                const fare = calculateFare();
+                
+                if (!fare) {
+                    fareEstimate.classList.remove('active');
+                    return;
+                }
+                
+                // Update surge badge if applicable
+                if (currentSurgeMultiplier > 1.0) {
+                    surgeBadge.textContent = `${currentSurgeMultiplier.toFixed(1)}x`;
+                    surgeBadge.style.display = 'inline';
+                } else {
+                    surgeBadge.style.display = 'none';
+                }
+                
+                // Build fare breakdown HTML
+                let html = '';
+                
+                // Base fare
+                html += `
+                    <div class="fare-row">
+                        <span class="label">Base Fare</span>
+                        <span class="value">${formatCurrency(fare.baseFare)}</span>
+                    </div>
+                `;
+                
+                // Distance charge
+                html += `
+                    <div class="fare-row">
+                        <span class="label">Distance (${fare.distance.toFixed(1)} mi × ${formatCurrency(PRICING_CONFIG.COST_PER_MILE)})</span>
+                        <span class="value">${formatCurrency(fare.distanceCharge)}</span>
+                    </div>
+                `;
+                
+                // Time charge
+                html += `
+                    <div class="fare-row">
+                        <span class="label">Time (${Math.ceil(fare.duration)} min × ${formatCurrency(PRICING_CONFIG.COST_PER_MINUTE)})</span>
+                        <span class="value">${formatCurrency(fare.timeCharge)}</span>
+                    </div>
+                `;
+                
+                // Surge pricing
+                if (fare.surgeMultiplier > 1.0) {
+                    html += `
+                        <div class="fare-row">
+                            <span class="label">Peak Pricing (${fare.surgeMultiplier.toFixed(1)}×)</span>
+                            <span class="value">Applied</span>
+                        </div>
+                    `;
+                }
+                
+                // Additional stops
+                if (fare.stopFees > 0) {
+                    html += `
+                        <div class="fare-row">
+                            <span class="label">Additional Stops (${stopCount} × ${formatCurrency(PRICING_CONFIG.ADDITIONAL_STOP_FEE)})</span>
+                            <span class="value">${formatCurrency(fare.stopFees)}</span>
+                        </div>
+                    `;
+                }
+                
+                // Pets fee
+                if (fare.petsFee > 0) {
+                    html += `
+                        <div class="fare-row">
+                            <span class="label">Pet Fee</span>
+                            <span class="value">${formatCurrency(fare.petsFee)}</span>
+                        </div>
+                    `;
+                }
+                
+                // Subtotal
+                html += `
+                    <div class="fare-row">
+                        <span class="label">Subtotal</span>
+                        <span class="value">${formatCurrency(fare.subtotal)}</span>
+                    </div>
+                `;
+                
+                // Booking fee
+                html += `
+                    <div class="fare-row">
+                        <span class="label">Booking Fee</span>
+                        <span class="value">${formatCurrency(fare.bookingFee)}</span>
+                    </div>
+                `;
+                
+                // Service fee
+                html += `
+                    <div class="fare-row">
+                        <span class="label">Service Fee (${(PRICING_CONFIG.SERVICE_FEE_PERCENTAGE * 100)}%)</span>
+                        <span class="value">${formatCurrency(fare.serviceFee)}</span>
+                    </div>
+                `;
+                
+                // Suggested tip
+                html += `
+                    <div class="fare-row">
+                        <span class="label">Suggested Tip (${(PRICING_CONFIG.TIPPING_SUGGESTION * 100)}%)</span>
+                        <span class="value">${formatCurrency(fare.suggestedTip)}</span>
+                    </div>
+                `;
+                
+                // Total
+                html += `
+                    <div class="fare-row total">
+                        <span class="label">Estimated Total</span>
+                        <span class="value">${formatCurrency(fare.totalWithTip)}</span>
+                    </div>
+                `;
+                
+                fareBreakdown.innerHTML = html;
+                fareEstimate.classList.add('active');
+                
+                return fare;
+            }
+            
+            // Calculate route using Google Maps Distance Matrix API
+            function calculateRoute(origin, destination) {
+                if (!origin || !destination || origin === '' || destination === '') {
+                    return;
+                }
+                
+                const service = new google.maps.DistanceMatrixService();
+                
+                service.getDistanceMatrix({
+                    origins: [origin],
+                    destinations: [destination],
+                    travelMode: google.maps.TravelMode.DRIVING,
+                    unitSystem: google.maps.UnitSystem.IMPERIAL,
+                    avoidHighways: false,
+                    avoidTolls: false,
+                }, function(response, status) {
+                    if (status === 'OK') {
+                        const element = response.rows[0].elements[0];
+                        
+                        if (element.status === 'OK') {
+                            // Convert meters to miles and seconds to minutes
+                            routeDistance = element.distance.value / 1609.34; // meters to miles
+                            routeDuration = element.duration.value / 60; // seconds to minutes
+                            
+                            // Update fare estimate
+                            updateFareEstimate();
+                        } else {
+                            console.error('Error calculating route:', element.status);
+                        }
+                    } else {
+                        console.error('Distance Matrix API error:', status);
+                    }
+                });
+            }
+            
+            // ============================================
+            // BURGER MENU FUNCTIONALITY
+            // ============================================
+            
             burgerBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 toggleMenu();
             });
             
-            // Toggle menu function
             function toggleMenu() {
                 isMenuOpen = !isMenuOpen;
                 
@@ -1977,13 +2397,11 @@
                 }
             }
             
-            // Close menu when clicking on backdrop
             backdrop.addEventListener('click', function() {
                 if (isMenuOpen) {
                     toggleMenu();
                 }
                 
-                // Also close any other open modals
                 if (simplePickerModal.classList.contains('active')) {
                     closeSimplePicker();
                 } else if (bookingForm.classList.contains('active')) {
@@ -1991,7 +2409,6 @@
                 }
             });
             
-            // Close menu when clicking outside
             document.addEventListener('click', function(e) {
                 if (isMenuOpen && 
                     !dropdownMenu.contains(e.target) && 
@@ -2000,7 +2417,6 @@
                 }
             });
             
-            // Menu Link Click Handlers
             homeLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 toggleMenu();
@@ -2018,7 +2434,6 @@
                 toggleMenu();
             });
             
-            // Reservations link handler
             reservationsLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 alert("Reservations page would open here! View or manage your bookings.");
@@ -2043,7 +2458,10 @@
                 toggleMenu();
             });
             
-            // Initialize Simple Date/Time Picker
+            // ============================================
+            // DATE/TIME PICKER FUNCTIONALITY
+            // ============================================
+            
             function initializeSimplePicker() {
                 // Populate hour dropdown (1-12)
                 for (let i = 1; i <= 12; i++) {
@@ -2077,12 +2495,9 @@
                 generateCalendar(currentMonth, currentYear);
             }
             
-            // Generate calendar for given month/year
             function generateCalendar(month, year) {
-                // Clear existing calendar
                 datePicker.innerHTML = '';
                 
-                // Add day headers
                 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 dayNames.forEach(day => {
                     const dayHeader = document.createElement('div');
@@ -2091,30 +2506,23 @@
                     datePicker.appendChild(dayHeader);
                 });
                 
-                // Get first day of month
                 const firstDay = new Date(year, month, 1);
-                // Get last day of month
                 const lastDay = new Date(year, month + 1, 0);
-                // Get number of days in month
                 const daysInMonth = lastDay.getDate();
-                // Get day of week for first day (0 = Sunday, 1 = Monday, etc.)
                 const startingDay = firstDay.getDay();
                 
-                // Update month display
                 const monthNames = [
                     'January', 'February', 'March', 'April', 'May', 'June',
                     'July', 'August', 'September', 'October', 'November', 'December'
                 ];
                 currentMonthDisplay.textContent = `${monthNames[month]} ${year}`;
                 
-                // Add empty cells for days before first day of month
                 for (let i = 0; i < startingDay; i++) {
                     const emptyCell = document.createElement('div');
                     emptyCell.className = 'day-cell disabled';
                     datePicker.appendChild(emptyCell);
                 }
                 
-                // Add cells for each day of the month
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 
@@ -2126,7 +2534,6 @@
                     dayCell.dataset.month = month;
                     dayCell.dataset.year = year;
                     
-                    // Check if this is the selected date
                     const cellDate = new Date(year, month, day);
                     if (selectedDate.getDate() === day && 
                         selectedDate.getMonth() === month && 
@@ -2134,21 +2541,16 @@
                         dayCell.classList.add('selected');
                     }
                     
-                    // Check if date is in the past
                     if (cellDate < today) {
                         dayCell.classList.add('disabled');
                     } else {
-                        // Add click event
                         dayCell.addEventListener('click', function() {
-                            // Remove selected class from all days
                             document.querySelectorAll('.day-cell').forEach(cell => {
                                 cell.classList.remove('selected');
                             });
                             
-                            // Add selected class to clicked day
                             this.classList.add('selected');
                             
-                            // Update selected date
                             selectedDate = new Date(
                                 parseInt(this.dataset.year),
                                 parseInt(this.dataset.month),
@@ -2161,9 +2563,7 @@
                 }
             }
             
-            // Open simple picker modal
             datetimeBtn.addEventListener('click', function() {
-                // Close burger menu if open
                 if (isMenuOpen) {
                     toggleMenu();
                 }
@@ -2173,7 +2573,6 @@
                 document.body.style.overflow = 'hidden';
             });
             
-            // Close simple picker modal
             closePickerBtn.addEventListener('click', closeSimplePicker);
             
             function closeSimplePicker() {
@@ -2182,7 +2581,6 @@
                 document.body.style.overflow = 'auto';
             }
             
-            // Month navigation
             prevMonthBtn.addEventListener('click', function() {
                 currentMonth--;
                 if (currentMonth < 0) {
@@ -2201,7 +2599,6 @@
                 generateCalendar(currentMonth, currentYear);
             });
             
-            // AM/PM selection
             ampmBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     ampmBtns.forEach(b => b.classList.remove('selected'));
@@ -2210,13 +2607,10 @@
                 });
             });
             
-            // Confirm date/time selection
             confirmDatetimeBtn.addEventListener('click', function() {
-                // Get selected values
                 selectedHour = parseInt(hourSelect.value);
                 selectedMinute = parseInt(minuteSelect.value);
                 
-                // Convert 12-hour to 24-hour for date object
                 let hour24 = selectedHour;
                 if (selectedAmPm === "PM" && selectedHour !== 12) {
                     hour24 = selectedHour + 12;
@@ -2224,10 +2618,8 @@
                     hour24 = 0;
                 }
                 
-                // Set time on selected date
                 selectedDate.setHours(hour24, selectedMinute, 0, 0);
                 
-                // Format selected date/time for display
                 const monthNames = [
                     'January', 'February', 'March', 'April', 'May', 'June',
                     'July', 'August', 'September', 'October', 'November', 'December'
@@ -2241,7 +2633,6 @@
                 
                 selectedDateTime = `${month} ${day}, ${year} at ${hour}:${minute} ${selectedAmPm}`;
                 
-                // Update display
                 datetimeText.textContent = selectedDateTime;
                 datetimeText.classList.add('has-selection');
                 datetimeBtn.classList.add('selected');
@@ -2250,19 +2641,22 @@
                 
                 closeSimplePicker();
                 
-                // Show passenger container when date is selected
                 passengerContainer.classList.add('active');
-                
-                // Check if all fields are complete
                 checkAllFieldsComplete();
+                
+                // Update fare estimate with new date/time
+                updateFareEstimate();
             });
             
-            // Initialize Google Maps Autocomplete
+            // ============================================
+            // GOOGLE MAPS INTEGRATION
+            // ============================================
+            
             function initGoogleMaps() {
                 console.log("Google Maps API loaded successfully");
                 
-                // Create autocomplete for pickup input
                 if (google.maps.places) {
+                    // Pickup autocomplete
                     autocompletePickup = new google.maps.places.Autocomplete(pickupInput, {
                         types: ['geocode', 'establishment'],
                         componentRestrictions: {country: 'us'}
@@ -2275,22 +2669,21 @@
                             pickupInput.style.borderColor = 'var(--neon-cyan)';
                             pickupInput.style.color = 'var(--neon-cyan)';
                             
-                            // Show date/time picker if destination is filled
                             if (destinationInput.value.trim().length > 0) {
                                 datetimeContainer.classList.add('active');
+                                // Calculate route when both addresses are available
+                                calculateRoute(pickupInput.value, destinationInput.value);
                             }
                             
-                            // Reset to normal color after 1 second
                             setTimeout(() => {
                                 pickupInput.style.color = 'var(--text-light)';
                             }, 1000);
                             
-                            // Check field completion
                             checkAllFieldsComplete();
                         }
                     });
                     
-                    // Create autocomplete for destination input
+                    // Destination autocomplete
                     autocompleteDestination = new google.maps.places.Autocomplete(destinationInput, {
                         types: ['geocode', 'establishment'],
                         componentRestrictions: {country: 'us'}
@@ -2303,17 +2696,16 @@
                             destinationInput.style.borderColor = 'var(--neon-cyan)';
                             destinationInput.style.color = 'var(--neon-cyan)';
                             
-                            // Show date/time picker if pickup is filled
                             if (pickupInput.value.trim().length > 0) {
                                 datetimeContainer.classList.add('active');
+                                // Calculate route when both addresses are available
+                                calculateRoute(pickupInput.value, destinationInput.value);
                             }
                             
-                            // Reset to normal color after 1 second
                             setTimeout(() => {
                                 destinationInput.style.color = 'var(--text-light)';
                             }, 1000);
                             
-                            // Check field completion
                             checkAllFieldsComplete();
                         }
                     });
@@ -2324,12 +2716,13 @@
                 }
             }
             
-            // Expand booking form when search pill is clicked
+            // ============================================
+            // FORM FUNCTIONALITY
+            // ============================================
+            
             searchPill.addEventListener('click', expandBookingForm);
             
-            // Expand booking form function
             function expandBookingForm() {
-                // Close burger menu if open
                 if (isMenuOpen) {
                     toggleMenu();
                 }
@@ -2340,13 +2733,11 @@
                 bookingCard.style.zIndex = '101';
                 document.body.style.overflow = 'hidden';
                 
-                // Focus on pickup input after animation
                 setTimeout(() => {
                     pickupInput.focus();
                 }, 300);
             }
             
-            // Collapse booking form function
             function collapseBookingForm() {
                 collapsedSearch.classList.remove('hidden');
                 bookingForm.classList.remove('active');
@@ -2355,12 +2746,10 @@
                 document.body.style.overflow = 'auto';
             }
             
-            // Use current location for pickup
             currentLocationBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                // Show loading state
                 const originalIcon = currentLocationBtn.innerHTML;
                 currentLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                 currentLocationBtn.disabled = true;
@@ -2368,42 +2757,34 @@
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         function(position) {
-                            // Success - set the pickup location
                             const latitude = position.coords.latitude;
                             const longitude = position.coords.longitude;
                             
-                            // Use Google Geocoding API to get address
                             getAddressFromCoordinatesGoogle(latitude, longitude)
                                 .then(address => {
                                     pickupInput.value = address;
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
                                     pickupInput.style.color = 'var(--neon-cyan)';
                                     
-                                    // Show date/time picker if destination is filled
                                     if (destinationInput.value.trim().length > 0) {
                                         datetimeContainer.classList.add('active');
+                                        calculateRoute(address, destinationInput.value);
                                     }
                                     
-                                    // Check field completion
                                     checkAllFieldsComplete();
                                 })
                                 .catch(error => {
-                                    // Fallback to coordinates
                                     pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
-                                    
-                                    // Check field completion
                                     checkAllFieldsComplete();
                                 })
                                 .finally(() => {
-                                    // Reset button
                                     currentLocationBtn.innerHTML = originalIcon;
                                     currentLocationBtn.disabled = false;
                                 });
                         },
                         function(error) {
                             console.error("Geolocation error:", error);
-                            // Reset button
                             currentLocationBtn.innerHTML = originalIcon;
                             currentLocationBtn.disabled = false;
                         },
@@ -2413,16 +2794,13 @@
                         }
                     );
                 } else {
-                    // Browser doesn't support geolocation
                     currentLocationBtn.innerHTML = originalIcon;
                     currentLocationBtn.disabled = false;
                 }
             });
             
-            // Get address from coordinates using Google Geocoding API
             function getAddressFromCoordinatesGoogle(lat, lng) {
                 return new Promise((resolve, reject) => {
-                    // Using Google Geocoding API
                     const geocoder = new google.maps.Geocoder();
                     const latlng = { lat: lat, lng: lng };
                     
@@ -2440,25 +2818,26 @@
                 });
             }
             
-            // Show date/time field when destination input starts
             destinationInput.addEventListener('input', function() {
                 if (destinationInput.value.trim().length > 0 && pickupInput.value.trim().length > 0) {
                     datetimeContainer.classList.add('active');
+                    // Recalculate route when both addresses change
+                    calculateRoute(pickupInput.value, destinationInput.value);
                 } else {
                     datetimeContainer.classList.remove('active');
                 }
                 checkAllFieldsComplete();
             });
             
-            // Also show date/time when pickup is filled
             pickupInput.addEventListener('input', function() {
                 if (destinationInput.value.trim().length > 0 && pickupInput.value.trim().length > 0) {
                     datetimeContainer.classList.add('active');
+                    // Recalculate route when both addresses change
+                    calculateRoute(pickupInput.value, destinationInput.value);
                 }
                 checkAllFieldsComplete();
             });
             
-            // Add additional stop
             addStopBtn.addEventListener('click', function() {
                 stopCount++;
                 
@@ -2479,10 +2858,8 @@
                 
                 stopsContainer.appendChild(stopItem);
                 
-                // Add event listener to remove button
                 const removeBtn = stopItem.querySelector('.remove-stop');
                 removeBtn.addEventListener('click', function() {
-                    // Add fade out animation
                     stopItem.style.opacity = '0';
                     stopItem.style.transform = 'translateX(-10px)';
                     stopItem.style.transition = 'opacity 0.3s, transform 0.3s';
@@ -2490,10 +2867,11 @@
                     setTimeout(() => {
                         stopItem.remove();
                         updateStopNumbers();
+                        // Update fare estimate after removing stop
+                        updateFareEstimate();
                     }, 300);
                 });
                 
-                // Setup Google Autocomplete for the new stop if available
                 if (google && google.maps && google.maps.places) {
                     new google.maps.places.Autocomplete(stopItem.querySelector('.stop-location'), {
                         types: ['geocode', 'establishment'],
@@ -2501,14 +2879,15 @@
                     });
                 }
                 
-                // Focus on the new stop input
                 setTimeout(() => {
                     const stopInput = stopItem.querySelector('.stop-location');
                     stopInput.focus();
                 }, 100);
+                
+                // Update fare estimate after adding stop
+                updateFareEstimate();
             });
             
-            // Update stop numbers after removal
             function updateStopNumbers() {
                 const stopNumbers = stopsContainer.querySelectorAll('.stop-number');
                 stopNumbers.forEach((number, index) => {
@@ -2517,60 +2896,45 @@
                 stopCount = stopNumbers.length;
             }
             
-            // Handle passenger count selection
             passengerBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Remove selected class from all passenger buttons
                     passengerBtns.forEach(b => b.classList.remove('selected'));
-                    
-                    // Add selected class to clicked button
                     this.classList.add('selected');
                     
-                    // Update passenger count
                     selectedPassengerCount = parseInt(this.getAttribute('data-value'));
                     passengerCountDisplay.textContent = selectedPassengerCount;
                     
-                    // Update button title
                     passengerBtn.title = `${selectedPassengerCount} Passenger${selectedPassengerCount > 1 ? 's' : ''}`;
                     passengerBtn.classList.add('selected');
                     
-                    // Show pets container when passenger count is selected
                     petsContainer.classList.add('active');
                     
-                    // Check field completion
                     checkAllFieldsComplete();
                 });
             });
             
-            // Set default passenger selection
             document.querySelector('.passenger-btn[data-value="1"]').classList.add('selected');
             passengerBtn.title = "1 Passenger";
             
-            // Handle pets selection
             petsBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Remove selected class from all pets buttons
                     petsBtns.forEach(b => b.classList.remove('selected'));
-                    
-                    // Add selected class to clicked button
                     this.classList.add('selected');
                     
-                    // Update pets selection
                     selectedPets = this.getAttribute('data-value');
                     
-                    // Update button title and icon
                     petsBtn.title = `Pets: ${selectedPets === 'yes' ? 'Yes' : 'No'}`;
                     petsBtn.classList.add('selected');
                     
-                    // Show passenger name container when pets is selected
                     passengerNameContainer.classList.add('active');
                     
-                    // Check field completion
                     checkAllFieldsComplete();
+                    
+                    // Update fare estimate for pets fee
+                    updateFareEstimate();
                 });
             });
             
-            // Handle passenger name input
             passengerNameInput.addEventListener('input', function() {
                 const name = this.value.trim();
                 
@@ -2578,7 +2942,6 @@
                     passengerNameBtn.title = `Name: ${name}`;
                     passengerNameBtn.classList.add('selected');
                     
-                    // Show phone container when name is entered
                     phoneContainer.classList.add('active');
                 } else {
                     passengerNameBtn.title = "Passenger name";
@@ -2590,7 +2953,6 @@
                 checkAllFieldsComplete();
             });
             
-            // Handle phone input
             phoneInput.addEventListener('input', function() {
                 const phone = this.value.trim();
                 
@@ -2598,7 +2960,6 @@
                     phoneBtn.title = `Phone: ${phone}`;
                     phoneBtn.classList.add('selected');
                     
-                    // Show email container when phone is entered
                     emailContainer.classList.add('active');
                 } else {
                     phoneBtn.title = "Phone number";
@@ -2609,7 +2970,6 @@
                 checkAllFieldsComplete();
             });
             
-            // Handle email input
             emailInput.addEventListener('input', function() {
                 const email = this.value.trim();
                 
@@ -2617,7 +2977,6 @@
                     emailBtn.title = `Email: ${email}`;
                     emailBtn.classList.add('selected');
                     
-                    // Show notes container when email is entered
                     notesContainer.classList.add('active');
                 } else {
                     emailBtn.title = "Email address";
@@ -2627,12 +2986,10 @@
                 checkAllFieldsComplete();
             });
             
-            // Handle notes character count
             notesInput.addEventListener('input', function() {
                 const length = this.value.length;
                 notesChars.textContent = `${length}/500 characters`;
                 
-                // Update character counter color
                 if (length > 450) {
                     notesChars.classList.add('error');
                     notesChars.classList.remove('warning');
@@ -2643,7 +3000,6 @@
                     notesChars.classList.remove('warning', 'error');
                 }
                 
-                // Update button title if there's content
                 if (length > 0) {
                     notesBtn.title = `Notes: ${length} characters`;
                     notesBtn.classList.add('selected');
@@ -2653,7 +3009,6 @@
                 }
             });
             
-            // Check if all required fields are complete
             function checkAllFieldsComplete() {
                 const pickup = pickupInput.value.trim();
                 const destination = destinationInput.value.trim();
@@ -2664,7 +3019,6 @@
                 const phone = phoneInput.value.trim();
                 const email = emailInput.value.trim();
                 
-                // Count completed fields
                 let completedCount = 0;
                 const totalFields = 8;
                 
@@ -2677,11 +3031,9 @@
                 if (phone) completedCount++;
                 if (email && email.includes('@')) completedCount++;
                 
-                // Update progress bar
                 const progressPercentage = (completedCount / totalFields) * 100;
                 progressFill.style.width = `${progressPercentage}%`;
                 
-                // Update progress text
                 const progressText = progressIndicator.querySelector('div');
                 if (completedCount < totalFields) {
                     progressText.textContent = `${completedCount} of ${totalFields} fields completed`;
@@ -2690,7 +3042,6 @@
                     progressText.style.color = "var(--success-green)";
                 }
                 
-                // Show/hide submit button
                 if (completedCount === totalFields) {
                     submitBtn.classList.add('active');
                     submitBtn.disabled = false;
@@ -2702,31 +3053,24 @@
                 return completedCount === totalFields;
             }
             
-            // Function to highlight missing field
             function highlightMissingField(field) {
-                // Remove any existing highlights
                 removeHighlights();
                 
-                // Add highlight class based on field type
                 if (field.classList.contains('form-input') || field.classList.contains('icon-input')) {
                     field.classList.add('missing-field');
                     
-                    // Remove highlight after 3 seconds
                     setTimeout(() => {
                         field.classList.remove('missing-field');
                     }, 3000);
                 } else if (field.classList.contains('icon-btn') || field.classList.contains('pets-btn')) {
-                    // For icon buttons, highlight the button
                     field.classList.add('missing-field-btn');
                     
-                    // Remove highlight after 3 seconds
                     setTimeout(() => {
                         field.classList.remove('missing-field-btn');
                     }, 3000);
                 }
             }
             
-            // Function to remove all highlights
             function removeHighlights() {
                 const highlightedFields = document.querySelectorAll('.missing-field, .missing-field-btn');
                 highlightedFields.forEach(field => {
@@ -2735,15 +3079,12 @@
                 });
             }
             
-            // Show validation error
             function showValidationError(message) {
-                // Remove any existing error message
                 const existingError = document.querySelector('.validation-error');
                 if (existingError) {
                     existingError.remove();
                 }
                 
-                // Create error message
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'validation-error';
                 errorDiv.innerHTML = `
@@ -2751,11 +3092,9 @@
                     ${message}
                 `;
                 
-                // Insert after form title
                 const formTitle = document.querySelector('.form-title');
                 formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
                 
-                // Scroll error into view
                 setTimeout(() => {
                     errorDiv.scrollIntoView({ 
                         behavior: 'smooth', 
@@ -2763,7 +3102,6 @@
                     });
                 }, 100);
                 
-                // Remove after 5 seconds
                 setTimeout(() => {
                     if (errorDiv.parentNode) {
                         errorDiv.style.opacity = '0';
@@ -2777,11 +3115,8 @@
                 }, 5000);
             }
             
-            // Handle form submission
             submitBtn.addEventListener('click', function() {
-                // Double-check all fields are complete
                 if (!checkAllFieldsComplete()) {
-                    // Get form values to find first missing field
                     const pickup = pickupInput.value.trim();
                     const destination = destinationInput.value.trim();
                     const datetime = selectedDateTime;
@@ -2791,7 +3126,6 @@
                     const phone = phoneInput.value.trim();
                     const email = emailInput.value.trim();
                     
-                    // Find first missing field
                     let firstMissingField = null;
                     let errorMessage = "";
                     
@@ -2826,22 +3160,16 @@
                     
                     showValidationError(errorMessage);
                     
-                    // Ensure form is expanded so user can see the field
                     expandBookingForm();
                     
-                    // Add visual highlight to the missing field
                     if (firstMissingField) {
                         highlightMissingField(firstMissingField);
                         
-                        // Focus on the field or button
                         setTimeout(() => {
                             if (firstMissingField.tagName === 'BUTTON') {
-                                // For buttons, we can focus on them
                                 firstMissingField.focus();
                             } else {
                                 firstMissingField.focus();
-                                
-                                // Scroll the field into view with some padding
                                 firstMissingField.scrollIntoView({ 
                                     behavior: 'smooth', 
                                     block: 'center',
@@ -2854,18 +3182,17 @@
                     return;
                 }
                 
-                // Show loading state on button
+                // Get fare estimate
+                const fare = calculateFare();
+                
                 const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> PROCESSING...';
                 submitBtn.disabled = true;
                 
-                // Simulate API call
                 setTimeout(() => {
-                    // Reset button
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                     
-                    // Get form values
                     const pickup = pickupInput.value.trim();
                     const destination = destinationInput.value.trim();
                     const datetime = selectedDateTime;
@@ -2876,23 +3203,22 @@
                     const email = emailInput.value.trim();
                     const notes = notesInput.value.trim();
                     
-                    // Get additional stops
                     const stopInputs = document.querySelectorAll('.stop-location');
                     const stops = Array.from(stopInputs)
                         .map(input => input.value.trim())
                         .filter(stop => stop.length > 0);
                     
-                    // Show success message with all details
-                    showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops);
+                    // Show booking confirmation with pricing
+                    showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, 
+                                          passengerName, phone, email, notes, stops, fare);
                     
-                    // Reset form
                     collapseBookingForm();
                     resetForm();
                 }, 1500);
             });
             
-            // Show booking confirmation
-            function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops) {
+            function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, 
+                                           passengerName, phone, email, notes, stops, fare) {
                 const confirmationHTML = `
                     <div style="
                         background: rgba(0, 243, 255, 0.1);
@@ -2917,6 +3243,26 @@
                             <p><strong>Email:</strong> ${email}</p>
                             ${notes ? `<p><strong>Special Notes:</strong> ${notes}</p>` : ''}
                             ${stops.length > 0 ? `<p><strong>Additional Stops:</strong> ${stops.join(', ')}</p>` : ''}
+                            
+                            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0, 243, 255, 0.3);">
+                                <h4 style="color: var(--neon-cyan); margin-bottom: 10px;">Payment Details</h4>
+                                ${fare ? `
+                                    <p><strong>Distance:</strong> ${fare.distance.toFixed(1)} miles</p>
+                                    <p><strong>Estimated Duration:</strong> ${Math.ceil(fare.duration)} minutes</p>
+                                    <p><strong>Base Fare:</strong> ${formatCurrency(fare.baseFare)}</p>
+                                    <p><strong>Distance Charge:</strong> ${formatCurrency(fare.distanceCharge)}</p>
+                                    <p><strong>Time Charge:</strong> ${formatCurrency(fare.timeCharge)}</p>
+                                    ${fare.surgeMultiplier > 1.0 ? `<p><strong>Peak Pricing:</strong> ${fare.surgeMultiplier.toFixed(1)}× multiplier</p>` : ''}
+                                    ${fare.stopFees > 0 ? `<p><strong>Additional Stops:</strong> ${formatCurrency(fare.stopFees)}</p>` : ''}
+                                    ${fare.petsFee > 0 ? `<p><strong>Pet Fee:</strong> ${formatCurrency(fare.petsFee)}</p>` : ''}
+                                    <p><strong>Booking Fee:</strong> ${formatCurrency(fare.bookingFee)}</p>
+                                    <p><strong>Service Fee:</strong> ${formatCurrency(fare.serviceFee)}</p>
+                                    <p style="font-weight: bold; color: var(--neon-cyan); margin-top: 10px;">
+                                        <strong>Total Charge:</strong> ${formatCurrency(fare.totalWithTip)}
+                                    </p>
+                                ` : '<p>Fare calculation unavailable</p>'}
+                            </div>
+                            
                             <p style="margin-top: 15px; color: var(--neon-cyan);">
                                 Your luxury SUV will arrive promptly. A confirmation has been sent to your email.
                             </p>
@@ -2924,10 +3270,8 @@
                     </div>
                 `;
                 
-                // Insert after booking card
                 bookingCard.insertAdjacentHTML('afterend', confirmationHTML);
                 
-                // Remove after 8 seconds
                 setTimeout(() => {
                     const confirmationDiv = document.querySelector('[style*="background: rgba(0, 243, 255, 0.1)"]');
                     if (confirmationDiv) {
@@ -2942,7 +3286,6 @@
                 }, 8000);
             }
             
-            // Reset form to initial state
             function resetForm() {
                 pickupInput.value = '';
                 destinationInput.value = '';
@@ -2950,73 +3293,4 @@
                 datetimeText.textContent = '';
                 datetimeText.classList.remove('has-selection');
                 datetimeBtn.classList.remove('selected');
-                datetimeBtn.title = "Select date and time";
-                datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
-                datetimeContainer.classList.remove('active');
-                
-                // Reset passenger count
-                passengerBtns.forEach(btn => btn.classList.remove('selected'));
-                document.querySelector('.passenger-btn[data-value="1"]').classList.add('selected');
-                selectedPassengerCount = 1;
-                passengerCountDisplay.textContent = '1';
-                passengerBtn.title = "1 Passenger";
-                passengerBtn.classList.remove('selected');
-                passengerBtn.innerHTML = '<i class="fas fa-users"></i>';
-                passengerContainer.classList.remove('active');
-                
-                // Reset pets
-                petsBtns.forEach(btn => btn.classList.remove('selected'));
-                selectedPets = null;
-                petsBtn.title = "Pet information";
-                petsBtn.classList.remove('selected');
-                petsBtn.innerHTML = '<i class="fas fa-paw"></i>';
-                petsContainer.classList.remove('active');
-                
-                // Reset passenger name
-                passengerNameInput.value = '';
-                passengerNameBtn.title = "Passenger name";
-                passengerNameBtn.classList.remove('selected');
-                passengerNameContainer.classList.remove('active');
-                
-                // Reset phone
-                phoneInput.value = '';
-                phoneBtn.title = "Phone number";
-                phoneBtn.classList.remove('selected');
-                phoneContainer.classList.remove('active');
-                
-                // Reset email
-                emailInput.value = '';
-                emailBtn.title = "Email address";
-                emailBtn.classList.remove('selected');
-                emailContainer.classList.remove('active');
-                
-                // Reset notes
-                notesInput.value = '';
-                notesChars.textContent = '0/500 characters';
-                notesChars.classList.remove('warning', 'error');
-                notesBtn.title = "Add special notes";
-                notesBtn.classList.remove('selected');
-                notesBtn.innerHTML = '<i class="fas fa-sticky-note"></i>';
-                notesContainer.classList.remove('active');
-                
-                // Clear additional stops
-                stopsContainer.innerHTML = '';
-                stopCount = 0;
-                
-                // Reset progress bar
-                progressFill.style.width = '0%';
-                const progressText = progressIndicator.querySelector('div');
-                progressText.textContent = "Complete all required fields to book";
-                progressText.style.color = "";
-                
-                // Hide submit button
-                submitBtn.classList.remove('active');
-                submitBtn.disabled = true;
-            }
-            
-            // Make initGoogleMaps globally accessible for Google Maps callback
-            window.initGoogleMaps = initGoogleMaps;
-        });
-    </script>
-</body>
-</html>
+                datetimeBtn.title =
