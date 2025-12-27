@@ -1434,83 +1434,66 @@
             transition: width 0.5s ease;
         }
 
-        /* Fare Estimate Display */
-        .fare-estimate {
+        /* PRICING STYLES - ADDED */
+        .price-display {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
             background: rgba(0, 243, 255, 0.05);
             border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: 12px;
-            padding: 1.2rem;
-            margin-top: 1.5rem;
-            display: none;
-            animation: fadeIn 0.5s ease;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
         }
-
-        .fare-estimate.active {
+        
+        .price-display.active {
             display: block;
         }
-
-        .fare-estimate h3 {
-            color: var(--neon-cyan);
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            text-align: center;
+        
+        .price-display .price {
             font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            text-shadow: var(--neon-glow);
+            margin: 0.5rem 0;
         }
-
-        .fare-breakdown {
-            font-size: 0.9rem;
+        
+        .price-display .price-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
         }
-
-        .fare-row {
+        
+        .price-breakdown {
+            display: none;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-align: left;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .price-breakdown.active {
+            display: block;
+        }
+        
+        .breakdown-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-
-        .fare-row:last-child {
+        
+        .breakdown-item:last-child {
             border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .fare-row.total {
-            font-weight: 700;
-            font-size: 1.1rem;
+            font-weight: 600;
             color: var(--neon-cyan);
-            margin-top: 0.8rem;
-            padding-top: 0.8rem;
-            border-top: 2px solid rgba(0, 243, 255, 0.3);
-        }
-
-        .fare-row .label {
-            color: var(--text-muted);
-        }
-
-        .fare-row .value {
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        .fare-note {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-align: center;
-            margin-top: 1rem;
-            font-style: italic;
-        }
-
-        /* Surge pricing indicator */
-        .surge-badge {
-            background: linear-gradient(90deg, #ff6b6b, #ffa500);
-            color: var(--primary-dark);
-            font-size: 0.7rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 10px;
-            font-weight: 700;
-            margin-left: 0.5rem;
-            animation: pulse 1.5s infinite;
+            margin-top: 0.3rem;
+            padding-top: 0.3rem;
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
         }
 
         /* Responsive adjustments */
@@ -1582,6 +1565,7 @@
                     </a>
                 </li>
                 
+                <!-- ADDED RESERVATIONS ITEM AS THE FOURTH ITEM -->
                 <li class="menu-item">
                     <a href="#" class="menu-link" id="reservations-link">
                         <div class="menu-icon-item">
@@ -1874,15 +1858,11 @@
                         </div>
                     </div>
                     
-                    <!-- Fare Estimate -->
-                    <div class="fare-estimate" id="fare-estimate">
-                        <h3>Fare Estimate <span class="surge-badge" id="surge-badge" style="display: none;">1.5x</span></h3>
-                        <div class="fare-breakdown" id="fare-breakdown">
-                            <!-- Fare breakdown will be populated here -->
-                        </div>
-                        <div class="fare-note">
-                            <p>Prices may vary based on traffic, route, and demand</p>
-                        </div>
+                    <!-- PRICE DISPLAY - Added -->
+                    <div class="price-display" id="price-display">
+                        <div class="price" id="price-amount">$0.00</div>
+                        <div class="price-note" id="price-note">Enter pickup and destination to see price</div>
+                        <div class="price-breakdown" id="price-breakdown"></div>
                     </div>
                     
                     <!-- Submit Button - Hidden until all required fields are filled -->
@@ -1921,9 +1901,201 @@
     </div>
 
     <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places,distanceMatrix&callback=initGoogleMaps" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiBOnLypU6-YGgPruQ2YFZvk3HyaaQ5Ps&libraries=places&callback=initGoogleMaps" async defer></script>
 
     <script>
+        // ============================================
+        // PRICING.JS LOGIC - INTEGRATED FROM GITHUB
+        // ============================================
+        
+        /**
+         * AGTS Group Inc - Luxury SUV Transportation Pricing Engine
+         * Calculates fares based on distance, time, passengers, and other factors
+         */
+        
+        // Base pricing configuration
+        const PRICING_CONFIG = {
+            baseFare: 75.00,
+            perMileRate: 3.50,
+            perMinuteRate: 0.85,
+            minimumFare: 45.00,
+            
+            // Surcharges
+            passengerSurcharge: {
+                1: 0,
+                2: 5,
+                3: 10,
+                4: 15,
+                5: 20,
+                6: 25
+            },
+            
+            petFee: 25.00,
+            additionalStopFee: 15.00,
+            
+            // Peak hours (6-9 AM, 4-7 PM weekdays)
+            peakHourMultiplier: 1.25,
+            
+            // Service fees
+            serviceFeePercentage: 15, // 15% service fee
+            bookingFee: 5.00,
+            
+            // Vehicle type multipliers
+            vehicleTypes: {
+                'standard': 1.0,
+                'premium': 1.5,
+                'executive': 2.0
+            }
+        };
+        
+        /**
+         * Calculate fare based on trip details
+         * @param {Object} tripDetails - Trip information
+         * @returns {Object} Fare breakdown and total
+         */
+        function calculateFare(tripDetails) {
+            // Default values
+            const defaults = {
+                distance: 0, // miles
+                duration: 0, // minutes
+                passengers: 1,
+                hasPets: false,
+                additionalStops: 0,
+                dateTime: new Date(),
+                vehicleType: 'standard',
+                isPeakHour: false
+            };
+            
+            // Merge with defaults
+            const details = { ...defaults, ...tripDetails };
+            
+            // Calculate base components
+            const distanceCharge = details.distance * PRICING_CONFIG.perMileRate;
+            const timeCharge = details.duration * PRICING_CONFIG.perMinuteRate;
+            
+            // Calculate surcharges
+            const passengerSurcharge = PRICING_CONFIG.passengerSurcharge[details.passengers] || 0;
+            const petFee = details.hasPets ? PRICING_CONFIG.petFee : 0;
+            const stopsFee = details.additionalStops * PRICING_CONFIG.additionalStopFee;
+            
+            // Check for peak hours
+            let peakHourMultiplier = 1.0;
+            if (details.isPeakHour) {
+                peakHourMultiplier = PRICING_CONFIG.peakHourMultiplier;
+            }
+            
+            // Calculate vehicle multiplier
+            const vehicleMultiplier = PRICING_CONFIG.vehicleTypes[details.vehicleType] || 1.0;
+            
+            // Calculate subtotal
+            let subtotal = PRICING_CONFIG.baseFare + 
+                          distanceCharge + 
+                          timeCharge + 
+                          passengerSurcharge + 
+                          petFee + 
+                          stopsFee;
+            
+            // Apply peak hour multiplier
+            subtotal *= peakHourMultiplier;
+            
+            // Apply vehicle type multiplier
+            subtotal *= vehicleMultiplier;
+            
+            // Ensure minimum fare
+            subtotal = Math.max(subtotal, PRICING_CONFIG.minimumFare);
+            
+            // Calculate service fee and booking fee
+            const serviceFee = subtotal * (PRICING_CONFIG.serviceFeePercentage / 100);
+            const bookingFee = PRICING_CONFIG.bookingFee;
+            
+            // Calculate total
+            const total = subtotal + serviceFee + bookingFee;
+            
+            // Return detailed breakdown
+            return {
+                total: parseFloat(total.toFixed(2)),
+                subtotal: parseFloat(subtotal.toFixed(2)),
+                breakdown: {
+                    base: parseFloat(PRICING_CONFIG.baseFare.toFixed(2)),
+                    distance: parseFloat(distanceCharge.toFixed(2)),
+                    time: parseFloat(timeCharge.toFixed(2)),
+                    passengers: parseFloat(passengerSurcharge.toFixed(2)),
+                    pets: parseFloat(petFee.toFixed(2)),
+                    stops: parseFloat(stopsFee.toFixed(2)),
+                    peakHour: details.isPeakHour ? parseFloat((subtotal * (peakHourMultiplier - 1)).toFixed(2)) : 0,
+                    vehicle: parseFloat((subtotal * (vehicleMultiplier - 1)).toFixed(2)),
+                    serviceFee: parseFloat(serviceFee.toFixed(2)),
+                    bookingFee: parseFloat(bookingFee.toFixed(2))
+                },
+                details: {
+                    distance: parseFloat(details.distance.toFixed(1)),
+                    duration: parseFloat(details.duration.toFixed(0)),
+                    passengers: details.passengers,
+                    hasPets: details.hasPets,
+                    additionalStops: details.additionalStops,
+                    isPeakHour: details.isPeakHour,
+                    vehicleType: details.vehicleType
+                }
+            };
+        }
+        
+        /**
+         * Estimate fare based on route coordinates (simplified version)
+         * @param {Object} origin - Starting point
+         * @param {Object} destination - Ending point
+         * @param {Object} options - Additional options
+         * @returns {Promise} Promise with fare estimate
+         */
+        async function estimateFare(origin, destination, options = {}) {
+            // This would normally use Google Maps Distance Matrix API
+            // For now, we'll simulate with random distance
+            const defaults = {
+                passengers: 1,
+                hasPets: false,
+                additionalStops: 0,
+                vehicleType: 'standard'
+            };
+            
+            const tripOptions = { ...defaults, ...options };
+            
+            // Simulate distance calculation (in a real app, use Google Maps API)
+            const simulatedDistance = 10 + Math.random() * 30; // 10-40 miles
+            const simulatedDuration = simulatedDistance * 2 + Math.random() * 10; // ~2 min per mile
+            
+            // Check if it's peak hour
+            const now = new Date();
+            const hour = now.getHours();
+            const day = now.getDay();
+            const isWeekday = day >= 1 && day <= 5;
+            const isMorningPeak = hour >= 6 && hour < 9;
+            const isEveningPeak = hour >= 16 && hour < 19;
+            tripOptions.isPeakHour = isWeekday && (isMorningPeak || isEveningPeak);
+            
+            // Set distance and duration
+            tripOptions.distance = simulatedDistance;
+            tripOptions.duration = simulatedDuration;
+            
+            // Calculate fare
+            return calculateFare(tripOptions);
+        }
+        
+        /**
+         * Format currency display
+         * @param {number} amount - Amount to format
+         * @returns {string} Formatted currency string
+         */
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(amount);
+        }
+        
+        // ============================================
+        // MAIN APPLICATION CODE
+        // ============================================
+        
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             // Elements
@@ -1943,9 +2115,12 @@
             const datetimeText = document.getElementById('datetime-text');
             const submitBtn = document.getElementById('submit-btn');
             const bookingCard = document.getElementById('booking-card');
-            const fareEstimate = document.getElementById('fare-estimate');
-            const fareBreakdown = document.getElementById('fare-breakdown');
-            const surgeBadge = document.getElementById('surge-badge');
+            
+            // PRICE DISPLAY ELEMENTS
+            const priceDisplay = document.getElementById('price-display');
+            const priceAmount = document.getElementById('price-amount');
+            const priceNote = document.getElementById('price-note');
+            const priceBreakdown = document.getElementById('price-breakdown');
             
             // Fixed Burger Menu Elements
             const burgerBtn = document.getElementById('burger-btn');
@@ -2015,9 +2190,6 @@
             let selectedPets = null;
             let autocompletePickup = null;
             let autocompleteDestination = null;
-            let routeDistance = 0; // in miles
-            let routeDuration = 0; // in minutes
-            let currentSurgeMultiplier = 1.0;
             
             // Date/Time Selection Variables
             let selectedDate = new Date();
@@ -2031,6 +2203,10 @@
             
             // Burger menu state
             let isMenuOpen = false;
+            
+            // Distance variables for pricing
+            let distance = 0;
+            let duration = 0;
             
             // Simulate loading screen for 3 seconds
             setTimeout(() => {
@@ -2046,341 +2222,13 @@
                 }, 500);
             }, 3000);
             
-            // ============================================
-            // UBER/LYFT STYLE PRICING LOGIC
-            // ============================================
-            
-            // Pricing configuration similar to Uber Black SUV/Lyft Lux Black
-            const PRICING_CONFIG = {
-                // Base fares (similar to Uber Black)
-                BASE_FARE: 8.00,          // Base booking fee
-                COST_PER_MILE: 4.75,      // Per mile rate (Uber Black is ~$4.50-5.00)
-                COST_PER_MINUTE: 0.85,    // Per minute rate
-                MINIMUM_FARE: 25.00,      // Minimum trip cost
-                CANCELLATION_FEE: 15.00,  // Cancellation fee
-                
-                // Service fees (similar to ride-hailing platforms)
-                BOOKING_FEE: 2.50,        // Platform booking fee
-                SERVICE_FEE_PERCENTAGE: 0.20, // 20% service fee
-                
-                // Additional charges
-                ADDITIONAL_STOP_FEE: 5.00, // Per additional stop
-                PETS_FEE: 20.00,          // Pet cleaning fee
-                AIRPORT_FEE: 5.00,        // Airport pickup/dropoff
-                TIPPING_SUGGESTION: 0.20, // 20% tip suggestion
-                
-                // Peak pricing/surge
-                PEAK_HOURS: {
-                    weekdayMorning: { start: 7, end: 10, multiplier: 1.3 },
-                    weekdayEvening: { start: 16, end: 19, multiplier: 1.4 },
-                    fridayNight: { start: 19, end: 2, multiplier: 1.8 },
-                    saturdayNight: { start: 19, end: 3, multiplier: 2.0 },
-                    sundayBrunch: { start: 10, end: 14, multiplier: 1.3 }
-                },
-                
-                // Vehicle types (for future expansion)
-                VEHICLES: {
-                    LUXURY_SUV: {
-                        name: "Luxury SUV",
-                        baseMultiplier: 1.0,
-                        capacity: 6
-                    },
-                    EXECUTIVE_VAN: {
-                        name: "Executive Van",
-                        baseMultiplier: 1.5,
-                        capacity: 10
-                    },
-                    PREMIUM_SEDAN: {
-                        name: "Premium Sedan",
-                        baseMultiplier: 0.8,
-                        capacity: 4
-                    }
-                }
-            };
-            
-            // Calculate surge pricing based on time and demand
-            function calculateSurgeMultiplier(date) {
-                const hour = date.getHours();
-                const day = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-                
-                let multiplier = 1.0;
-                
-                // Check for peak hours
-                for (const [period, config] of Object.entries(PRICING_CONFIG.PEAK_HOURS)) {
-                    let startHour = config.start;
-                    let endHour = config.end;
-                    
-                    // Handle overnight periods
-                    if (endHour < startHour) {
-                        if (hour >= startHour || hour < endHour) {
-                            multiplier = Math.max(multiplier, config.multiplier);
-                        }
-                    } else {
-                        if (hour >= startHour && hour < endHour) {
-                            multiplier = Math.max(multiplier, config.multiplier);
-                        }
-                    }
-                }
-                
-                // Special holiday pricing
-                const holidays = [
-                    '2023-12-24', '2023-12-25', '2023-12-31',
-                    '2024-01-01', '2024-07-04', '2024-11-28'
-                ];
-                const dateStr = date.toISOString().split('T')[0];
-                if (holidays.includes(dateStr)) {
-                    multiplier = Math.max(multiplier, 2.0);
-                }
-                
-                // Random demand simulation (for demo)
-                const randomDemand = Math.random();
-                if (randomDemand > 0.7) {
-                    multiplier += 0.2;
-                }
-                if (randomDemand > 0.9) {
-                    multiplier += 0.3;
-                }
-                
-                // Cap at 3.0x
-                return Math.min(multiplier, 3.0);
-            }
-            
-            // Calculate fare based on Uber/Lyft style pricing
-            function calculateFare() {
-                if (routeDistance === 0 || routeDuration === 0) {
-                    return null;
-                }
-                
-                // Apply surge pricing
-                currentSurgeMultiplier = calculateSurgeMultiplier(selectedDate);
-                
-                // Calculate base fare components
-                const distanceCharge = routeDistance * PRICING_CONFIG.COST_PER_MILE;
-                const timeCharge = routeDuration * PRICING_CONFIG.COST_PER_MINUTE;
-                
-                // Calculate subtotal
-                let subtotal = PRICING_CONFIG.BASE_FARE + distanceCharge + timeCharge;
-                
-                // Apply surge pricing
-                subtotal *= currentSurgeMultiplier;
-                
-                // Add additional stop fees
-                const stopFees = stopCount * PRICING_CONFIG.ADDITIONAL_STOP_FEE;
-                subtotal += stopFees;
-                
-                // Add pets fee if applicable
-                let petsFee = 0;
-                if (selectedPets === 'yes') {
-                    petsFee = PRICING_CONFIG.PETS_FEE;
-                    subtotal += petsFee;
-                }
-                
-                // Check for minimum fare
-                if (subtotal < PRICING_CONFIG.MINIMUM_FARE) {
-                    subtotal = PRICING_CONFIG.MINIMUM_FARE;
-                }
-                
-                // Calculate fees
-                const bookingFee = PRICING_CONFIG.BOOKING_FEE;
-                const serviceFee = subtotal * PRICING_CONFIG.SERVICE_FEE_PERCENTAGE;
-                const suggestedTip = subtotal * PRICING_CONFIG.TIPPING_SUGGESTION;
-                
-                // Calculate total
-                const total = subtotal + bookingFee + serviceFee;
-                const totalWithTip = total + suggestedTip;
-                
-                return {
-                    baseFare: PRICING_CONFIG.BASE_FARE,
-                    distanceCharge: distanceCharge,
-                    timeCharge: timeCharge,
-                    surgeMultiplier: currentSurgeMultiplier,
-                    stopFees: stopFees,
-                    petsFee: petsFee,
-                    subtotal: subtotal,
-                    bookingFee: bookingFee,
-                    serviceFee: serviceFee,
-                    suggestedTip: suggestedTip,
-                    total: total,
-                    totalWithTip: totalWithTip,
-                    estimatedTotal: totalWithTip,
-                    distance: routeDistance,
-                    duration: routeDuration
-                };
-            }
-            
-            // Format currency
-            function formatCurrency(amount) {
-                return new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    minimumFractionDigits: 2
-                }).format(amount);
-            }
-            
-            // Update fare estimate display
-            function updateFareEstimate() {
-                const fare = calculateFare();
-                
-                if (!fare) {
-                    fareEstimate.classList.remove('active');
-                    return;
-                }
-                
-                // Update surge badge if applicable
-                if (currentSurgeMultiplier > 1.0) {
-                    surgeBadge.textContent = `${currentSurgeMultiplier.toFixed(1)}x`;
-                    surgeBadge.style.display = 'inline';
-                } else {
-                    surgeBadge.style.display = 'none';
-                }
-                
-                // Build fare breakdown HTML
-                let html = '';
-                
-                // Base fare
-                html += `
-                    <div class="fare-row">
-                        <span class="label">Base Fare</span>
-                        <span class="value">${formatCurrency(fare.baseFare)}</span>
-                    </div>
-                `;
-                
-                // Distance charge
-                html += `
-                    <div class="fare-row">
-                        <span class="label">Distance (${fare.distance.toFixed(1)} mi × ${formatCurrency(PRICING_CONFIG.COST_PER_MILE)})</span>
-                        <span class="value">${formatCurrency(fare.distanceCharge)}</span>
-                    </div>
-                `;
-                
-                // Time charge
-                html += `
-                    <div class="fare-row">
-                        <span class="label">Time (${Math.ceil(fare.duration)} min × ${formatCurrency(PRICING_CONFIG.COST_PER_MINUTE)})</span>
-                        <span class="value">${formatCurrency(fare.timeCharge)}</span>
-                    </div>
-                `;
-                
-                // Surge pricing
-                if (fare.surgeMultiplier > 1.0) {
-                    html += `
-                        <div class="fare-row">
-                            <span class="label">Peak Pricing (${fare.surgeMultiplier.toFixed(1)}×)</span>
-                            <span class="value">Applied</span>
-                        </div>
-                    `;
-                }
-                
-                // Additional stops
-                if (fare.stopFees > 0) {
-                    html += `
-                        <div class="fare-row">
-                            <span class="label">Additional Stops (${stopCount} × ${formatCurrency(PRICING_CONFIG.ADDITIONAL_STOP_FEE)})</span>
-                            <span class="value">${formatCurrency(fare.stopFees)}</span>
-                        </div>
-                    `;
-                }
-                
-                // Pets fee
-                if (fare.petsFee > 0) {
-                    html += `
-                        <div class="fare-row">
-                            <span class="label">Pet Fee</span>
-                            <span class="value">${formatCurrency(fare.petsFee)}</span>
-                        </div>
-                    `;
-                }
-                
-                // Subtotal
-                html += `
-                    <div class="fare-row">
-                        <span class="label">Subtotal</span>
-                        <span class="value">${formatCurrency(fare.subtotal)}</span>
-                    </div>
-                `;
-                
-                // Booking fee
-                html += `
-                    <div class="fare-row">
-                        <span class="label">Booking Fee</span>
-                        <span class="value">${formatCurrency(fare.bookingFee)}</span>
-                    </div>
-                `;
-                
-                // Service fee
-                html += `
-                    <div class="fare-row">
-                        <span class="label">Service Fee (${(PRICING_CONFIG.SERVICE_FEE_PERCENTAGE * 100)}%)</span>
-                        <span class="value">${formatCurrency(fare.serviceFee)}</span>
-                    </div>
-                `;
-                
-                // Suggested tip
-                html += `
-                    <div class="fare-row">
-                        <span class="label">Suggested Tip (${(PRICING_CONFIG.TIPPING_SUGGESTION * 100)}%)</span>
-                        <span class="value">${formatCurrency(fare.suggestedTip)}</span>
-                    </div>
-                `;
-                
-                // Total
-                html += `
-                    <div class="fare-row total">
-                        <span class="label">Estimated Total</span>
-                        <span class="value">${formatCurrency(fare.totalWithTip)}</span>
-                    </div>
-                `;
-                
-                fareBreakdown.innerHTML = html;
-                fareEstimate.classList.add('active');
-                
-                return fare;
-            }
-            
-            // Calculate route using Google Maps Distance Matrix API
-            function calculateRoute(origin, destination) {
-                if (!origin || !destination || origin === '' || destination === '') {
-                    return;
-                }
-                
-                const service = new google.maps.DistanceMatrixService();
-                
-                service.getDistanceMatrix({
-                    origins: [origin],
-                    destinations: [destination],
-                    travelMode: google.maps.TravelMode.DRIVING,
-                    unitSystem: google.maps.UnitSystem.IMPERIAL,
-                    avoidHighways: false,
-                    avoidTolls: false,
-                }, function(response, status) {
-                    if (status === 'OK') {
-                        const element = response.rows[0].elements[0];
-                        
-                        if (element.status === 'OK') {
-                            // Convert meters to miles and seconds to minutes
-                            routeDistance = element.distance.value / 1609.34; // meters to miles
-                            routeDuration = element.duration.value / 60; // seconds to minutes
-                            
-                            // Update fare estimate
-                            updateFareEstimate();
-                        } else {
-                            console.error('Error calculating route:', element.status);
-                        }
-                    } else {
-                        console.error('Distance Matrix API error:', status);
-                    }
-                });
-            }
-            
-            // ============================================
-            // BURGER MENU FUNCTIONALITY
-            // ============================================
-            
+            // Burger Menu Toggle Functionality
             burgerBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 toggleMenu();
             });
             
+            // Toggle menu function
             function toggleMenu() {
                 isMenuOpen = !isMenuOpen;
                 
@@ -2397,11 +2245,13 @@
                 }
             }
             
+            // Close menu when clicking on backdrop
             backdrop.addEventListener('click', function() {
                 if (isMenuOpen) {
                     toggleMenu();
                 }
                 
+                // Also close any other open modals
                 if (simplePickerModal.classList.contains('active')) {
                     closeSimplePicker();
                 } else if (bookingForm.classList.contains('active')) {
@@ -2409,6 +2259,7 @@
                 }
             });
             
+            // Close menu when clicking outside
             document.addEventListener('click', function(e) {
                 if (isMenuOpen && 
                     !dropdownMenu.contains(e.target) && 
@@ -2417,6 +2268,7 @@
                 }
             });
             
+            // Menu Link Click Handlers
             homeLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 toggleMenu();
@@ -2434,6 +2286,7 @@
                 toggleMenu();
             });
             
+            // Reservations link handler
             reservationsLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 alert("Reservations page would open here! View or manage your bookings.");
@@ -2458,10 +2311,7 @@
                 toggleMenu();
             });
             
-            // ============================================
-            // DATE/TIME PICKER FUNCTIONALITY
-            // ============================================
-            
+            // Initialize Simple Date/Time Picker
             function initializeSimplePicker() {
                 // Populate hour dropdown (1-12)
                 for (let i = 1; i <= 12; i++) {
@@ -2495,9 +2345,12 @@
                 generateCalendar(currentMonth, currentYear);
             }
             
+            // Generate calendar for given month/year
             function generateCalendar(month, year) {
+                // Clear existing calendar
                 datePicker.innerHTML = '';
                 
+                // Add day headers
                 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 dayNames.forEach(day => {
                     const dayHeader = document.createElement('div');
@@ -2506,23 +2359,30 @@
                     datePicker.appendChild(dayHeader);
                 });
                 
+                // Get first day of month
                 const firstDay = new Date(year, month, 1);
+                // Get last day of month
                 const lastDay = new Date(year, month + 1, 0);
+                // Get number of days in month
                 const daysInMonth = lastDay.getDate();
+                // Get day of week for first day (0 = Sunday, 1 = Monday, etc.)
                 const startingDay = firstDay.getDay();
                 
+                // Update month display
                 const monthNames = [
                     'January', 'February', 'March', 'April', 'May', 'June',
                     'July', 'August', 'September', 'October', 'November', 'December'
                 ];
                 currentMonthDisplay.textContent = `${monthNames[month]} ${year}`;
                 
+                // Add empty cells for days before first day of month
                 for (let i = 0; i < startingDay; i++) {
                     const emptyCell = document.createElement('div');
                     emptyCell.className = 'day-cell disabled';
                     datePicker.appendChild(emptyCell);
                 }
                 
+                // Add cells for each day of the month
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 
@@ -2534,6 +2394,7 @@
                     dayCell.dataset.month = month;
                     dayCell.dataset.year = year;
                     
+                    // Check if this is the selected date
                     const cellDate = new Date(year, month, day);
                     if (selectedDate.getDate() === day && 
                         selectedDate.getMonth() === month && 
@@ -2541,16 +2402,21 @@
                         dayCell.classList.add('selected');
                     }
                     
+                    // Check if date is in the past
                     if (cellDate < today) {
                         dayCell.classList.add('disabled');
                     } else {
+                        // Add click event
                         dayCell.addEventListener('click', function() {
+                            // Remove selected class from all days
                             document.querySelectorAll('.day-cell').forEach(cell => {
                                 cell.classList.remove('selected');
                             });
                             
+                            // Add selected class to clicked day
                             this.classList.add('selected');
                             
+                            // Update selected date
                             selectedDate = new Date(
                                 parseInt(this.dataset.year),
                                 parseInt(this.dataset.month),
@@ -2563,7 +2429,9 @@
                 }
             }
             
+            // Open simple picker modal
             datetimeBtn.addEventListener('click', function() {
+                // Close burger menu if open
                 if (isMenuOpen) {
                     toggleMenu();
                 }
@@ -2573,6 +2441,7 @@
                 document.body.style.overflow = 'hidden';
             });
             
+            // Close simple picker modal
             closePickerBtn.addEventListener('click', closeSimplePicker);
             
             function closeSimplePicker() {
@@ -2581,6 +2450,7 @@
                 document.body.style.overflow = 'auto';
             }
             
+            // Month navigation
             prevMonthBtn.addEventListener('click', function() {
                 currentMonth--;
                 if (currentMonth < 0) {
@@ -2599,6 +2469,7 @@
                 generateCalendar(currentMonth, currentYear);
             });
             
+            // AM/PM selection
             ampmBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     ampmBtns.forEach(b => b.classList.remove('selected'));
@@ -2607,10 +2478,13 @@
                 });
             });
             
+            // Confirm date/time selection
             confirmDatetimeBtn.addEventListener('click', function() {
+                // Get selected values
                 selectedHour = parseInt(hourSelect.value);
                 selectedMinute = parseInt(minuteSelect.value);
                 
+                // Convert 12-hour to 24-hour for date object
                 let hour24 = selectedHour;
                 if (selectedAmPm === "PM" && selectedHour !== 12) {
                     hour24 = selectedHour + 12;
@@ -2618,8 +2492,10 @@
                     hour24 = 0;
                 }
                 
+                // Set time on selected date
                 selectedDate.setHours(hour24, selectedMinute, 0, 0);
                 
+                // Format selected date/time for display
                 const monthNames = [
                     'January', 'February', 'March', 'April', 'May', 'June',
                     'July', 'August', 'September', 'October', 'November', 'December'
@@ -2633,6 +2509,7 @@
                 
                 selectedDateTime = `${month} ${day}, ${year} at ${hour}:${minute} ${selectedAmPm}`;
                 
+                // Update display
                 datetimeText.textContent = selectedDateTime;
                 datetimeText.classList.add('has-selection');
                 datetimeBtn.classList.add('selected');
@@ -2641,22 +2518,22 @@
                 
                 closeSimplePicker();
                 
+                // Show passenger container when date is selected
                 passengerContainer.classList.add('active');
+                
+                // Check if all fields are complete
                 checkAllFieldsComplete();
                 
-                // Update fare estimate with new date/time
-                updateFareEstimate();
+                // Update price
+                updatePriceDisplay();
             });
             
-            // ============================================
-            // GOOGLE MAPS INTEGRATION
-            // ============================================
-            
+            // Initialize Google Maps Autocomplete
             function initGoogleMaps() {
                 console.log("Google Maps API loaded successfully");
                 
+                // Create autocomplete for pickup input
                 if (google.maps.places) {
-                    // Pickup autocomplete
                     autocompletePickup = new google.maps.places.Autocomplete(pickupInput, {
                         types: ['geocode', 'establishment'],
                         componentRestrictions: {country: 'us'}
@@ -2669,21 +2546,25 @@
                             pickupInput.style.borderColor = 'var(--neon-cyan)';
                             pickupInput.style.color = 'var(--neon-cyan)';
                             
+                            // Show date/time picker if destination is filled
                             if (destinationInput.value.trim().length > 0) {
                                 datetimeContainer.classList.add('active');
-                                // Calculate route when both addresses are available
-                                calculateRoute(pickupInput.value, destinationInput.value);
                             }
                             
+                            // Reset to normal color after 1 second
                             setTimeout(() => {
                                 pickupInput.style.color = 'var(--text-light)';
                             }, 1000);
                             
+                            // Check field completion
                             checkAllFieldsComplete();
+                            
+                            // Update price and calculate distance
+                            calculateDistanceAndUpdatePrice();
                         }
                     });
                     
-                    // Destination autocomplete
+                    // Create autocomplete for destination input
                     autocompleteDestination = new google.maps.places.Autocomplete(destinationInput, {
                         types: ['geocode', 'establishment'],
                         componentRestrictions: {country: 'us'}
@@ -2696,17 +2577,21 @@
                             destinationInput.style.borderColor = 'var(--neon-cyan)';
                             destinationInput.style.color = 'var(--neon-cyan)';
                             
+                            // Show date/time picker if pickup is filled
                             if (pickupInput.value.trim().length > 0) {
                                 datetimeContainer.classList.add('active');
-                                // Calculate route when both addresses are available
-                                calculateRoute(pickupInput.value, destinationInput.value);
                             }
                             
+                            // Reset to normal color after 1 second
                             setTimeout(() => {
                                 destinationInput.style.color = 'var(--text-light)';
                             }, 1000);
                             
+                            // Check field completion
                             checkAllFieldsComplete();
+                            
+                            // Update price and calculate distance
+                            calculateDistanceAndUpdatePrice();
                         }
                     });
                     
@@ -2716,13 +2601,12 @@
                 }
             }
             
-            // ============================================
-            // FORM FUNCTIONALITY
-            // ============================================
-            
+            // Expand booking form when search pill is clicked
             searchPill.addEventListener('click', expandBookingForm);
             
+            // Expand booking form function
             function expandBookingForm() {
+                // Close burger menu if open
                 if (isMenuOpen) {
                     toggleMenu();
                 }
@@ -2733,11 +2617,13 @@
                 bookingCard.style.zIndex = '101';
                 document.body.style.overflow = 'hidden';
                 
+                // Focus on pickup input after animation
                 setTimeout(() => {
                     pickupInput.focus();
                 }, 300);
             }
             
+            // Collapse booking form function
             function collapseBookingForm() {
                 collapsedSearch.classList.remove('hidden');
                 bookingForm.classList.remove('active');
@@ -2746,10 +2632,12 @@
                 document.body.style.overflow = 'auto';
             }
             
+            // Use current location for pickup
             currentLocationBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
+                // Show loading state
                 const originalIcon = currentLocationBtn.innerHTML;
                 currentLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
                 currentLocationBtn.disabled = true;
@@ -2757,34 +2645,45 @@
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         function(position) {
+                            // Success - set the pickup location
                             const latitude = position.coords.latitude;
                             const longitude = position.coords.longitude;
                             
+                            // Use Google Geocoding API to get address
                             getAddressFromCoordinatesGoogle(latitude, longitude)
                                 .then(address => {
                                     pickupInput.value = address;
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
                                     pickupInput.style.color = 'var(--neon-cyan)';
                                     
+                                    // Show date/time picker if destination is filled
                                     if (destinationInput.value.trim().length > 0) {
                                         datetimeContainer.classList.add('active');
-                                        calculateRoute(address, destinationInput.value);
                                     }
                                     
+                                    // Check field completion
                                     checkAllFieldsComplete();
+                                    
+                                    // Update price and calculate distance
+                                    calculateDistanceAndUpdatePrice();
                                 })
                                 .catch(error => {
+                                    // Fallback to coordinates
                                     pickupInput.value = `Current Location (${latitude.toFixed(4)}, ${longitude.toFixed(4)})`;
                                     pickupInput.style.borderColor = 'var(--neon-cyan)';
+                                    
+                                    // Check field completion
                                     checkAllFieldsComplete();
                                 })
                                 .finally(() => {
+                                    // Reset button
                                     currentLocationBtn.innerHTML = originalIcon;
                                     currentLocationBtn.disabled = false;
                                 });
                         },
                         function(error) {
                             console.error("Geolocation error:", error);
+                            // Reset button
                             currentLocationBtn.innerHTML = originalIcon;
                             currentLocationBtn.disabled = false;
                         },
@@ -2794,13 +2693,16 @@
                         }
                     );
                 } else {
+                    // Browser doesn't support geolocation
                     currentLocationBtn.innerHTML = originalIcon;
                     currentLocationBtn.disabled = false;
                 }
             });
             
+            // Get address from coordinates using Google Geocoding API
             function getAddressFromCoordinatesGoogle(lat, lng) {
                 return new Promise((resolve, reject) => {
+                    // Using Google Geocoding API
                     const geocoder = new google.maps.Geocoder();
                     const latlng = { lat: lat, lng: lng };
                     
@@ -2818,26 +2720,27 @@
                 });
             }
             
+            // Show date/time field when destination input starts
             destinationInput.addEventListener('input', function() {
                 if (destinationInput.value.trim().length > 0 && pickupInput.value.trim().length > 0) {
                     datetimeContainer.classList.add('active');
-                    // Recalculate route when both addresses change
-                    calculateRoute(pickupInput.value, destinationInput.value);
                 } else {
                     datetimeContainer.classList.remove('active');
                 }
                 checkAllFieldsComplete();
+                calculateDistanceAndUpdatePrice();
             });
             
+            // Also show date/time when pickup is filled
             pickupInput.addEventListener('input', function() {
                 if (destinationInput.value.trim().length > 0 && pickupInput.value.trim().length > 0) {
                     datetimeContainer.classList.add('active');
-                    // Recalculate route when both addresses change
-                    calculateRoute(pickupInput.value, destinationInput.value);
                 }
                 checkAllFieldsComplete();
+                calculateDistanceAndUpdatePrice();
             });
             
+            // Add additional stop
             addStopBtn.addEventListener('click', function() {
                 stopCount++;
                 
@@ -2858,8 +2761,10 @@
                 
                 stopsContainer.appendChild(stopItem);
                 
+                // Add event listener to remove button
                 const removeBtn = stopItem.querySelector('.remove-stop');
                 removeBtn.addEventListener('click', function() {
+                    // Add fade out animation
                     stopItem.style.opacity = '0';
                     stopItem.style.transform = 'translateX(-10px)';
                     stopItem.style.transition = 'opacity 0.3s, transform 0.3s';
@@ -2867,11 +2772,11 @@
                     setTimeout(() => {
                         stopItem.remove();
                         updateStopNumbers();
-                        // Update fare estimate after removing stop
-                        updateFareEstimate();
+                        updatePriceDisplay();
                     }, 300);
                 });
                 
+                // Setup Google Autocomplete for the new stop if available
                 if (google && google.maps && google.maps.places) {
                     new google.maps.places.Autocomplete(stopItem.querySelector('.stop-location'), {
                         types: ['geocode', 'establishment'],
@@ -2879,15 +2784,17 @@
                     });
                 }
                 
+                // Focus on the new stop input
                 setTimeout(() => {
                     const stopInput = stopItem.querySelector('.stop-location');
                     stopInput.focus();
                 }, 100);
                 
-                // Update fare estimate after adding stop
-                updateFareEstimate();
+                // Update price
+                updatePriceDisplay();
             });
             
+            // Update stop numbers after removal
             function updateStopNumbers() {
                 const stopNumbers = stopsContainer.querySelectorAll('.stop-number');
                 stopNumbers.forEach((number, index) => {
@@ -2896,45 +2803,109 @@
                 stopCount = stopNumbers.length;
             }
             
+            // Calculate distance between pickup and destination
+            function calculateDistanceAndUpdatePrice() {
+                const pickup = pickupInput.value.trim();
+                const destination = destinationInput.value.trim();
+                
+                if (!pickup || !destination || !window.google || !google.maps) {
+                    // Don't calculate if we don't have both addresses
+                    updatePriceDisplay();
+                    return;
+                }
+                
+                // Use Google Distance Matrix API
+                const service = new google.maps.DistanceMatrixService();
+                service.getDistanceMatrix(
+                    {
+                        origins: [pickup],
+                        destinations: [destination],
+                        travelMode: 'DRIVING',
+                        unitSystem: google.maps.UnitSystem.IMPERIAL,
+                    },
+                    function(response, status) {
+                        if (status === 'OK') {
+                            const element = response.rows[0].elements[0];
+                            if (element.status === 'OK') {
+                                // Convert distance from miles to kilometers if needed
+                                // The pricing.js expects distance in miles
+                                distance = element.distance.value / 1609.34; // Convert meters to miles
+                                duration = element.duration.value / 60; // Convert seconds to minutes
+                                
+                                console.log(`Distance: ${distance.toFixed(2)} miles, Duration: ${duration.toFixed(2)} minutes`);
+                                updatePriceDisplay();
+                            } else {
+                                console.error('Error calculating distance:', element.status);
+                                updatePriceDisplay();
+                            }
+                        } else {
+                            console.error('Error from Distance Matrix:', status);
+                            updatePriceDisplay();
+                        }
+                    }
+                );
+            }
+            
+            // Handle passenger count selection
             passengerBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
+                    // Remove selected class from all passenger buttons
                     passengerBtns.forEach(b => b.classList.remove('selected'));
+                    
+                    // Add selected class to clicked button
                     this.classList.add('selected');
                     
+                    // Update passenger count
                     selectedPassengerCount = parseInt(this.getAttribute('data-value'));
                     passengerCountDisplay.textContent = selectedPassengerCount;
                     
+                    // Update button title
                     passengerBtn.title = `${selectedPassengerCount} Passenger${selectedPassengerCount > 1 ? 's' : ''}`;
                     passengerBtn.classList.add('selected');
                     
+                    // Show pets container when passenger count is selected
                     petsContainer.classList.add('active');
                     
+                    // Check field completion
                     checkAllFieldsComplete();
+                    
+                    // Update price
+                    updatePriceDisplay();
                 });
             });
             
+            // Set default passenger selection
             document.querySelector('.passenger-btn[data-value="1"]').classList.add('selected');
             passengerBtn.title = "1 Passenger";
             
+            // Handle pets selection
             petsBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
+                    // Remove selected class from all pets buttons
                     petsBtns.forEach(b => b.classList.remove('selected'));
+                    
+                    // Add selected class to clicked button
                     this.classList.add('selected');
                     
+                    // Update pets selection
                     selectedPets = this.getAttribute('data-value');
                     
+                    // Update button title and icon
                     petsBtn.title = `Pets: ${selectedPets === 'yes' ? 'Yes' : 'No'}`;
                     petsBtn.classList.add('selected');
                     
+                    // Show passenger name container when pets is selected
                     passengerNameContainer.classList.add('active');
                     
+                    // Check field completion
                     checkAllFieldsComplete();
                     
-                    // Update fare estimate for pets fee
-                    updateFareEstimate();
+                    // Update price
+                    updatePriceDisplay();
                 });
             });
             
+            // Handle passenger name input
             passengerNameInput.addEventListener('input', function() {
                 const name = this.value.trim();
                 
@@ -2942,6 +2913,7 @@
                     passengerNameBtn.title = `Name: ${name}`;
                     passengerNameBtn.classList.add('selected');
                     
+                    // Show phone container when name is entered
                     phoneContainer.classList.add('active');
                 } else {
                     passengerNameBtn.title = "Passenger name";
@@ -2953,6 +2925,7 @@
                 checkAllFieldsComplete();
             });
             
+            // Handle phone input
             phoneInput.addEventListener('input', function() {
                 const phone = this.value.trim();
                 
@@ -2960,6 +2933,7 @@
                     phoneBtn.title = `Phone: ${phone}`;
                     phoneBtn.classList.add('selected');
                     
+                    // Show email container when phone is entered
                     emailContainer.classList.add('active');
                 } else {
                     phoneBtn.title = "Phone number";
@@ -2970,6 +2944,7 @@
                 checkAllFieldsComplete();
             });
             
+            // Handle email input
             emailInput.addEventListener('input', function() {
                 const email = this.value.trim();
                 
@@ -2977,6 +2952,7 @@
                     emailBtn.title = `Email: ${email}`;
                     emailBtn.classList.add('selected');
                     
+                    // Show notes container when email is entered
                     notesContainer.classList.add('active');
                 } else {
                     emailBtn.title = "Email address";
@@ -2986,10 +2962,12 @@
                 checkAllFieldsComplete();
             });
             
+            // Handle notes character count
             notesInput.addEventListener('input', function() {
                 const length = this.value.length;
                 notesChars.textContent = `${length}/500 characters`;
                 
+                // Update character counter color
                 if (length > 450) {
                     notesChars.classList.add('error');
                     notesChars.classList.remove('warning');
@@ -3000,6 +2978,7 @@
                     notesChars.classList.remove('warning', 'error');
                 }
                 
+                // Update button title if there's content
                 if (length > 0) {
                     notesBtn.title = `Notes: ${length} characters`;
                     notesBtn.classList.add('selected');
@@ -3009,6 +2988,164 @@
                 }
             });
             
+            // UPDATE PRICE DISPLAY - Integrated with pricing.js
+            function updatePriceDisplay() {
+                const pickup = pickupInput.value.trim();
+                const destination = destinationInput.value.trim();
+                
+                // Only show price if we have both pickup and destination
+                if (!pickup || !destination) {
+                    priceDisplay.classList.remove('active');
+                    priceBreakdown.classList.remove('active');
+                    priceAmount.textContent = '$0.00';
+                    priceNote.textContent = 'Enter pickup and destination to see price';
+                    return;
+                }
+                
+                // Show price display
+                priceDisplay.classList.add('active');
+                
+                // Get additional stops
+                const stopInputs = document.querySelectorAll('.stop-location');
+                const stops = Array.from(stopInputs)
+                    .map(input => input.value.trim())
+                    .filter(stop => stop.length > 0);
+                
+                // Prepare data for pricing calculation
+                const pricingData = {
+                    distance: distance || 10, // Default to 10 miles if no distance calculated
+                    duration: duration || 20, // Default to 20 minutes
+                    passengers: selectedPassengerCount,
+                    hasPets: selectedPets === 'yes',
+                    additionalStops: stops.length,
+                    dateTime: selectedDate,
+                    isPeakHour: false,
+                    vehicleType: 'premium' // Luxury SUV
+                };
+                
+                // Check if it's peak hour (6-9 AM or 4-7 PM on weekdays)
+                if (selectedDate) {
+                    const hour = selectedDate.getHours();
+                    const day = selectedDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                    const isWeekday = day >= 1 && day <= 5;
+                    const isMorningPeak = hour >= 6 && hour < 9;
+                    const isEveningPeak = hour >= 16 && hour < 19;
+                    pricingData.isPeakHour = isWeekday && (isMorningPeak || isEveningPeak);
+                }
+                
+                // Use pricing.js to calculate price
+                try {
+                    const fareDetails = calculateFare(pricingData);
+                    
+                    // Update price display
+                    priceAmount.textContent = `$${fareDetails.total.toFixed(2)}`;
+                    priceNote.textContent = distance > 0 ? 
+                        `Estimated fare for ${distance.toFixed(1)} miles` : 
+                        "Estimated fare";
+                    
+                    // Show breakdown if available
+                    if (fareDetails.breakdown) {
+                        priceBreakdown.innerHTML = '';
+                        
+                        // Add base fare
+                        if (fareDetails.breakdown.base) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Base Fare</span><span>$${fareDetails.breakdown.base.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add distance charge
+                        if (fareDetails.breakdown.distance) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Distance (${distance.toFixed(1)} mi)</span><span>$${fareDetails.breakdown.distance.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add time charge
+                        if (fareDetails.breakdown.time) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Time (${duration.toFixed(0)} min)</span><span>$${fareDetails.breakdown.time.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add passenger surcharge
+                        if (fareDetails.breakdown.passengers && selectedPassengerCount > 1) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Passenger Surcharge (${selectedPassengerCount})</span><span>$${fareDetails.breakdown.passengers.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add pets fee
+                        if (fareDetails.breakdown.pets && selectedPets === 'yes') {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Pet Fee</span><span>$${fareDetails.breakdown.pets.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add stops fee
+                        if (fareDetails.breakdown.stops && stops.length > 0) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Additional Stops (${stops.length})</span><span>$${fareDetails.breakdown.stops.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add peak hour surcharge
+                        if (fareDetails.breakdown.peakHour) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Peak Hour Surcharge</span><span>$${fareDetails.breakdown.peakHour.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add vehicle premium
+                        if (fareDetails.breakdown.vehicle) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Luxury SUV Premium</span><span>$${fareDetails.breakdown.vehicle.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add service fee
+                        if (fareDetails.breakdown.serviceFee) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Service Fee (${PRICING_CONFIG.serviceFeePercentage}%)</span><span>$${fareDetails.breakdown.serviceFee.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add booking fee
+                        if (fareDetails.breakdown.bookingFee) {
+                            const item = document.createElement('div');
+                            item.className = 'breakdown-item';
+                            item.innerHTML = `<span>Booking Fee</span><span>$${fareDetails.breakdown.bookingFee.toFixed(2)}</span>`;
+                            priceBreakdown.appendChild(item);
+                        }
+                        
+                        // Add total
+                        const totalItem = document.createElement('div');
+                        totalItem.className = 'breakdown-item';
+                        totalItem.innerHTML = `<span>Total</span><span>$${fareDetails.total.toFixed(2)}</span>`;
+                        priceBreakdown.appendChild(totalItem);
+                        
+                        priceBreakdown.classList.add('active');
+                    }
+                } catch (error) {
+                    console.error("Error calculating price:", error);
+                    // Fallback
+                    const fallbackPrice = 75.00;
+                    priceAmount.textContent = `$${fallbackPrice.toFixed(2)}`;
+                    priceNote.textContent = "Estimated fare";
+                    priceBreakdown.classList.remove('active');
+                }
+            }
+            
+            // Check if all required fields are complete
             function checkAllFieldsComplete() {
                 const pickup = pickupInput.value.trim();
                 const destination = destinationInput.value.trim();
@@ -3019,6 +3156,7 @@
                 const phone = phoneInput.value.trim();
                 const email = emailInput.value.trim();
                 
+                // Count completed fields
                 let completedCount = 0;
                 const totalFields = 8;
                 
@@ -3031,9 +3169,11 @@
                 if (phone) completedCount++;
                 if (email && email.includes('@')) completedCount++;
                 
+                // Update progress bar
                 const progressPercentage = (completedCount / totalFields) * 100;
                 progressFill.style.width = `${progressPercentage}%`;
                 
+                // Update progress text
                 const progressText = progressIndicator.querySelector('div');
                 if (completedCount < totalFields) {
                     progressText.textContent = `${completedCount} of ${totalFields} fields completed`;
@@ -3042,6 +3182,7 @@
                     progressText.style.color = "var(--success-green)";
                 }
                 
+                // Show/hide submit button
                 if (completedCount === totalFields) {
                     submitBtn.classList.add('active');
                     submitBtn.disabled = false;
@@ -3053,24 +3194,31 @@
                 return completedCount === totalFields;
             }
             
+            // Function to highlight missing field
             function highlightMissingField(field) {
+                // Remove any existing highlights
                 removeHighlights();
                 
+                // Add highlight class based on field type
                 if (field.classList.contains('form-input') || field.classList.contains('icon-input')) {
                     field.classList.add('missing-field');
                     
+                    // Remove highlight after 3 seconds
                     setTimeout(() => {
                         field.classList.remove('missing-field');
                     }, 3000);
                 } else if (field.classList.contains('icon-btn') || field.classList.contains('pets-btn')) {
+                    // For icon buttons, highlight the button
                     field.classList.add('missing-field-btn');
                     
+                    // Remove highlight after 3 seconds
                     setTimeout(() => {
                         field.classList.remove('missing-field-btn');
                     }, 3000);
                 }
             }
             
+            // Function to remove all highlights
             function removeHighlights() {
                 const highlightedFields = document.querySelectorAll('.missing-field, .missing-field-btn');
                 highlightedFields.forEach(field => {
@@ -3079,12 +3227,15 @@
                 });
             }
             
+            // Show validation error
             function showValidationError(message) {
+                // Remove any existing error message
                 const existingError = document.querySelector('.validation-error');
                 if (existingError) {
                     existingError.remove();
                 }
                 
+                // Create error message
                 const errorDiv = document.createElement('div');
                 errorDiv.className = 'validation-error';
                 errorDiv.innerHTML = `
@@ -3092,9 +3243,11 @@
                     ${message}
                 `;
                 
+                // Insert after form title
                 const formTitle = document.querySelector('.form-title');
                 formTitle.parentNode.insertBefore(errorDiv, formTitle.nextSibling);
                 
+                // Scroll error into view
                 setTimeout(() => {
                     errorDiv.scrollIntoView({ 
                         behavior: 'smooth', 
@@ -3102,6 +3255,7 @@
                     });
                 }, 100);
                 
+                // Remove after 5 seconds
                 setTimeout(() => {
                     if (errorDiv.parentNode) {
                         errorDiv.style.opacity = '0';
@@ -3115,8 +3269,11 @@
                 }, 5000);
             }
             
+            // Handle form submission
             submitBtn.addEventListener('click', function() {
+                // Double-check all fields are complete
                 if (!checkAllFieldsComplete()) {
+                    // Get form values to find first missing field
                     const pickup = pickupInput.value.trim();
                     const destination = destinationInput.value.trim();
                     const datetime = selectedDateTime;
@@ -3126,6 +3283,7 @@
                     const phone = phoneInput.value.trim();
                     const email = emailInput.value.trim();
                     
+                    // Find first missing field
                     let firstMissingField = null;
                     let errorMessage = "";
                     
@@ -3160,16 +3318,22 @@
                     
                     showValidationError(errorMessage);
                     
+                    // Ensure form is expanded so user can see the field
                     expandBookingForm();
                     
+                    // Add visual highlight to the missing field
                     if (firstMissingField) {
                         highlightMissingField(firstMissingField);
                         
+                        // Focus on the field or button
                         setTimeout(() => {
                             if (firstMissingField.tagName === 'BUTTON') {
+                                // For buttons, we can focus on them
                                 firstMissingField.focus();
                             } else {
                                 firstMissingField.focus();
+                                
+                                // Scroll the field into view with some padding
                                 firstMissingField.scrollIntoView({ 
                                     behavior: 'smooth', 
                                     block: 'center',
@@ -3182,17 +3346,18 @@
                     return;
                 }
                 
-                // Get fare estimate
-                const fare = calculateFare();
-                
+                // Show loading state on button
                 const originalText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 10px;"></i> PROCESSING...';
                 submitBtn.disabled = true;
                 
+                // Simulate API call
                 setTimeout(() => {
+                    // Reset button
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                     
+                    // Get form values
                     const pickup = pickupInput.value.trim();
                     const destination = destinationInput.value.trim();
                     const datetime = selectedDateTime;
@@ -3202,23 +3367,25 @@
                     const phone = phoneInput.value.trim();
                     const email = emailInput.value.trim();
                     const notes = notesInput.value.trim();
+                    const price = priceAmount.textContent;
                     
+                    // Get additional stops
                     const stopInputs = document.querySelectorAll('.stop-location');
                     const stops = Array.from(stopInputs)
                         .map(input => input.value.trim())
                         .filter(stop => stop.length > 0);
                     
-                    // Show booking confirmation with pricing
-                    showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, 
-                                          passengerName, phone, email, notes, stops, fare);
+                    // Show success message with all details including price
+                    showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops, price);
                     
+                    // Reset form
                     collapseBookingForm();
                     resetForm();
                 }, 1500);
             });
             
-            function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, 
-                                           passengerName, phone, email, notes, stops, fare) {
+            // Show booking confirmation
+            function showBookingConfirmation(pickup, destination, datetime, passengerCount, pets, passengerName, phone, email, notes, stops, price) {
                 const confirmationHTML = `
                     <div style="
                         background: rgba(0, 243, 255, 0.1);
@@ -3235,34 +3402,16 @@
                         <div style="font-size: 0.9rem; line-height: 1.6;">
                             <p><strong>Pickup:</strong> ${pickup}</p>
                             <p><strong>Destination:</strong> ${destination}</p>
+                            ${distance > 0 ? `<p><strong>Distance:</strong> ${distance.toFixed(1)} miles</p>` : ''}
                             <p><strong>Date & Time:</strong> ${datetime}</p>
                             <p><strong>Passengers:</strong> ${passengerCount}</p>
                             <p><strong>Traveling with Pets:</strong> ${pets === 'yes' ? 'Yes' : 'No'}</p>
                             <p><strong>Passenger Name:</strong> ${passengerName}</p>
                             <p><strong>Phone:</strong> ${phone}</p>
                             <p><strong>Email:</strong> ${email}</p>
+                            <p><strong>Total Price:</strong> <span style="color: var(--neon-cyan); font-weight: bold;">${price}</span></p>
                             ${notes ? `<p><strong>Special Notes:</strong> ${notes}</p>` : ''}
                             ${stops.length > 0 ? `<p><strong>Additional Stops:</strong> ${stops.join(', ')}</p>` : ''}
-                            
-                            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0, 243, 255, 0.3);">
-                                <h4 style="color: var(--neon-cyan); margin-bottom: 10px;">Payment Details</h4>
-                                ${fare ? `
-                                    <p><strong>Distance:</strong> ${fare.distance.toFixed(1)} miles</p>
-                                    <p><strong>Estimated Duration:</strong> ${Math.ceil(fare.duration)} minutes</p>
-                                    <p><strong>Base Fare:</strong> ${formatCurrency(fare.baseFare)}</p>
-                                    <p><strong>Distance Charge:</strong> ${formatCurrency(fare.distanceCharge)}</p>
-                                    <p><strong>Time Charge:</strong> ${formatCurrency(fare.timeCharge)}</p>
-                                    ${fare.surgeMultiplier > 1.0 ? `<p><strong>Peak Pricing:</strong> ${fare.surgeMultiplier.toFixed(1)}× multiplier</p>` : ''}
-                                    ${fare.stopFees > 0 ? `<p><strong>Additional Stops:</strong> ${formatCurrency(fare.stopFees)}</p>` : ''}
-                                    ${fare.petsFee > 0 ? `<p><strong>Pet Fee:</strong> ${formatCurrency(fare.petsFee)}</p>` : ''}
-                                    <p><strong>Booking Fee:</strong> ${formatCurrency(fare.bookingFee)}</p>
-                                    <p><strong>Service Fee:</strong> ${formatCurrency(fare.serviceFee)}</p>
-                                    <p style="font-weight: bold; color: var(--neon-cyan); margin-top: 10px;">
-                                        <strong>Total Charge:</strong> ${formatCurrency(fare.totalWithTip)}
-                                    </p>
-                                ` : '<p>Fare calculation unavailable</p>'}
-                            </div>
-                            
                             <p style="margin-top: 15px; color: var(--neon-cyan);">
                                 Your luxury SUV will arrive promptly. A confirmation has been sent to your email.
                             </p>
@@ -3270,8 +3419,10 @@
                     </div>
                 `;
                 
+                // Insert after booking card
                 bookingCard.insertAdjacentHTML('afterend', confirmationHTML);
                 
+                // Remove after 8 seconds
                 setTimeout(() => {
                     const confirmationDiv = document.querySelector('[style*="background: rgba(0, 243, 255, 0.1)"]');
                     if (confirmationDiv) {
@@ -3286,6 +3437,7 @@
                 }, 8000);
             }
             
+            // Reset form to initial state
             function resetForm() {
                 pickupInput.value = '';
                 destinationInput.value = '';
@@ -3293,4 +3445,84 @@
                 datetimeText.textContent = '';
                 datetimeText.classList.remove('has-selection');
                 datetimeBtn.classList.remove('selected');
-                datetimeBtn.title =
+                datetimeBtn.title = "Select date and time";
+                datetimeBtn.innerHTML = '<i class="far fa-calendar-alt"></i>';
+                datetimeContainer.classList.remove('active');
+                
+                // Reset passenger count
+                passengerBtns.forEach(btn => btn.classList.remove('selected'));
+                document.querySelector('.passenger-btn[data-value="1"]').classList.add('selected');
+                selectedPassengerCount = 1;
+                passengerCountDisplay.textContent = '1';
+                passengerBtn.title = "1 Passenger";
+                passengerBtn.classList.remove('selected');
+                passengerBtn.innerHTML = '<i class="fas fa-users"></i>';
+                passengerContainer.classList.remove('active');
+                
+                // Reset pets
+                petsBtns.forEach(btn => btn.classList.remove('selected'));
+                selectedPets = null;
+                petsBtn.title = "Pet information";
+                petsBtn.classList.remove('selected');
+                petsBtn.innerHTML = '<i class="fas fa-paw"></i>';
+                petsContainer.classList.remove('active');
+                
+                // Reset passenger name
+                passengerNameInput.value = '';
+                passengerNameBtn.title = "Passenger name";
+                passengerNameBtn.classList.remove('selected');
+                passengerNameContainer.classList.remove('active');
+                
+                // Reset phone
+                phoneInput.value = '';
+                phoneBtn.title = "Phone number";
+                phoneBtn.classList.remove('selected');
+                phoneContainer.classList.remove('active');
+                
+                // Reset email
+                emailInput.value = '';
+                emailBtn.title = "Email address";
+                emailBtn.classList.remove('selected');
+                emailContainer.classList.remove('active');
+                
+                // Reset notes
+                notesInput.value = '';
+                notesChars.textContent = '0/500 characters';
+                notesChars.classList.remove('warning', 'error');
+                notesBtn.title = "Add special notes";
+                notesBtn.classList.remove('selected');
+                notesBtn.innerHTML = '<i class="fas fa-sticky-note"></i>';
+                notesContainer.classList.remove('active');
+                
+                // Clear additional stops
+                stopsContainer.innerHTML = '';
+                stopCount = 0;
+                
+                // Reset distance
+                distance = 0;
+                duration = 0;
+                
+                // Reset price display
+                priceDisplay.classList.remove('active');
+                priceAmount.textContent = '$0.00';
+                priceNote.textContent = 'Enter pickup and destination to see price';
+                priceBreakdown.classList.remove('active');
+                priceBreakdown.innerHTML = '';
+                
+                // Reset progress bar
+                progressFill.style.width = '0%';
+                const progressText = progressIndicator.querySelector('div');
+                progressText.textContent = "Complete all required fields to book";
+                progressText.style.color = "";
+                
+                // Hide submit button
+                submitBtn.classList.remove('active');
+                submitBtn.disabled = true;
+            }
+            
+            // Make initGoogleMaps globally accessible for Google Maps callback
+            window.initGoogleMaps = initGoogleMaps;
+        });
+    </script>
+</body>
+</html>
