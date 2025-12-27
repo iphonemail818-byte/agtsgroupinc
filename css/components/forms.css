@@ -1,0 +1,613 @@
+/* Booking Card */
+.booking-card {
+    max-width: 500px;
+    margin: 1rem auto;
+    background: linear-gradient(180deg, var(--card-dark), var(--card-darker));
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    transition: var(--transition);
+    position: relative;
+    z-index: 100;
+}
+
+@media (min-width: 768px) {
+    .booking-card {
+        margin: 2rem auto;
+    }
+    .booking-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    }
+}
+
+/* Collapsed Search Input */
+.collapsed-search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-pill {
+    width: 100%;
+    max-width: 400px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 1.2rem 1.5rem;
+    font-size: 1rem;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.search-pill:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(0, 243, 255, 0.3);
+}
+
+/* Expanded Booking Form */
+.booking-form {
+    display: none;
+}
+
+.booking-form.active {
+    display: block;
+}
+
+.form-title {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-light);
+}
+
+.input-group {
+    margin-bottom: 1.2rem;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Input Wrapper with Button */
+.input-with-button {
+    position: relative;
+    width: 100%;
+}
+
+.form-input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 1rem 3.5rem 1rem 1.2rem;
+    font-size: 1rem;
+    color: var(--text-light);
+    transition: var(--transition);
+    font-family: inherit;
+    height: 52px;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+}
+
+/* Current Location Button */
+.current-location-btn {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 243, 255, 0.1);
+    color: var(--neon-cyan);
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    z-index: 2;
+}
+
+.current-location-btn:hover {
+    background: rgba(0, 243, 255, 0.2);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.current-location-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* Destination field doesn't have button, adjust padding */
+#destination {
+    padding-right: 1.2rem;
+}
+
+/* Stops Container */
+.stops-container {
+    margin-top: 1rem;
+}
+
+.stop-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.3s ease;
+}
+
+.stop-number {
+    width: 28px;
+    height: 28px;
+    background-color: rgba(0, 243, 255, 0.2);
+    color: var(--neon-cyan);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    margin-right: 0.8rem;
+    flex-shrink: 0;
+}
+
+.stop-input {
+    flex-grow: 1;
+    position: relative;
+}
+
+.remove-stop {
+    background: none;
+    border: none;
+    color: #ff4757;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.remove-stop:hover {
+    background-color: rgba(255, 71, 87, 0.1);
+}
+
+/* Add Stop Button */
+.add-stop-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 243, 255, 0.1);
+    color: var(--neon-cyan);
+    border: 1px dashed rgba(0, 243, 255, 0.3);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: 0.5rem 0;
+    transition: var(--transition);
+}
+
+.add-stop-btn:hover {
+    background-color: rgba(0, 243, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* Date & Time Picker - Simple Style */
+.datetime-container {
+    display: none;
+    margin-top: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.datetime-container.active {
+    display: block;
+}
+
+.datetime-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* Date/Time Display */
+.datetime-display {
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--neon-cyan);
+    min-height: 1.2rem;
+    padding: 0.5rem 1rem;
+    background-color: rgba(0, 243, 255, 0.05);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 300px;
+    flex-grow: 1;
+    border: 1px solid transparent;
+    transition: var(--transition);
+}
+
+.datetime-display.has-selection {
+    border-color: rgba(0, 243, 255, 0.3);
+    background-color: rgba(0, 243, 255, 0.1);
+}
+
+/* Passenger Count Container */
+.passenger-container {
+    display: none;
+    margin-top: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.passenger-container.active {
+    display: block;
+}
+
+.passenger-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* Pets Container */
+.pets-container {
+    display: none;
+    margin-top: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.pets-container.active {
+    display: block;
+}
+
+.pets-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* Passenger Name Container */
+.passenger-name-container {
+    display: none;
+    margin-top: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.passenger-name-container.active {
+    display: block;
+}
+
+.passenger-name-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* Phone Container */
+.phone-container {
+    display: none;
+    margin-top: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.phone-container.active {
+    display: block;
+}
+
+.phone-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* Email Container */
+.email-container {
+    display: none;
+    margin-top: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.email-container.active {
+    display: block;
+}
+
+.email-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* Notes Container */
+.notes-container {
+    display: none;
+    margin-top: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.notes-container.active {
+    display: block;
+}
+
+.notes-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+/* Universal Icon Button Style */
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 243, 255, 0.1);
+    color: var(--neon-cyan);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 12px;
+    width: 60px;
+    height: 60px;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.icon-btn:hover {
+    background-color: rgba(0, 243, 255, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+}
+
+.icon-btn.selected {
+    background-color: rgba(0, 243, 255, 0.2);
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+    border-color: var(--neon-cyan);
+}
+
+/* Universal Input Field Style for new fields */
+.icon-input-wrapper {
+    flex-grow: 1;
+    position: relative;
+}
+
+.icon-input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    color: var(--text-light);
+    transition: var(--transition);
+    font-family: inherit;
+    height: 60px;
+}
+
+.icon-input:focus {
+    outline: none;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+}
+
+/* Passenger selector styles */
+.passenger-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(0, 243, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    flex-grow: 1;
+}
+
+.passenger-btn {
+    background: none;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    color: var(--text-light);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.passenger-btn:hover {
+    background-color: rgba(0, 243, 255, 0.1);
+    border-color: var(--neon-cyan);
+}
+
+.passenger-btn.selected {
+    background-color: rgba(0, 243, 255, 0.2);
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.passenger-count-display {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--neon-cyan);
+    min-width: 40px;
+    text-align: center;
+}
+
+/* Pets selector styles */
+.pets-selector {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: rgba(0, 243, 255, 0.05);
+    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    flex-grow: 1;
+}
+
+.pets-btn {
+    background: none;
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    color: var(--text-light);
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    flex: 1;
+    text-align: center;
+}
+
+.pets-btn:hover {
+    background-color: rgba(0, 243, 255, 0.1);
+    border-color: var(--neon-cyan);
+}
+
+.pets-btn.selected {
+    background-color: rgba(0, 243, 255, 0.2);
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.pets-yes {
+    background-color: rgba(0, 255, 157, 0.1);
+    border-color: rgba(0, 255, 157, 0.3);
+}
+
+.pets-yes.selected {
+    background-color: rgba(0, 255, 157, 0.2);
+    color: var(--success-green);
+    border-color: var(--success-green);
+}
+
+.pets-no {
+    background-color: rgba(255, 165, 0, 0.1);
+    border-color: rgba(255, 165, 0, 0.3);
+}
+
+.pets-no.selected {
+    background-color: rgba(255, 165, 0, 0.2);
+    color: var(--warning-orange);
+    border-color: var(--warning-orange);
+}
+
+/* Notes input styles */
+.notes-input-wrapper {
+    flex-grow: 1;
+    position: relative;
+}
+
+.notes-input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    color: var(--text-light);
+    transition: var(--transition);
+    font-family: inherit;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.notes-input:focus {
+    outline: none;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 0 2px rgba(0, 243, 255, 0.2);
+}
+
+.notes-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Submit Button - Initially Hidden */
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(90deg, rgba(0, 243, 255, 0.9), rgba(0, 200, 255, 0.9));
+    border: none;
+    border-radius: 12px;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: var(--transition);
+    letter-spacing: 0.5px;
+    font-family: 'Orbitron', sans-serif;
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+
+.submit-btn.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.submit-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 243, 255, 0.4);
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+.submit-btn:disabled {
+    background: linear-gradient(90deg, rgba(0, 243, 255, 0.3), rgba(0, 200, 255, 0.3));
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Character counter for notes */
+.char-counter {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+.char-counter.warning {
+    color: var(--warning-orange);
+}
+
+.char-counter.error {
+    color: var(--error-red);
+}
