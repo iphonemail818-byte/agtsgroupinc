@@ -1905,68 +1905,66 @@
 
     <script>
         // ============================================
-        // PRICING.JS LOGIC - INTEGRATED FROM GITHUB
+        // UPDATED PRICING.JS LOGIC - REALISTIC PRICING
+        // Competitive with Uber Black/Lyft Lux
         // ============================================
         
-        /**
-         * AGTS Group Inc - Luxury SUV Transportation Pricing Engine
-         * Calculates fares based on distance, time, passengers, and other factors
-         */
-        
-        // Base pricing configuration
+        // REALISTIC pricing configuration for luxury SUV service
         const PRICING_CONFIG = {
-            baseFare: 75.00,
-            perMileRate: 3.50,
-            perMinuteRate: 0.85,
-            minimumFare: 45.00,
+            // Base pricing (competitive with Uber Black)
+            baseFare: 8.00,           // Lower base fare (Uber Black: $8-10)
+            perMileRate: 3.25,        // Competitive per mile rate (Uber Black: $3.50-4.00)
+            perMinuteRate: 0.50,      // Competitive per minute rate (Uber Black: $0.55-0.65)
+            minimumFare: 25.00,       // Minimum fare for short trips
             
-            // Surcharges
+            // REALISTIC Surcharges
             passengerSurcharge: {
                 1: 0,
-                2: 5,
-                3: 10,
-                4: 15,
-                5: 20,
-                6: 25
+                2: 3,
+                3: 6,
+                4: 9,
+                5: 12,
+                6: 15
             },
             
-            petFee: 25.00,
-            additionalStopFee: 15.00,
+            petFee: 10.00,            // Reasonable pet fee
+            additionalStopFee: 8.00,  // Reasonable stop fee
             
-            // Peak hours (6-9 AM, 4-7 PM weekdays)
-            peakHourMultiplier: 1.25,
+            // Peak hours (6-9 AM, 4-7 PM weekdays) - 1.15x multiplier
+            peakHourMultiplier: 1.15,
             
-            // Service fees
-            serviceFeePercentage: 15, // 15% service fee
-            bookingFee: 5.00,
+            // REALISTIC Service fees
+            serviceFeePercentage: 8,  // 8% service fee (reasonable)
+            bookingFee: 2.50,         // Reasonable booking fee
             
             // Vehicle type multipliers
             vehicleTypes: {
                 'standard': 1.0,
-                'premium': 1.5,
-                'executive': 2.0
-            }
+                'premium': 1.3,       // 30% premium for luxury SUV
+                'executive': 1.5      // 50% premium for executive
+            },
+            
+            // Safety/sanity limits
+            maximumPricePerMile: 7.00, // Never charge more than $7 per mile
+            maximumFareMultiplier: 2.0  // Never more than 2x the base calculation
         };
         
         /**
-         * Calculate fare based on trip details
-         * @param {Object} tripDetails - Trip information
-         * @returns {Object} Fare breakdown and total
+         * Calculate REALISTIC fare based on trip details
+         * Competitive with Uber Black/Lyft Lux pricing
          */
         function calculateFare(tripDetails) {
-            // Default values
             const defaults = {
-                distance: 0, // miles
-                duration: 0, // minutes
+                distance: 0,
+                duration: 0,
                 passengers: 1,
                 hasPets: false,
                 additionalStops: 0,
                 dateTime: new Date(),
-                vehicleType: 'standard',
+                vehicleType: 'premium', // Luxury SUV
                 isPeakHour: false
             };
             
-            // Merge with defaults
             const details = { ...defaults, ...tripDetails };
             
             // Calculate base components
@@ -1978,16 +1976,7 @@
             const petFee = details.hasPets ? PRICING_CONFIG.petFee : 0;
             const stopsFee = details.additionalStops * PRICING_CONFIG.additionalStopFee;
             
-            // Check for peak hours
-            let peakHourMultiplier = 1.0;
-            if (details.isPeakHour) {
-                peakHourMultiplier = PRICING_CONFIG.peakHourMultiplier;
-            }
-            
-            // Calculate vehicle multiplier
-            const vehicleMultiplier = PRICING_CONFIG.vehicleTypes[details.vehicleType] || 1.0;
-            
-            // Calculate subtotal
+            // Calculate initial subtotal
             let subtotal = PRICING_CONFIG.baseFare + 
                           distanceCharge + 
                           timeCharge + 
@@ -1995,14 +1984,31 @@
                           petFee + 
                           stopsFee;
             
-            // Apply peak hour multiplier
-            subtotal *= peakHourMultiplier;
+            // Apply peak hour multiplier if applicable
+            if (details.isPeakHour) {
+                subtotal *= PRICING_CONFIG.peakHourMultiplier;
+            }
             
-            // Apply vehicle type multiplier
+            // Apply vehicle multiplier (luxury SUV = premium)
+            const vehicleMultiplier = PRICING_CONFIG.vehicleTypes[details.vehicleType] || 1.0;
             subtotal *= vehicleMultiplier;
             
             // Ensure minimum fare
             subtotal = Math.max(subtotal, PRICING_CONFIG.minimumFare);
+            
+            // Apply sanity checks
+            // 1. Never exceed maximum price per mile
+            const pricePerMile = subtotal / (details.distance || 1);
+            if (pricePerMile > PRICING_CONFIG.maximumPricePerMile && details.distance > 0) {
+                subtotal = PRICING_CONFIG.maximumPricePerMile * details.distance;
+            }
+            
+            // 2. Apply maximum fare multiplier (prevent extreme prices)
+            const baseCalculation = PRICING_CONFIG.baseFare + distanceCharge + timeCharge;
+            const maximumAllowed = baseCalculation * PRICING_CONFIG.maximumFareMultiplier;
+            if (subtotal > maximumAllowed) {
+                subtotal = maximumAllowed;
+            }
             
             // Calculate service fee and booking fee
             const serviceFee = subtotal * (PRICING_CONFIG.serviceFeePercentage / 100);
@@ -2022,7 +2028,7 @@
                     passengers: parseFloat(passengerSurcharge.toFixed(2)),
                     pets: parseFloat(petFee.toFixed(2)),
                     stops: parseFloat(stopsFee.toFixed(2)),
-                    peakHour: details.isPeakHour ? parseFloat((subtotal * (peakHourMultiplier - 1)).toFixed(2)) : 0,
+                    peakHour: details.isPeakHour ? parseFloat((subtotal * (PRICING_CONFIG.peakHourMultiplier - 1)).toFixed(2)) : 0,
                     vehicle: parseFloat((subtotal * (vehicleMultiplier - 1)).toFixed(2)),
                     serviceFee: parseFloat(serviceFee.toFixed(2)),
                     bookingFee: parseFloat(bookingFee.toFixed(2))
@@ -2034,62 +2040,76 @@
                     hasPets: details.hasPets,
                     additionalStops: details.additionalStops,
                     isPeakHour: details.isPeakHour,
-                    vehicleType: details.vehicleType
+                    vehicleType: details.vehicleType,
+                    pricePerMile: parseFloat((total / (details.distance || 1)).toFixed(2))
                 }
             };
         }
         
         /**
-         * Estimate fare based on route coordinates (simplified version)
-         * @param {Object} origin - Starting point
-         * @param {Object} destination - Ending point
-         * @param {Object} options - Additional options
-         * @returns {Promise} Promise with fare estimate
+         * Get competitive price estimate for a given distance
+         * This provides realistic estimates comparable to Uber Black
          */
-        async function estimateFare(origin, destination, options = {}) {
-            // This would normally use Google Maps Distance Matrix API
-            // For now, we'll simulate with random distance
+        function getCompetitiveEstimate(distanceMiles, durationMinutes = null, options = {}) {
             const defaults = {
                 passengers: 1,
                 hasPets: false,
                 additionalStops: 0,
-                vehicleType: 'standard'
+                isPeakHour: false
             };
             
             const tripOptions = { ...defaults, ...options };
             
-            // Simulate distance calculation (in a real app, use Google Maps API)
-            const simulatedDistance = 10 + Math.random() * 30; // 10-40 miles
-            const simulatedDuration = simulatedDistance * 2 + Math.random() * 10; // ~2 min per mile
+            // If no duration provided, estimate based on distance
+            if (!durationMinutes) {
+                durationMinutes = distanceMiles * 2.5; // Average 2.5 min per mile
+            }
             
-            // Check if it's peak hour
-            const now = new Date();
-            const hour = now.getHours();
-            const day = now.getDay();
-            const isWeekday = day >= 1 && day <= 5;
-            const isMorningPeak = hour >= 6 && hour < 9;
-            const isEveningPeak = hour >= 16 && hour < 19;
-            tripOptions.isPeakHour = isWeekday && (isMorningPeak || isEveningPeak);
+            // Calculate using the main fare function
+            const fareDetails = calculateFare({
+                distance: distanceMiles,
+                duration: durationMinutes,
+                passengers: tripOptions.passengers,
+                hasPets: tripOptions.hasPets,
+                additionalStops: tripOptions.additionalStops,
+                isPeakHour: tripOptions.isPeakHour
+            });
             
-            // Set distance and duration
-            tripOptions.distance = simulatedDistance;
-            tripOptions.duration = simulatedDuration;
-            
-            // Calculate fare
-            return calculateFare(tripOptions);
+            return fareDetails.total;
         }
         
         /**
-         * Format currency display
-         * @param {number} amount - Amount to format
-         * @returns {string} Formatted currency string
+         * Compare price with Uber Black estimate
+         * Returns comparison data
          */
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 2
-            }).format(amount);
+        function compareWithUberBlack(distanceMiles, durationMinutes = null) {
+            // Uber Black typical pricing (varies by city)
+            const uberBase = 8.50;
+            const uberPerMile = 3.75;
+            const uberPerMinute = 0.65;
+            const uberBookingFee = 2.80;
+            const uberServiceFee = 0.15; // 15%
+            
+            if (!durationMinutes) {
+                durationMinutes = distanceMiles * 2.5;
+            }
+            
+            // Calculate Uber Black estimate
+            let uberSubtotal = uberBase + (distanceMiles * uberPerMile) + (durationMinutes * uberPerMinute);
+            uberSubtotal = Math.max(uberSubtotal, 25); // Uber minimum
+            const uberService = uberSubtotal * uberServiceFee;
+            const uberTotal = uberSubtotal + uberService + uberBookingFee;
+            
+            // Calculate AGTS price
+            const agtsPrice = getCompetitiveEstimate(distanceMiles, durationMinutes);
+            
+            // Return comparison
+            return {
+                uberBlack: parseFloat(uberTotal.toFixed(2)),
+                agtsLuxury: parseFloat(agtsPrice.toFixed(2)),
+                savings: parseFloat((uberTotal - agtsPrice).toFixed(2)),
+                percentageSavings: parseFloat(((1 - agtsPrice / uberTotal) * 100).toFixed(1))
+            };
         }
         
         // ============================================
@@ -2988,7 +3008,7 @@
                 }
             });
             
-            // UPDATE PRICE DISPLAY - Integrated with pricing.js
+            // UPDATE PRICE DISPLAY - Using REALISTIC pricing
             function updatePriceDisplay() {
                 const pickup = pickupInput.value.trim();
                 const destination = destinationInput.value.trim();
@@ -3013,8 +3033,8 @@
                 
                 // Prepare data for pricing calculation
                 const pricingData = {
-                    distance: distance || 10, // Default to 10 miles if no distance calculated
-                    duration: duration || 20, // Default to 20 minutes
+                    distance: distance || 10, // Use actual distance or default
+                    duration: duration || 25, // Use actual duration or default
                     passengers: selectedPassengerCount,
                     hasPets: selectedPets === 'yes',
                     additionalStops: stops.length,
@@ -3033,18 +3053,32 @@
                     pricingData.isPeakHour = isWeekday && (isMorningPeak || isEveningPeak);
                 }
                 
-                // Use pricing.js to calculate price
+                // Use REALISTIC pricing calculation
                 try {
                     const fareDetails = calculateFare(pricingData);
                     
-                    // Update price display
+                    // Update price display with REALISTIC price
                     priceAmount.textContent = `$${fareDetails.total.toFixed(2)}`;
-                    priceNote.textContent = distance > 0 ? 
-                        `Estimated fare for ${distance.toFixed(1)} miles` : 
-                        "Estimated fare";
                     
-                    // Show breakdown if available
-                    if (fareDetails.breakdown) {
+                    // Show distance info
+                    if (distance > 0) {
+                        priceNote.textContent = `Estimate for ${distance.toFixed(1)} miles`;
+                        
+                        // Add competitive comparison if significantly cheaper
+                        const comparison = compareWithUberBlack(distance, duration);
+                        if (comparison.savings > 5) {
+                            priceNote.textContent += ` (Save $${comparison.savings.toFixed(2)} vs Uber Black)`;
+                            priceNote.style.color = 'var(--success-green)';
+                        } else {
+                            priceNote.style.color = '';
+                        }
+                    } else {
+                        priceNote.textContent = "Estimated fare";
+                        priceNote.style.color = '';
+                    }
+                    
+                    // Show breakdown if available and distance is known
+                    if (fareDetails.breakdown && distance > 0) {
                         priceBreakdown.innerHTML = '';
                         
                         // Add base fare
@@ -3059,15 +3093,15 @@
                         if (fareDetails.breakdown.distance) {
                             const item = document.createElement('div');
                             item.className = 'breakdown-item';
-                            item.innerHTML = `<span>Distance (${distance.toFixed(1)} mi)</span><span>$${fareDetails.breakdown.distance.toFixed(2)}</span>`;
+                            item.innerHTML = `<span>Distance (${distance.toFixed(1)} mi @ $${PRICING_CONFIG.perMileRate}/mi)</span><span>$${fareDetails.breakdown.distance.toFixed(2)}</span>`;
                             priceBreakdown.appendChild(item);
                         }
                         
                         // Add time charge
-                        if (fareDetails.breakdown.time) {
+                        if (fareDetails.breakdown.time && duration > 0) {
                             const item = document.createElement('div');
                             item.className = 'breakdown-item';
-                            item.innerHTML = `<span>Time (${duration.toFixed(0)} min)</span><span>$${fareDetails.breakdown.time.toFixed(2)}</span>`;
+                            item.innerHTML = `<span>Time (${duration.toFixed(0)} min @ $${PRICING_CONFIG.perMinuteRate}/min)</span><span>$${fareDetails.breakdown.time.toFixed(2)}</span>`;
                             priceBreakdown.appendChild(item);
                         }
                         
@@ -3137,10 +3171,10 @@
                     }
                 } catch (error) {
                     console.error("Error calculating price:", error);
-                    // Fallback
-                    const fallbackPrice = 75.00;
-                    priceAmount.textContent = `$${fallbackPrice.toFixed(2)}`;
-                    priceNote.textContent = "Estimated fare";
+                    // Fallback to competitive estimate
+                    const competitivePrice = getCompetitiveEstimate(distance || 10, duration || 25);
+                    priceAmount.textContent = `$${competitivePrice.toFixed(2)}`;
+                    priceNote.textContent = "Estimated competitive fare";
                     priceBreakdown.classList.remove('active');
                 }
             }
@@ -3506,6 +3540,7 @@
                 priceDisplay.classList.remove('active');
                 priceAmount.textContent = '$0.00';
                 priceNote.textContent = 'Enter pickup and destination to see price';
+                priceNote.style.color = '';
                 priceBreakdown.classList.remove('active');
                 priceBreakdown.innerHTML = '';
                 
