@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallel Array Sum Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 900px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .input-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: monospace;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #calculateBtn {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        #calculateBtn:hover {
+            background-color: #27ae60;
+            transform: translateY(-3px);
+        }
+        
+        #resetBtn {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        #resetBtn:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .result-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .result-box h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+        
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .visualization {
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 2px dashed #ddd;
+        }
+        
+        .visualization h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .threads-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .thread {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 180px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .thread h4 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .thread-elements {
+            font-family: monospace;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            min-height: 40px;
+        }
+        
+        .thread-sum {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .calculation-steps {
+            margin-top: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .calculation-steps h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        #stepsList {
+            list-style-type: none;
+        }
+        
+        #stepsList li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-family: monospace;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .results {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 Parallel Array Sum Calculator</h1>
+        
+        <div class="description">
+            This application simulates how multiple threads work together to calculate the sum of an array.
+            Each "thread" processes a portion of the array in parallel, and then results are combined.
+        </div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="arraySize">Array Size (N)</label>
+                <input type="number" id="arraySize" min="1" max="100" value="8">
+            </div>
+            
+            <div class="input-group">
+                <label for="arrayElements">Array Elements (space-separated)</label>
+                <textarea id="arrayElements" placeholder="Enter numbers separated by spaces">1 2 3 4 5 6 7 8</textarea>
+            </div>
+            
+            <div class="input-group">
+                <label for="threadCount">Number of Threads (T)</label>
+                <input type="number" id="threadCount" min="1" max="10" value="2">
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button id="calculateBtn">Calculate Parallel Sum</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+        
+        <div class="results">
+            <div class="result-box">
+                <h3>Sequential Sum</h3>
+                <div id="sequentialSum" class="result-value">-</div>
+                <p style="text-align: center; margin-top: 10px; color: #7f8c8d;">(Single-threaded approach)</p>
+            </div>
+            
+            <div class="result-box">
+                <h3>Parallel Sum</h3>
+                <div id="parallelSum" class="result-value">-</div>
+                <p style="text-align: center; margin-top: 10px; color: #7f8c8d;">(Multi-threaded approach)</p>
+            </div>
+        </div>
+        
+        <div class="visualization">
+            <h3>Thread Visualization</h3>
+            <div class="threads-container" id="threadsContainer">
+                <!-- Thread visualizations will be added here -->
+            </div>
+            
+            <div class="calculation-steps">
+                <h3>Calculation Steps</h3>
+                <ul id="stepsList">
+                    <li>Enter array values and thread count, then click "Calculate Parallel Sum"</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            This is a simulation of multithreading using JavaScript's asynchronous capabilities.
+            In real C/pthreads applications, threads run in true parallel on multi-core CPUs.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const arraySizeInput = document.getElementById('arraySize');
+            const arrayElementsInput = document.getElementById('arrayElements');
+            const threadCountInput = document.getElementById('threadCount');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const sequentialSumElement = document.getElementById('sequentialSum');
+            const parallelSumElement = document.getElementById('parallelSum');
+            const threadsContainer = document.getElementById('threadsContainer');
+            const stepsList = document.getElementById('stepsList');
+            
+            // Update array elements when array size changes
+            arraySizeInput.addEventListener('change', function() {
+                const size = parseInt(this.value);
+                const currentElements = arrayElementsInput.value.trim().split(/\s+/).map(Number);
+                
+                if (isNaN(size) || size < 1) return;
+                
+                // Generate new array
+                let newArray = [];
+                if (currentElements.length > 0 && !currentElements.some(isNaN)) {
+                    // Extend or truncate existing array
+                    newArray = currentElements.slice(0, size);
+                    while (newArray.length < size) {
+                        newArray.push(Math.floor(Math.random() * 20) + 1);
+                    }
+                } else {
+                    // Generate random array
+                    for (let i = 0; i < size; i++) {
+                        newArray.push(Math.floor(Math.random() * 20) + 1);
+                    }
+                }
+                
+                arrayElementsInput.value = newArray.join(' ');
+            });
+            
+            // Calculate parallel sum
+            calculateBtn.addEventListener('click', calculateSum);
+            
+            // Reset form
+            resetBtn.addEventListener('click', function() {
+                arraySizeInput.value = '8';
+                arrayElementsInput.value = '1 2 3 4 5 6 7 8';
+                threadCountInput.value = '2';
+                sequentialSumElement.textContent = '-';
+                parallelSumElement.textContent = '-';
+                threadsContainer.innerHTML = '';
+                stepsList.innerHTML = '<li>Enter array values and thread count, then click "Calculate Parallel Sum"</li>';
+            });
+            
+            function calculateSum() {
+                // Get input values
+                const arrayText = arrayElementsInput.value.trim();
+                const array = arrayText.split(/\s+/).map(Number);
+                
+                if (array.some(isNaN)) {
+                    alert('Please enter valid numbers for array elements');
+                    return;
+                }
+                
+                const N = array.length;
+                let T = parseInt(threadCountInput.value);
+                
+                // Update array size input to match actual array length
+                arraySizeInput.value = N;
+                
+                if (isNaN(T) || T < 1) {
+                    alert('Please enter a valid number of threads (at least 1)');
+                    return;
+                }
+                
+                // Cap threads at array length
+                if (T > N) {
+                    T = N;
+                    threadCountInput.value = T;
+                }
+                
+                // Clear previous visualization
+                threadsContainer.innerHTML = '';
+                stepsList.innerHTML = '';
+                
+                // Calculate sequential sum
+                const sequentialStart = performance.now();
+                let sequentialSum = 0;
+                for (let i = 0; i < N; i++) {
+                    sequentialSum += array[i];
+                }
+                const sequentialTime = performance.now() - sequentialStart;
+                
+                sequentialSumElement.textContent = sequentialSum;
+                addStep(`Sequential sum calculated: ${sequentialSum} (took ${sequentialTime.toFixed(2)}ms)`);
+                
+                // Calculate parallel sum using simulated threads
+                calculateParallelSum(array, N, T);
+            }
+            
+            function calculateParallelSum(array, N, T) {
+                const parallelStart = performance.now();
+                
+                // Calculate elements per thread
+                const elementsPerThread = Math.floor(N / T);
+                const remainingElements = N % T;
+                
+                let currentStart = 0;
+                let threadPromises = [];
+                
+                addStep(`Dividing array of ${N} elements among ${T} threads...`);
+                
+                // Create "threads" (simulated with setTimeout to show parallel behavior)
+                for (let i = 0; i < T; i++) {
+                    const threadId = i + 1;
+                    const startIndex = currentStart;
+                    
+                    // Distribute remaining elements among first few threads
+                    const endOffset = elementsPerThread + (i < remainingElements ? 1 : 0);
+                    const endIndex = currentStart + endOffset;
+                    
+                    currentStart = endIndex;
+                    
+                    // Get thread's portion of the array
+                    const threadArray = array.slice(startIndex, endIndex);
+                    
+                    addStep(`Thread ${threadId} assigned elements ${startIndex} to ${endIndex-1}: [${threadArray.join(', ')}]`);
+                    
+                    // Create a promise to simulate thread processing
+                    const threadPromise = new Promise(resolve => {
+                        // Use setTimeout to simulate computation time
+                        const processingTime = 100 + Math.random() * 300; // Random time between 100-400ms
+                        
+                        setTimeout(() => {
+                            // Calculate partial sum
+                            let partialSum = 0;
+                            for (let j = 0; j < threadArray.length; j++) {
+                                partialSum += threadArray[j];
+                            }
+                            
+                            // Create thread visualization
+                            createThreadVisualization(threadId, threadArray, partialSum, processingTime);
+                            
+                            addStep(`Thread ${threadId} finished: sum = ${partialSum} (took ${processingTime.toFixed(0)}ms)`);
+                            
+                            resolve(partialSum);
+                        }, processingTime);
+                    });
+                    
+                    threadPromises.push(threadPromise);
+                }
+                
+                // Wait for all "threads" to complete and combine results
+                Promise.all(threadPromises).then(partialSums => {
+                    const parallelTime = performance.now() - parallelStart;
+                    
+                    // Combine partial sums
+                    let parallelSum = 0;
+                    for (let i = 0; i < partialSums.length; i++) {
+                        parallelSum += partialSums[i];
+                    }
+                    
+                    parallelSumElement.textContent = parallelSum;
+                    
+                    addStep(`All threads completed. Combining results: ${partialSums.join(' + ')} = ${parallelSum}`);
+                    addStep(`Parallel calculation took ${parallelTime.toFixed(2)}ms`);
+                    
+                    // Show comparison
+                    if (parallelSum === parseInt(sequentialSumElement.textContent)) {
+                        addStep(`✅ Results match! Both methods give ${parallelSum}`);
+                    } else {
+                        addStep(`❌ Results don't match! Check for errors.`);
+                    }
+                });
+            }
+            
+            function createThreadVisualization(threadId, threadArray, partialSum, processingTime) {
+                const threadElement = document.createElement('div');
+                threadElement.className = 'thread';
+                
+                threadElement.innerHTML = `
+                    <h4>Thread ${threadId}</h4>
+                    <div class="thread-elements">${threadArray.join(' + ')}</div>
+                    <div class="thread-sum">= ${partialSum}</div>
+                    <div style="font-size: 0.8rem; margin-top: 5px;">${processingTime.toFixed(0)}ms</div>
+                `;
+                
+                threadsContainer.appendChild(threadElement);
+            }
+            
+            function addStep(stepText) {
+                const stepItem = document.createElement('li');
+                stepItem.textContent = stepText;
+                stepsList.appendChild(stepItem);
+                // Scroll to bottom of steps list
+                stepItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Initialize with example
+            calculateSum();
+        });
+    </script>
+</body>
+</html>
